@@ -29,6 +29,7 @@ const Login = () => {
         try {
             const url = `${backendUrl}/login-admin`
             const respuesta = await axios.post(url,form)
+            localStorage.setItem('token', respuesta.data.tokenJWT)
             console.log(respuesta);
             navigate('/dashboard')
         } catch (error) {
