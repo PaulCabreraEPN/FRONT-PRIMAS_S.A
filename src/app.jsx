@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'
+import './app.css'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import Login from './pages/Login'
 import Auth from './layout/Auth'
@@ -18,4 +18,5 @@ function App(){
         </>  
     )
 }
+
 export default App
