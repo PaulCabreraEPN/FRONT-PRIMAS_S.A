@@ -39,7 +39,8 @@ export const Register = () => {
             }
             const formData = { role: "Seller",status: true ,...form};
             const response = await axios.post(url,formData,options)
-            setMensaje({respuesta: respuesta.data.msg, tipo: true})
+            console.log(response);
+            setMensaje({respuesta: response.data.msg, tipo: true})
         } catch (error) {
             const mensajeError = error.response?.data?.msg || error.response?.data || 'Error en el registro'
             setMensaje({respuesta: mensajeError, tipo: false})
