@@ -17,7 +17,7 @@ const Login = () => {
     });
     
     //Setear valores 
-    const handeChange = (e) => {
+    const handleChange = (e) => {
         setform({
             ...form,
             [e.target.name]:e.target.value
@@ -26,31 +26,44 @@ const Login = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Normalizar valores vacíos
+        const normalizedForm = {
+            username: form.username.trim() || "",
+            password: form.password.trim() || ""
+        };
+        
         try {
-            const url = `${backendUrl}/login-admin`
-            const respuesta = await axios.post(url,form)
-            localStorage.setItem('token', respuesta.data.tokenJWT)
+            console.log(normalizedForm);
+            const url = `${backendUrl}/login-admin`;
+            const respuesta = await axios.post(url, normalizedForm);
             console.log(respuesta);
-            navigate('/dashboard')
+            
+            setform({ username: form.username, password: "" });  // Solo vaciar la contraseña
+            localStorage.setItem("token", respuesta.data.tokenJWT);
+            navigate("/dashboard");
         } catch (error) {
-            setMensaje({respuesta:error.response.data.msg,tipo:false})
+            console.log(error);
+            setMensaje({ respuesta: error.response?.data?.msg || "Error desconocido", tipo: false });
             setTimeout(() => {
-                setMensaje({})
-            },5000);
-            setform({})
+                setMensaje({});
+            }, 5000);
+    
+            setform({ username: form.username, password: "" });  // Solo vaciar la contraseña, mantener el username
         }
-    }
+    };
+    
+    
 
     return (
         <div className="flex h-screen">
             {/* Primera mitad: Formulario */}
-            <div className="w-1/2 bg-white flex justify-center items-center padd">
-                <div className="md:w-3/5 sm:w-full">
+            <div className="w-1/2 bg-customWhite flex justify-center items-center padd">
+                <div className="md:w-1/2 sm:w-full">
                     <div className='flex'>
                     <div className="hidden sm:block bg-[url('/images/mainlogo.png')] bg-no-repeat bg-center bg-contain h-48 w-48 sm:h-14 sm:w-12">
-  {/* Aquí puedes agregar otros elementos si los necesitas */}
-</div>
-                        <h1 className="text-5xl font-semibold mb-2 text-center uppercase text-gray-500">
+                    </div>
+                        <h1 className="text-5xl font-semibold mb-2 text-left uppercase" style={{ color: '#2c308a' }}>
                         PRIMA S.A.
                         </h1>
                         
@@ -59,27 +72,27 @@ const Login = () => {
 
                     {Object.keys(mensaje).length>0 && <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>}
 
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className='mt-10'>
                         <div className="mb-3">
-                            <label className="mb-2 block text-lg font-semibold">Nombre de Usuario</label>
+                            <label className="mb-2 block text-lg font-sans" style={{ color: '#6b6999' }}>Nombre de Usuario</label>
                             <input
                                 type="text"
                                 placeholder="Ingresa tu nombre de usuario"
-                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
+                                className="block w-full rounded-full border border-gray-300  focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
                                 name='username'
-                                onChange={handeChange}
+                                onChange={handleChange}
                                 value={form.name}
                             />
                         </div>
 
                         <div className="mb-3">
-                            <label className="mb-2 block text-lg font-semibold">Contraseña</label>
+                            <label className="mb-2 block text-lg font-sans" style={{ color: '#6b6999' }} >Contraseña</label>
                             <input
                                 type="password"
-                                placeholder="********************"
-                                className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
+                                placeholder="**********"
+                                className="block w-full rounded-full border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
                                 name='password'
-                                onChange={handeChange}
+                                onChange={handleChange}
                                 value={form.password}
                             />
                         </div>
@@ -89,17 +102,17 @@ const Login = () => {
                             <p>Recordarme</p>
                         </div>
 
-                        <div className="my-4 border-b-2 py-4">
-                        <button className="py-2 w-full block text-center bg-gray-500 text-slate-300 border rounded-xl hover:scale-100 duration-300 hover:bg-gray-900 hover:text-white">Iniciar Sesión</button>
+                        <div className="my-4 border-b-2 border-b-gray-300 py-4 ">
+                        <button className="py-2 w-full md:w-1/2 block text-center bg-gray-500 text-slate-300 border hover:scale-100 duration-300 hover:bg-customBlue hover:text-white rounded-full mx-auto">Iniciar Sesión</button>
                         </div>
                     </form>
                     
-                    <div className="mt-5 text-xs ">
+                    <div className="mt-5 text-xs text-center">
                         <Link
-                            to="/forgot/id"
+                            to="/recovery-account"
                             className="underline text-sm text-gray-400 hover:text-gray-900"
                         >
-                            Forgot your password?
+                            ¿Olvidaste tu contraseña? | Recuperar cuenta
                         </Link>
                     </div>
 

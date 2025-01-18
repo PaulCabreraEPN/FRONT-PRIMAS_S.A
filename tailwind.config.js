@@ -6,7 +6,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customBlue: '#205598', // Nombre del color: código hexadecimal
+        customWhite: '#efefef', // Otro color personalizado
+      },
+    },
   },
   plugins: [],
 }
