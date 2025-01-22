@@ -107,7 +107,7 @@ const Login = () => {
                     
                     <div className="mt-5 text-xs text-center">
                         <Link
-                            to="/forgot/:id"
+                            to="/recovery-account"
                             className="underline text-sm text-gray-400 hover:text-gray-900"
                         >
                             ¿Olvidaste tu contraseña? | Recuperar cuenta
