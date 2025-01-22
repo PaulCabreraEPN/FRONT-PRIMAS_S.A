@@ -87,4 +87,4 @@ const Forgot = () => {
         </>
     )
 }
-export default Forgot
+export default Forgot;
