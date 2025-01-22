@@ -3,8 +3,8 @@ import './app.css'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import Login from './pages/Login'
 import Auth from './layout/Auth'
-import { Register } from './pages/Register';
 import LoadingPage from './pages/LoadingPage';
+import Register from './pages/Register';
 
 function App(){
     return(

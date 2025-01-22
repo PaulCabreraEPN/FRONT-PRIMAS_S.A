@@ -2,9 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import Mensaje from "../context/alerts/Mensaje";
 
-
-
-export const Register = () => {
+const Register = () => {
     const [form, setForm] = useState({
         "names": "",
         "lastNames": "",
@@ -110,4 +108,5 @@ export const Register = () => {
     )
 }
 
-export default Register;
+export default Register
+
