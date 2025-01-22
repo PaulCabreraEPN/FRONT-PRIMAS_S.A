@@ -15,6 +15,7 @@ function App(){
                 <Route path='/' element={<Auth/>}>
                     <Route path='login' element={<Login/>}/>
                     <Route path='register' element={<Register/>}/>
+                    <Route path='forgot/:id' element={<Forgot/>}/>
                 </Route> 
             </Routes>
         </BrowserRouter>
