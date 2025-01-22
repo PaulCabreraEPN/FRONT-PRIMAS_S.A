@@ -29,7 +29,7 @@ export const Register = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token')
-            const backUrl = import.meta.env.VITE_URL_BACKEND
+            const backUrl = import.meta.env.VITE_URL_BACKEND_API
             const url = `${backUrl}/register`;
             const options = {
                 headers:{

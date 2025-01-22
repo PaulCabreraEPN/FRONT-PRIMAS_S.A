@@ -6,7 +6,7 @@ import Mensaje from '../context/alerts/Mensaje';
 const Login = () => {
     //Declarciones
     const frontendUrl = import.meta.env.VITE_URL_FRONTEND;
-    const backendUrl = import.meta.env.VITE_URL_BACKEND;
+    const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
     const [mensaje, setMensaje] = useState({})
     const navigate = useNavigate()
 
@@ -34,11 +34,9 @@ const Login = () => {
         };
         
         try {
-            console.log(normalizedForm);
             const url = `${backendUrl}/login-admin`;
             const respuesta = await axios.post(url, normalizedForm);
-            console.log(respuesta);
-            
+
             setform({ username: form.username, password: "" });  // Solo vaciar la contraseña
             localStorage.setItem("token", respuesta.data.tokenJWT);
             navigate("/dashboard");
