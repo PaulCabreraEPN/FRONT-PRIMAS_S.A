@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Auth from './layout/Auth'
 import LoadingPage from './pages/LoadingPage';
 import Register from './pages/Register';
+import Forgot from './pages/Forgot';
 
 function App(){
     return(
