@@ -3,7 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Mensaje from '../context/alerts/Mensaje';
 
-export const Forgot = () => {
+const Forgot = () => {
     const [mail, setMail] = useState({});
     const [mensaje, setMensaje] = useState({})
     const handleChange = (e) => {
