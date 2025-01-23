@@ -68,10 +68,10 @@ const Forgot = () => {
 
                             <div className="mb-1">
                                 <label className="mb-2 block text-sm font-semibold">Email</label>
-                                <input type="text" placeholder="Prima@example.com" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                <input type="text" placeholder="Ingresa tu nombre de usuario" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                     name='username'
                                     onChange={handleChange}
-                                    value={form.username}/>
+                                    value={form.name}/>
                             </div>
 
                             <div className="mb-3">
