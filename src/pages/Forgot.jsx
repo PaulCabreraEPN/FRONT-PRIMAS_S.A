@@ -41,7 +41,7 @@ const Forgot = () => {
         }
 
         try {
-            const url = `${backendUrl}/recovery-password-admin`;
+            const url = `https://back-prima-s-a.onrender.com/recovery-password-admin`;
             const respuesta = await axios.post(url, normalizedForm);
             setMensaje({ respuesta: respuesta.data.msg, tipo: true });
             setForm({ username: "" }); // Resetear el formulario
