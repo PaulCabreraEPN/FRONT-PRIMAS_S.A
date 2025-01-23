@@ -1,5 +1,7 @@
 const Main = () => {
     return (
+        <>
+        
         <div
             style={{
                 display: "grid",
@@ -28,6 +30,11 @@ const Main = () => {
                 <p className="fs-4">10</p>
             </div>
         </div>
+        <div>
+        <iframe title="Reporte videojuegos" width="1024" height="1060" src="https://app.powerbi.com/view?r=eyJrIjoiMmQ5MzFhNjEtY2NhNC00MDgxLTljZWQtOWFhMTVlYzVjMjgyIiwidCI6IjY4MmE0ZTZhLWE3N2YtNDk1OC1hM2FjLTllMjY2ZDE4YWEzNyIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+        </div>
+
+        </>
     );
     
 }
