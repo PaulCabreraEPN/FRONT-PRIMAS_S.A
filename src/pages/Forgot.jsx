@@ -4,23 +4,38 @@ import axios from 'axios';
 import Mensaje from '../context/alerts/Mensaje';
 
 const Forgot = () => {
-    const [mail, setMail] = useState({});
+   //Declarciones
+    const frontendUrl = import.meta.env.VITE_URL_FRONTEND;
+    const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+    
     const [mensaje, setMensaje] = useState({})
+    
+    //Crear un use state
+    const [form, setform] = useState({
+        username:""
+    });
+    
+    //Setear valores 
     const handleChange = (e) => {
-        setMail({
-            ...mail,
-            [e.target.name]: e.target.value
-        })
-    }
+        setform({
+            ...form,
+            [e.target.name]:e.target.value
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        // Normalizar valores vacíos
+        const normalizedForm = {
+            username: form.username.trim() || ""
+        };
+
         try {
-            const url = `${backUrl}/recovery-password-admin`
-            const respuesta = await axios.post(url, mail)
+            const url = `${backendUrl}/recovery-password-admin`
+            const respuesta = await axios.post(url, normalizedForm)
             setMensaje({ respuesta: respuesta.data.msg, tipo: true })
-            setMail("")
+            setform({ username: "" })
         } catch (error) {
             setMensaje({ respuesta: error.response.data.msg, tipo: false })
         }
@@ -54,8 +69,9 @@ const Forgot = () => {
                             <div className="mb-1">
                                 <label className="mb-2 block text-sm font-semibold">Email</label>
                                 <input type="email" placeholder="Prima@example.com" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                                    name='email'
-                                    onChange={handleChange} />
+                                    name='username'
+                                    onChange={handleChange}
+                                    value={form.username}/>
                             </div>
 
                             <div className="mb-3">
