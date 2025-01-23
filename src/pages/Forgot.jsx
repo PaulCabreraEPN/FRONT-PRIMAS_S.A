@@ -55,6 +55,8 @@ const Forgot = () => {
 
     return (
         <div className="flex h-screen">
+            {/* Segunda mitad: Imagen */}
+            <div className="w-7/12 hidden sm:block bg-[url('/images/atlasrecovery.jpg')] bg-no-repeat bg-cover bg-center"></div>
             {/* Primera mitad: Formulario */}
             <div className="bg-white flex justify-center items-center w-1/2">
                 <div className="md:w-1/2 sm:w-full">
@@ -117,8 +119,7 @@ const Forgot = () => {
                 </div>
             </div>
 
-            {/* Segunda mitad: Imagen */}
-            <div className="w-7/12 hidden sm:block bg-[url('/images/atlaslogin.jpg')] bg-no-repeat bg-cover bg-center"></div>
+            
         </div>
     );
 };
