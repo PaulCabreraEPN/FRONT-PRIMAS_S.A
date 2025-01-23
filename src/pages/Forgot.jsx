@@ -61,13 +61,13 @@ const Forgot = () => {
                         </div>
                         <small className="text-gray-400 block mb-5 text-sm">Bienvenido a tu plataforma</small>
                         <h1 className="text-3xl font-semibold mb-2 text-center uppercase  text-gray-500">Perdiste tu contraseña !!!</h1>
-                        <small className="text-gray-400 block my-4 text-sm">No te preocupes, porfavor llena tu email</small>
+                        <small className="text-gray-400 block my-4 text-sm">No te preocupes, porfavor ingresa tu usuario</small>
 
 
                         <form onSubmit={handleSubmit}>
 
                             <div className="mb-1">
-                                <label className="mb-2 block text-sm font-semibold">Email</label>
+                                <label className="mb-2 block text-sm font-semibold">Usuario</label>
                                 <input type="text" placeholder="Ingresa tu nombre de usuario" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                     name='username'
                                     onChange={handleChange}
