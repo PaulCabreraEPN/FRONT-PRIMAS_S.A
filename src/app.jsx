@@ -7,8 +7,8 @@ import LoadingPage from './pages/LoadingPage';
 import Register from './pages/Register';
 import Forgot from './pages/Forgot';
 import { PrivateRoute } from './routes/PrivateRoutes';
-import Main from './pages/main';
 import Dashboard from './layout/Dasboard';
+import Main from './pages/Main';
 
 
 function App() {
