@@ -34,7 +34,7 @@ const Forgot = () => {
 
                 <div className="bg-white flex justify-center items-center w-1/2">
 
-                    <div className="md:w-4/5 sm:w-full">
+                    <div className="md:w-1/2 sm:w-full">
                         {Object.keys(mensaje).length > 0 && <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>}
                         <div className='flex'>
                             <div className="hidden sm:block bg-[url('/images/mainlogo.png')] bg-no-repeat bg-center bg-contain h-48 w-48 sm:h-14 sm:w-12">

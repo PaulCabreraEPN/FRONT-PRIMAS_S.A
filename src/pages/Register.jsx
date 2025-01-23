@@ -46,9 +46,9 @@ const Register = () => {
     }
     
     return(
-        <div className="flex h-screen">
-            <div className="bg-white flex justify-center items-center w-1/2">
-                <div className="md:w-4/5 sm:w-full">
+        <div className="flex">
+            <div className="bg-white flex justify-center items-center w-full">
+                <div className="md:w-1/2">
                 {Object.keys(mensaje).length > 0 && <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>}
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
@@ -99,10 +99,6 @@ const Register = () => {
                         </div>
                     </form>
                 </div>
-            </div>
-            <div className="w-1/2 h-screen bg-[url('/images/atlaslogin.jpg')] 
-            bg-no-repeat bg-cover bg-center sm:block hidden
-            ">
             </div>
         </div>
     )
