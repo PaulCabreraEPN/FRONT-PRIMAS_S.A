@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {ToastContainer, toast} from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 
 const UpdateSeller = () => {
     const [seller, setSeller] = useState({
@@ -38,7 +38,6 @@ const UpdateSeller = () => {
             const DataResponse = response.data
 
             const sellerData = DataResponse.msg;
-            console.log(DataResponse)
             // Verificar que sellerData existe antes de actualizar
             if (sellerData) {
                 setSeller({
@@ -49,6 +48,7 @@ const UpdateSeller = () => {
                     email: sellerData.email || "",
                     SalesCity: sellerData.SalesCity || "",
                     PhoneNumber: sellerData.PhoneNumber || "",
+                    status: sellerData.status || true
                 });
             }
             toast.success(response.data.msg)
@@ -60,6 +60,9 @@ const UpdateSeller = () => {
     }
 
     const handleChange = (e) => {
+        const value = e.target.name === 'status'
+            ? e.target.value === 'true'  // convierte el string a booleano
+            : e.target.value;
         setSeller({
             ...seller,
             [e.target.name]: e.target.value
@@ -215,6 +218,19 @@ const UpdateSeller = () => {
                             onChange={handleChange}
                             className="w-full p-2 border rounded"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block mb-2">Estado:</label>
+                        <select
+                            name="status"
+                            value={(seller?.status ?? true).toString()}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
                     </div>
                 </div>
 
