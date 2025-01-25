@@ -10,6 +10,7 @@ import { PrivateRoute } from './routes/PrivateRoutes';
 import Dashboard from './layout/Dasboard';
 import Main from './pages/Main';
 import Sellers from './pages/Sellers';
+import UpdateSeller from './pages/UpdateSeller';
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                     <Route index element={<Main />} />
                     <Route path="sellers/" element={<Sellers />} />
                     <Route path="sellers/register" element={<Register />} />
+                    <Route path="sellers/update/:id" element={<UpdateSeller />} />
                 </Route>
             </Routes>
         </BrowserRouter>

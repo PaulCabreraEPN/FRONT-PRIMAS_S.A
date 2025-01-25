@@ -61,7 +61,7 @@ const Tabla = () => {
                                 <div
                                     className="w-full p-4 flex items-center shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200"
                                     key={seller._id}
-                                    onClick={() => navigate(`/dashboard/sellers/${seller.numberID}`)} // Opcional: hacer clic en todo el div
+                                    // En Tabla.jsx
                                 >
                                     {/* Imagen del vendedor */}
                                     <img 
@@ -73,7 +73,7 @@ const Tabla = () => {
                                     {/* Detalles del vendedor */}
                                     <div className="flex-1">
                                         <h1 className="text-lg font-semibold">Ci: {seller.numberID}</h1>
-                                        <h1 className="text-lg">Nombre: {seller.name}</h1>
+                                        <h1 className="text-lg">Nombre: {seller.names}</h1>
                                         <h1 className="text-lg">Apellidos: {seller.lastNames}</h1>
                                         <h1 className="text-lg">Ciudad: {seller.SalesCity}</h1>
                                     </div>
@@ -92,7 +92,7 @@ const Tabla = () => {
                                         className="h-7 w-7 text-slate-800 cursor-pointer ml-2"
                                         onClick={(e) => {
                                             e.stopPropagation(); // Evitar que el clic en el ícono dispare el clic del div
-                                            navigate(`/dashboard/sellers/${seller.numberID}`);
+                                            navigate(`/dashboard/sellers/update/${seller._id}`);
                                         }}
                                     />
                                 </div>

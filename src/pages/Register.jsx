@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import Mensaje from "../context/alerts/Mensaje";
+import { useNavigate } from "react-router-dom";
+import {ToastContainer, toast} from 'react-toastify'
 
 const Register = () => {
+    const navigate = useNavigate()
     const [form, setForm] = useState({
         "names": "",
         "lastNames": "",
@@ -14,7 +16,6 @@ const Register = () => {
         "status": true
     });
 
-    const [mensaje, setMensaje] = useState("")
 
     const handleChange = (e) => {
         setForm({
@@ -38,10 +39,12 @@ const Register = () => {
             const formData = { role: "Seller",status: true ,...form};
             const response = await axios.post(url,formData,options)
             console.log(response);
-            setMensaje({respuesta: response.data.msg, tipo: true})
+            toast.success(response.data.msg)
+            setTimeout(() => {
+                navigate('/dashboard/sellers')
+            },2000)
         } catch (error) {
-            const mensajeError = error.response?.data?.msg || error.response?.data || 'Error en el registro'
-            setMensaje({respuesta: mensajeError, tipo: false})
+            toast.error(error.response?.data?.msg)
         }
     }
     
@@ -49,7 +52,16 @@ const Register = () => {
         <div className="flex">
             <div className="bg-white flex justify-center items-center w-full">
                 <div className="md:w-1/2">
-                {Object.keys(mensaje).length > 0 && <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>}
+                    <div className="flex justify-end mb-4">
+                        <button 
+                            onClick={() => navigate('/dashboard/sellers')}
+                            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        >
+                            <i className="fas fa-arrow-left mr-2"></i>
+                            Atrás
+                        </button>
+                    </div>
+                    <ToastContainer />
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="names" className="mb-2 block text-sm font-semibold">Nombres: </label>
