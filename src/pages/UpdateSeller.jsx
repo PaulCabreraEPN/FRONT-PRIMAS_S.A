@@ -119,13 +119,60 @@ const UpdateSeller = () => {
     }, [id])
 
     if (isLoading) {
-        return <div>Cargando...</div>;
+        return (
+            <div>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        minHeight: "100vh",
+                        fontFamily: "Arial, sans-serif",
+                    }}
+                >
+                    <div style={{ textAlign: "center" }}>
+                        {/* Logo principal con animación */}
+                        <img
+                            src="/images/mainlogo.png"
+                            alt="Logo"
+                            style={{
+                                width: "120px",
+                                height: "120px",
+                                animation: "bounce 1.5s infinite",
+                                marginBottom: "20px", // Espaciado entre la imagen y el texto
+                            }}
+                        />
+                        <p
+                            style={{
+                                fontSize: "18px",
+                                color: "#21559a",
+                                textAlign: "center",
+                            }}
+                        >
+                            Cargando...
+                        </p>
+                    </div>
+                </div>
+                <style>
+                    {`
+                      @keyframes bounce {
+                        0%, 100% {
+                          transform: translateY(0);
+                        }
+                        50% {
+                          transform: translateY(-20px);
+                        }
+                      }
+                    `}
+                </style>
+            </div>
+        );
     }
 
     return (
         <div className="container mx-auto mt-8 p-4">
             <button
-                onClick={() => navigate('/dashboard/sellers')}
+                onClick={() => navigate(`/dashboard/sellers/${id}`)}
                 className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
             >
                 ← Atrás

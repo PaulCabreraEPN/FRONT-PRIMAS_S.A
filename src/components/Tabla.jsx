@@ -6,10 +6,12 @@ import Mensaje from "./Alertas/Mensaje";
 
 const Tabla = () => {
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
     const [sellers, setSellers] = useState([]);
     const [searchId, setSearchId] = useState("");
 
     const listarSellers = async () => {
+        setIsLoading(true);
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem('token');
@@ -24,6 +26,8 @@ const Tabla = () => {
             setSellers(respuesta.data);
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsLoading(false);
         }
     };
 
@@ -45,39 +49,70 @@ const Tabla = () => {
         }
     };
 
-    const eliminarSeller = async (id) => {
-        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este vendedor?");
-        if (!confirmacion) return;
-
-        try {
-            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem("token");
-            const url = `${backendUrl}/deleteSellerinfo/${id}`;
-            const options = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-            const respuesta = await axios.delete(url, options);
-            alert(respuesta.data.msg);
-            listarSellers(); // Actualizar la lista de vendedores
-        } catch (error) {
-            console.error(error);
-            alert("Error al eliminar el vendedor");
-        }
-    };
+    
 
     useEffect(() => {
         listarSellers();
     }, []);
 
+    if (isLoading) {
+        return (
+            <div>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        minHeight: "100vh",
+                        fontFamily: "Arial, sans-serif",
+                    }}
+                >
+                    <div style={{ textAlign: "center" }}>
+                        {/* Logo principal con animación */}
+                        <img
+                            src="/images/mainlogo.png"
+                            alt="Logo"
+                            style={{
+                                width: "120px",
+                                height: "120px",
+                                animation: "bounce 1.5s infinite",
+                                marginBottom: "20px", // Espaciado entre la imagen y el texto
+                            }}
+                        />
+                        <p
+                            style={{
+                                fontSize: "18px",
+                                color: "#21559a",
+                                textAlign: "center",
+                            }}
+                        >
+                            Cargando...
+                        </p>
+                    </div>
+                </div>
+                <style>
+                    {`
+                      @keyframes bounce {
+                        0%, 100% {
+                          transform: translateY(0);
+                        }
+                        50% {
+                          transform: translateY(-20px);
+                        }
+                      }
+                    `}
+                </style>
+            </div>
+        );
+    }
+
     return (
         <>
-            <div className="p-4 bg-blue-100 text-center rounded-lg mb-4">
-                <span className="mr-2">Digita la cédula del vendedor:</span>
+            <div className="p-4 text-center rounded-lg mb-4">
+                <span className="mr-2"></span>
                 <input
                     type="text"
+                    placeholder="Cédula vendedor"
                     value={searchId}
                     onChange={(e) => setSearchId(e.target.value)}
                     className="border p-2 rounded mr-2"
@@ -86,46 +121,83 @@ const Tabla = () => {
                 <button onClick={listarSellers} className="bg-gray-500 text-white px-4 py-2 rounded ml-2">Mostrar Todos</button>
             </div>
 
+            <div className="flex justify-end items-center mb-4">
+                            
+                <button 
+                    onClick={() => navigate('register')}
+                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                    <i className="fas fa-user-plus mr-2"></i>
+                        Registrar Vendedor
+                    </button>
+            </div>
+
             {
-                sellers.length === 0 ?
+                sellers.length == 0
+                    ?
                     <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
                     :
-                    <div className="pl-3 pr-3 grid grid-cols-2 gap-4">
-                        {sellers.map((seller) => (
-                            <div
-                                className="w-full p-4 flex items-center shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200"
-                                key={seller._id}
-                            >
-                                <img src="/images/seller.png" alt="Imagen del vendedor" className="w-24 h-24 object-cover rounded-full mr-4" />
-                                <div className="flex-1">
-                                    <h1 className="text-sm font-semibold">Ci: {seller.numberID}</h1>
-                                    <h1 className="text-sm">Nombre: {seller.names}</h1>
-                                    <h1 className="text-sm">Apellidos: {seller.lastNames}</h1>
-                                    <h1 className="text-sm">Ciudad: {seller.SalesCity}</h1>
-                                </div>
-                                {seller.status ?
-                                    <span className="absolute top-2 right-2 bg-blue-100 text-green-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900">Activo</span>
-                                    :
-                                    <span className="absolute top-2 right-2 bg-blue-100 text-red-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900">Inactivo</span>
-                                }
-                                <MdNoteAdd
-                                    className="h-7 w-7 text-slate-800 cursor-pointer ml-2"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/dashboard/sellers/update/${seller._id}`);
-                                    }}
-                                />
-                                <MdDeleteForever
-                                    className="h-7 w-7 text-red-900 cursor-pointer inline-block"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        eliminarSeller(seller._id);
-                                    }}
-                                />
 
-                            </div>
-                        ))}
+                    <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr", // Dos columnas iguales
+                        gap: "20px", // Espaciado entre elementos
+                    }}
+
+                    className="pl-3 pr-3"
+                    >
+                        
+                       
+                        {
+                            sellers.map((seller, index) => (
+                                
+                                <div
+                                    className="w-full p-4 flex items-center shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200"
+                                    key={seller._id}
+                                    onClick={() => navigate(`/dashboard/sellers/${seller._id}`)} // Opcional: hacer clic en todo el div
+                                >
+                                    {/* Imagen del vendedor */}
+                                    <img 
+                                        src="/images/seller.png" 
+                                        alt="Imagen del vendedor" 
+                                        className="w-24 h-24 object-cover rounded-full mr-4"
+                                    />
+                                    
+                                    {/* Detalles del vendedor */}
+                                    <div className="flex-1">
+                                        <h1 className="text-lg font-semibold">Ci: {seller.numberID}</h1>
+                                        <h1 className="text-lg">Nombre: {seller.names}</h1>
+                                        <h1 className="text-lg">Apellidos: {seller.lastNames}</h1>
+                                        <h1 className="text-lg">Ciudad: {seller.SalesCity}</h1>
+                                    </div>
+                                    
+                                    {/* Estado del vendedor */}
+                                    {
+                                        seller.status ? 
+                                        <span className="absolute top-2 right-2 bg-blue-100 text-green-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900"> {"Activo"} </span>
+                                        :
+                                        <span className="absolute top-2 right-2 bg-blue-100 text-red-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900"> {"Inacativo"} </span>
+                                        } 
+                                    
+
+                                    {/* Ícono para agregar nota */}
+                                    <MdNoteAdd
+                                        className="h-7 w-7 text-slate-800 cursor-pointer ml-2"
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Evitar que el clic en el ícono dispare el clic del div
+                                            navigate(`/dashboard/sellers/${seller._id}`);
+                                        }}
+                                    />
+                                </div>
+                            ))
+                        }
+
+
+
+                        
                     </div>
+                    
             }
         </>
     );

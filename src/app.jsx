@@ -11,6 +11,7 @@ import Dashboard from './layout/Dasboard';
 import Main from './pages/Main';
 import Sellers from './pages/Sellers';
 import UpdateSeller from './pages/UpdateSeller';
+import SellerDetaill from './pages/SellerDetatill';
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                 >
                     <Route index element={<Main />} />
                     <Route path="sellers/" element={<Sellers />} />
+                    <Route path="sellers/:id" element={<SellerDetaill/>} />
                     <Route path="sellers/register" element={<Register />} />
                     <Route path="sellers/update/:id" element={<UpdateSeller />} />
                 </Route>
