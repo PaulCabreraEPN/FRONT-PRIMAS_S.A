@@ -14,7 +14,7 @@ const Dashboard = () => {
                         height: 100vh;
                         position: fixed;
                         width: 250px;
-                        background-color: #343a40;
+                        background-color: #205599;
                         color: white;
                     }
                     .sidebar a {
@@ -24,7 +24,7 @@ const Dashboard = () => {
                         display: block;
                     }
                     .sidebar a:hover {
-                        background-color: #495057;
+                        background-color: #2762b2;
                     }
                     .main-content {
                         margin-left: 250px;
@@ -37,7 +37,8 @@ const Dashboard = () => {
             </style>
 
             <div className="sidebar">
-                <h3 className="text-center py-3">Admin Panel</h3>
+                <div className="hidden sm:block bg-[url('/images/mainlogoW.png')] bg-no-repeat bg-center bg-contain h-48 w-48 sm:h-14 sm:w-12"/>
+                <div className="hidden sm:block bg-[url('/images/atlasletterW.png')] bg-no-repeat bg-center bg-contain sm:h-14 sm:w-12"/>
                 <a href={`/dashboard`}><i className="fas fa-home"></i> Inicio</a>
                 <a href={`/dashboard/orders`}><i className="fas fa-shopping-cart"></i> Pedidos</a>
                 <a href={`/dashboard/clients`}><i className="fas fa-users"></i> Clientes</a>

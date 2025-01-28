@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
+import Loader from "../components/Carga";
 
 const UpdateSeller = () => {
     const [seller, setSeller] = useState({
@@ -120,52 +121,7 @@ const UpdateSeller = () => {
 
     if (isLoading) {
         return (
-            <div>
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        minHeight: "100vh",
-                        fontFamily: "Arial, sans-serif",
-                    }}
-                >
-                    <div style={{ textAlign: "center" }}>
-                        {/* Logo principal con animación */}
-                        <img
-                            src="/images/mainlogo.png"
-                            alt="Logo"
-                            style={{
-                                width: "120px",
-                                height: "120px",
-                                animation: "bounce 1.5s infinite",
-                                marginBottom: "20px", // Espaciado entre la imagen y el texto
-                            }}
-                        />
-                        <p
-                            style={{
-                                fontSize: "18px",
-                                color: "#21559a",
-                                textAlign: "center",
-                            }}
-                        >
-                            Cargando...
-                        </p>
-                    </div>
-                </div>
-                <style>
-                    {`
-                      @keyframes bounce {
-                        0%, 100% {
-                          transform: translateY(0);
-                        }
-                        50% {
-                          transform: translateY(-20px);
-                        }
-                      }
-                    `}
-                </style>
-            </div>
+            <Loader />   
         );
     }
 
@@ -300,6 +256,7 @@ const UpdateSeller = () => {
                         {isLoading ? "Actualizando..." : "Actualización Completa"}
                     </button>
                 </div>
+
             </form>
         </div>
     );
