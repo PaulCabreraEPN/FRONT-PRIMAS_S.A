@@ -13,6 +13,7 @@ import Sellers from './pages/Sellers';
 import UpdateSeller from './pages/UpdateSeller';
 import SellerDetaill from './pages/SellerDetatill';
 import Products from './pages/Products';
+import Orders from './pages/Orders';
 
 
 
@@ -42,6 +43,7 @@ function App() {
                     <Route path="sellers/register" element={<Register />} />
                     <Route path="sellers/update/:id" element={<UpdateSeller />} />
                     <Route path="products/" element={<Products/>} />
+                    <Route path='orders/' element={<Orders/>}></Route>
                 </Route>
             </Routes>
         </BrowserRouter>
