@@ -14,6 +14,7 @@ import UpdateSeller from './pages/UpdateSeller';
 import SellerDetaill from './pages/SellerDetatill';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
+import Proforma from './pages/Proforma';
 
 
 
@@ -44,6 +45,7 @@ function App() {
                     <Route path="sellers/update/:id" element={<UpdateSeller />} />
                     <Route path="products/" element={<Products/>} />
                     <Route path='orders/' element={<Orders/>}></Route>
+                    <Route path='orders/:id' element={<Proforma/>}></Route>
                 </Route>
             </Routes>
         </BrowserRouter>
