@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Mensaje from "./Alertas/Mensaje";
 import { toast, ToastContainer } from "react-toastify";
 import Loader from "./Carga";
+import { useNavigate } from "react-router-dom";
+import { MdNoteAdd } from "react-icons/md";
 
 const TablaOrders = () => {
     // Estados
@@ -10,7 +12,9 @@ const TablaOrders = () => {
     const [searchId, setSearchId] = useState("");
     const [orders, setOrders] = useState([]);
     const [orderStates, setOrderStates] = useState({});
-
+    
+    //
+    const navigate = useNavigate()
     // Función para obtener pedidos
     const getOrders = async () => {
         try {
@@ -154,7 +158,23 @@ const TablaOrders = () => {
                             key={order._id}
                             className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 relative"
                         >
-                            <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
+                            <div
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "1fr 1fr", // Dos columnas
+                               
+                                }}>
+                                <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
+                                <MdNoteAdd
+                                    className="h-7 w-7 text-slate-800 cursor-pointer ml-2 flex justify-self-end"
+                                    onClick={(e) => {
+                                    e.stopPropagation(); // Evitar que el clic en el ícono dispare el clic del div
+                                    navigate(`/dashboard/orders/${order._id}`);
+                                    }}
+                                />
+                            </div>
+                            
+                            
                             <p className="text-gray-700">Cliente: {order.customer.Name}</p>
                             <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
 
