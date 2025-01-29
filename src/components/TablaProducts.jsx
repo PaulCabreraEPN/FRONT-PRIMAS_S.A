@@ -36,7 +36,6 @@ const TablaProducts = () => {
                 },
             };
             const response = await axios.get(url, options);
-            console.log(response.data);
             setProducts(response.data);
 
             // Guardar los índices originales
@@ -154,7 +153,6 @@ const TablaProducts = () => {
 
             {filteredProducts.length == 0 ? (
                 <div className="text-center p-4">
-                    {toast.error("No existen registros")}
                     <p className="text-gray-500">No hay productos disponibles</p>
                 </div>
             ) : (
