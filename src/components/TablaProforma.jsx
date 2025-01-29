@@ -46,19 +46,22 @@ const TablaProforma = () => {
         getOrder()
 },[])
 
-    const { netTotal, totalWithTax, discountApplied } = order;
+    const { _id, netTotal, totalWithTax, discountApplied } = order;
 
     return (
         <div id="proforma" style={{ fontFamily: "Arial, sans-serif", padding: "20px", maxWidth: "800px", margin: "auto", border: "1px solid #ddd" }}>
         <Header/>
         <br />
+        <div className="flex justify-end"><p><strong>Código: </strong>{_id}</p></div>
+        <br />
         <h1 style={{ textAlign: "center" }}>PROFORMA</h1>
-        <br/>
+        <br />
         <p><strong>Cliente:</strong> {customer.Name}</p>
         <p><strong>RUC:</strong> {customer.Ruc}</p>
         <p><strong>Dirección:</strong> {customer.Address}</p>
         <p><strong>Teléfono:</strong> {customer.telephone}</p>
         <p><strong>Email:</strong> {customer.email}</p>
+        <br />
         <hr />
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
             <thead>
@@ -83,6 +86,7 @@ const TablaProforma = () => {
                 </tr>
             ))}
             </tbody>
+
         </table>
         <hr />
         <div

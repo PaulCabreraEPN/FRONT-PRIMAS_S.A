@@ -28,7 +28,7 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px",
-    borderBottom: "2px solid #000",
+    borderBottom: "2px solid #ddd",
   },
   leftSection: {
     display: "flex",
