@@ -49,7 +49,7 @@ const UpdateSeller = () => {
                     email: sellerData.email || "",
                     SalesCity: sellerData.SalesCity || "",
                     PhoneNumber: sellerData.PhoneNumber || "",
-                    status: sellerData.status || true
+                    status: sellerData.status
                 });
             }
             toast.success(response.data.msg)
@@ -62,11 +62,11 @@ const UpdateSeller = () => {
 
     const handleChange = (e) => {
         const value = e.target.name === 'status'
-            ? e.target.value === 'true'  // convierte el string a booleano
+            ? e.target.value === ''  // convierte el string a booleano
             : e.target.value;
         setSeller({
             ...seller,
-            [e.target.name]: e.target.value
+            [e.target.name]: value
         })
     }
 
@@ -227,8 +227,8 @@ const UpdateSeller = () => {
                         <label className="block mb-2">Estado:</label>
                         <select
                             name="status"
-                            value={(seller?.status ?? true).toString()}
-                            onChange={handleChange}
+                            value={seller.status.toString()}
+                            onChange={(e) => setSeller({...seller, status: e.target.value === "true"})}
                             className="w-full p-2 border rounded"
                         >
                             <option value="true">Activo</option>

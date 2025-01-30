@@ -49,7 +49,7 @@ const SellerDetaill = () => {
                 email: Seller.email,
                 SalesCity: Seller.SalesCity,
                 PhoneNumber: Seller.PhoneNumber,
-                status: true
+                status: Seller.status
 
             })
 
