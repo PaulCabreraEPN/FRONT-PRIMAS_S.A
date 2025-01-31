@@ -1,4 +1,36 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import StatictsBarS from "../components/Staticts/TopSellers";
+import StatictsDouS from "../components/Staticts/BarChart";
+
 const Main = () => {
+    
+    const [counts, setCounts] = useState({})
+
+    const getAllCount = async() => {
+        try {
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem("token");
+            const url = `${backendUrl}/statics/count`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const response = await axios.get(url, options);
+            const data = response.data;
+            setCounts(data);
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(()=>{
+        getAllCount()
+    },[])
+
     return (
         <>
         
@@ -12,26 +44,26 @@ const Main = () => {
             <div className="card text-center p-3">
                 <i className="fas fa-shopping-cart fa-2x mb-2"></i>
                 <h5>Total Pedidos</h5>
-                <p className="fs-4">120</p>
+                <p className="fs-4">{counts.orders}</p>
             </div>
             <div className="card text-center p-3">
                 <i className="fas fa-users fa-2x mb-2"></i>
                 <h5>Clientes Registrados</h5>
-                <p className="fs-4">85</p>
+                <p className="fs-4">{counts.clients}</p>
             </div>
             <div className="card text-center p-3">
                 <i className="fas fa-box fa-2x mb-2"></i>
                 <h5>Productos Activos</h5>
-                <p className="fs-4">50</p>
+                <p className="fs-4">{counts.products}</p>
             </div>
             <div className="card text-center p-3">
                 <i className="fas fa-user-cog fa-2x mb-2"></i>
                 <h5>Vendedores Activos</h5>
-                <p className="fs-4">10</p>
+                <p className="fs-4">{counts.sellers}</p>
             </div>
         </div>
         <div>
-        <iframe title="Reporte videojuegos" width="1024" height="1060" src="https://app.powerbi.com/view?r=eyJrIjoiMmQ5MzFhNjEtY2NhNC00MDgxLTljZWQtOWFhMTVlYzVjMjgyIiwidCI6IjY4MmE0ZTZhLWE3N2YtNDk1OC1hM2FjLTllMjY2ZDE4YWEzNyIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+            <StatictsBarS/>
         </div>
 
         </>
