@@ -13,7 +13,7 @@ const Register = () => {
         "SalesCity": "",
         "PhoneNumber": "",
         "role": "Seller",
-        "status": true
+        "status": false
     });
 
 
@@ -36,7 +36,7 @@ const Register = () => {
                     Authorization: `Bearer ${token}`
                 }
             }
-            const formData = { role: "Seller",status: true ,...form};
+            const formData = { role: "Seller",status: false ,...form};
             const response = await axios.post(url,formData,options)
             console.log(response);
             toast.success(response.data.msg)
