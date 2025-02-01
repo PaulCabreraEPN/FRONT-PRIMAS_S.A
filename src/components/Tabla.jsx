@@ -27,7 +27,7 @@ const Tabla = () => {
             setSellers(respuesta.data);
         } catch (error) {
             console.log(error);
-        }finally {
+        } finally {
             setIsLoading(false);
         }
     };
@@ -44,13 +44,25 @@ const Tabla = () => {
                 }
             };
             const respuesta = await axios.get(url, options);
-            setSellers([respuesta.data.msg]);
+
+            // Acceder directamente a respuesta.data.msg
+            const seller = respuesta.data.msg;
+
+            // Corregir la estructura del dato para que coincida con los nombres en el JSX
+            setSellers([{
+                _id: seller._id,
+                numberID: seller.numberID,
+                names: seller.name,  // Cambiar "name" a "names"
+                lastNames: seller.lastNames,
+                SalesCity: seller.SalesCity,
+                status: seller.status
+            }]);
         } catch (error) {
             console.log(error);
         }
     };
 
-    
+
 
     useEffect(() => {
         listarSellers();
@@ -58,7 +70,7 @@ const Tabla = () => {
 
     if (isLoading) {
         return (
-            <Loader/>
+            <Loader />
         );
     }
 
@@ -78,14 +90,14 @@ const Tabla = () => {
             </div>
 
             <div className="flex justify-end items-center mb-4">
-                            
-                <button 
+
+                <button
                     onClick={() => navigate('register')}
                     className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
+                >
                     <i className="fas fa-user-plus mr-2"></i>
-                        Registrar Vendedor
-                    </button>
+                    Registrar Vendedor
+                </button>
             </div>
 
             {
@@ -95,31 +107,31 @@ const Tabla = () => {
                     :
 
                     <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr", // Dos columnas iguales
-                        gap: "20px", // Espaciado entre elementos
-                    }}
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr", // Dos columnas iguales
+                            gap: "20px", // Espaciado entre elementos
+                        }}
 
-                    className="pl-3 pr-3"
+                        className="pl-3 pr-3"
                     >
-                        
-                       
+
+
                         {
-                            sellers.map((seller, index) => (
-                                
+                            sellers.map((seller) => (
+
                                 <div
                                     className="w-full p-4 flex items-center shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200"
                                     key={seller._id}
                                     onClick={() => navigate(`/dashboard/sellers/${seller._id}`)} // Opcional: hacer clic en todo el div
                                 >
                                     {/* Imagen del vendedor */}
-                                    <img 
-                                        src="/images/seller.png" 
-                                        alt="Imagen del vendedor" 
+                                    <img
+                                        src="/images/seller.png"
+                                        alt="Imagen del vendedor"
                                         className="w-24 h-24 object-cover rounded-full mr-4"
                                     />
-                                    
+
                                     {/* Detalles del vendedor */}
                                     <div className="flex-1">
                                         <h1 className="text-lg font-semibold">Ci: {seller.numberID}</h1>
@@ -127,15 +139,15 @@ const Tabla = () => {
                                         <h1 className="text-lg">Apellidos: {seller.lastNames}</h1>
                                         <h1 className="text-lg">Ciudad: {seller.SalesCity}</h1>
                                     </div>
-                                    
+
                                     {/* Estado del vendedor */}
                                     {
-                                        seller.status ? 
-                                        <span className="absolute top-2 right-2 bg-blue-100 text-green-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900"> {"Activo"} </span>
-                                        :
-                                        <span className="absolute top-2 right-2 bg-blue-100 text-red-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900"> {"Inacativo"} </span>
-                                        } 
-                                    
+                                        seller.status ?
+                                            <span className="absolute top-2 right-2 bg-blue-100 text-green-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900"> {"Activo"} </span>
+                                            :
+                                            <span className="absolute top-2 right-2 bg-blue-100 text-red-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900"> {"Inacativo"} </span>
+                                    }
+
 
                                     {/* Ícono para agregar nota */}
                                     <MdNoteAdd
@@ -151,9 +163,9 @@ const Tabla = () => {
 
 
 
-                        
+
                     </div>
-                    
+
             }
         </>
     );
