@@ -25,71 +25,31 @@ const LoadingPage = () => {
     },[])
 
     return (
-        <div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "100vh",
-            backgroundColor: "#21559a",
-            fontFamily: "Arial, sans-serif",
-          }}
-        >
-          <div style={{ textAlign: "center"}}>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-[#21559a] font-sans text-center">
+          <div className="flex flex-col sm:flex-row items-center">
+              {/* Logo principal con animación */}
+              <img
+                  src="/images/mainlogoW.png"
+                  alt="Logo"
+                  className="w-24 h-24 sm:w-32 sm:h-32 animate-bounce"
+              />
 
-            <div style={{display:"flex"}}>
-
-                {/* Logo principal con animación */}
-                <img
-                    src="/images/mainlogoW.png"
-                    alt="Logo"
-                    style={{
-                        width: "120px",
-                        height: "120px",
-                        animation: "bounce 1.5s infinite",
-                        display:"flex"
-                    }}
-              
-                />
-
-                {/* Imagen secundaria */}
-                <img
-                    src="/images/atlasletterW.png"
-                    alt="Atlas Letter"
-                    style={{
-                        height: "118px",
-                        display:"flex"
-                    }}
-                />
-
-            </div>
-            
-            <p
-                style={{
-                    marginTop: "20px",
-                    fontSize: "18px",
-                    color: "azure",
-                }}
-            >
-                Cargando Recursos...
-            </p>
+              {/* Imagen secundaria */}
+              <img
+                  src="/images/atlasletterW.png"
+                  alt="Atlas Letter"
+                  className="h-20 sm:h-28 ml-2"
+              />
           </div>
-        </div>
-        <style>
-            {`
-              @keyframes bounce {
-                0%, 100% {
-                  transform: translateY(0);
-                }
-                50% {
-                  transform: translateY(-20px);
-                }
-              }
-            `}
-        </style>
-        </div>
-      );
+
+          <p className="mt-5 text-lg text-gray-200">Cargando Recursos...</p>
+
+          {/* Footer */}
+          <footer className="absolute bottom-5 text-white text-sm">
+              &copy; 2024 PRIMA S.A. Todos los derechos reservados.
+          </footer>
+      </div>
+  );
       
 }
 
