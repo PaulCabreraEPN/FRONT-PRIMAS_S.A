@@ -111,59 +111,51 @@ const TablaProducts = () => {
         <>
             <ToastContainer />
             <div className="p-4 text-center rounded-lg mb-4">
-                <span className="mr-2"></span>
                 <input
                     type="text"
                     placeholder="ID del producto"
                     value={searchId}
                     onChange={(e) => setSearchId(e.target.value)}
-                    className="border p-2 rounded mr-2"
+                    className="border p-2 rounded mb-2 sm:mb-0 sm:w-64 w-full sm:mr-2"
                 />
                 <button
                     onClick={getProductsById}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 sm:w-auto w-full sm:mr-2"
                 >
                     Buscar
                 </button>
                 <button
                     onClick={getProducts}
-                    className="bg-gray-500 text-white px-4 py-2 rounded ml-2"
+                    className="bg-gray-500 text-white px-4 py-2 rounded sm:w-auto w-full"
                 >
                     Mostrar Todos
                 </button>
             </div>
-
-            {/* Menú de categorías fijo */}
-            <div className="sticky top-0 z-50 bg-white shadow-md p-4 mb-4">
-                <div className="flex justify-center space-x-4">
+    
+            {/* Menú de categorías sin efecto estático */}
+            <div className="p-4 mb-4">
+                <div className="flex flex-wrap justify-center space-x-4">
                     {Object.entries(categories).map(([key, value]) => (
                         <button
                             key={key}
                             onClick={() => setCurrentCategory(key)}
-                            className={`px-4 py-2 rounded-lg transition-colors ${currentCategory === key
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-200 hover:bg-gray-300'
-                                }`}
+                            className={`px-4 py-2 rounded-lg transition-colors mb-2 sm:mb-0 ${currentCategory === key
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-200 hover:bg-gray-300'
+                            }`}
                         >
                             {value.name}
                         </button>
                     ))}
                 </div>
             </div>
-
-            {filteredProducts.length == 0 ? (
+    
+            {filteredProducts.length === 0 ? (
                 <div className="text-center p-4">
                     <p className="text-gray-500">No hay productos disponibles</p>
                 </div>
             ) : (
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-                        gap: "1.5rem",
-                        padding: "1rem",
-                    }}
-                >
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
                     {filteredProducts.map((product) => (
                         <div
                             className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 relative"
@@ -180,7 +172,7 @@ const TablaProducts = () => {
                                         className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg"
                                     />
                                 </div>
-
+    
                                 <div className="w-full md:w-2/3 p-6">
                                     <div className="space-y-2">
                                         <h1 className="text-lg font-semibold text-gray-800">

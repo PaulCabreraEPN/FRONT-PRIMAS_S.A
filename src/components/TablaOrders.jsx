@@ -127,60 +127,43 @@ const TablaOrders = () => {
     }
 
     return (
-        <div>
+        <div className="p-4">
             <ToastContainer />
             {/* Barra de búsqueda */}
-            <div className="p-4 text-center rounded-lg mb-4">
+            <div className="p-4 text-center rounded-lg mb-4 flex flex-col sm:flex-row items-center gap-2 justify-center">
                 <input
                     type="text"
                     placeholder="Código de Orden"
                     value={searchId}
                     onChange={(e) => setSearchId(e.target.value)}
-                    className="border p-2 rounded mr-2"
+                    className="border p-2 rounded w-full sm:w-auto"
                 />
-                <button onClick={searchOrders} className="bg-blue-500 text-white px-4 py-2 rounded">Buscar</button>
-                <button onClick={getOrders} className="bg-gray-500 text-white px-4 py-2 rounded ml-2">Mostrar Todos</button>
+                <button onClick={searchOrders} className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto">Buscar</button>
+                <button onClick={getOrders} className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto">Mostrar Todos</button>
             </div>
-
+    
             {orders.length === 0 ? (
                 <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
             ) : (
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr", // Dos columnas
-                        gap: "20px",
-                    }}
-                    className="pl-3 pr-3"
-                >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
                     {orders.map((order) => (
-                        <div
-                            key={order._id}
-                            className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 relative"
-                        >
-                            <div
-                                style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "1fr 1fr", // Dos columnas
-                               
-                                }}>
+                        <div key={order._id} className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 relative">
+                            <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
                                 <MdNoteAdd
-                                    className="h-7 w-7 text-slate-800 cursor-pointer ml-2 flex justify-self-end"
+                                    className="h-7 w-7 text-slate-800 cursor-pointer"
                                     onClick={(e) => {
-                                    e.stopPropagation(); // Evitar que el clic en el ícono dispare el clic del div
-                                    navigate(`/dashboard/orders/${order._id}`);
+                                        e.stopPropagation();
+                                        navigate(`/dashboard/orders/${order._id}`);
                                     }}
                                 />
                             </div>
                             
-                            
                             <p className="text-gray-700">Cliente: {order.customer.Name}</p>
                             <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
-
+    
                             <div className="mt-3">
                                 <p><strong>Vendedor:</strong> {order.seller.names} {order.seller.lastNames}</p>
-
                                 <p className="mt-2 font-semibold">Productos:</p>
                                 <ul className="list-disc pl-5 text-sm text-gray-700">
                                     {order.products.map((prod) => (
@@ -190,7 +173,7 @@ const TablaOrders = () => {
                                     ))}
                                 </ul>
                             </div>
-
+    
                             {/* Select alineado en la esquina inferior derecha */}
                             <div className="absolute bottom-4 right-4">
                                 <select
@@ -210,6 +193,7 @@ const TablaOrders = () => {
             )}
         </div>
     );
+    
 };
 
 export default TablaOrders;

@@ -54,75 +54,82 @@ const Login = () => {
     
 
     return (
-        <div className="flex h-screen">
-            {/* Primera mitad: Formulario */}
-            <div className="w-1/2 bg-customWhite flex justify-center items-center padd">
-                <div className="md:w-1/2 sm:w-full">
-                    <div className='flex'>
-                    <div className="hidden sm:block bg-[url('/images/mainlogo.png')] bg-no-repeat bg-center bg-contain h-48 w-48 sm:h-14 sm:w-12">
-                    </div>
-                        <h1 className="text-5xl font-semibold mb-2 text-left uppercase" style={{ color: '#2c308a' }}>
-                        PRIMA S.A.
+        <div className="flex flex-col sm:flex-row h-screen">
+            {/* Contenedor del formulario */}
+            <div className="w-full sm:w-1/2 flex justify-center items-center bg-customWhite p-6 h-full">
+                <div className="w-full max-w-md p-6 rounded-lg sm:rounded-none sm:shadow-none">
+                    <div className="flex items-center justify-center mb-1">
+                        {/* Logo a la izquierda */}
+                        <img
+                            src="/images/mainlogo.png"
+                            alt="Main Logo"
+                            className="h-10 w-10 sm:h-12 sm:w-12 mr-1"
+                        />
+                        <h1 className="text-4xl font-semibold uppercase text-[#2c308a]">
+                            PRIMA S.A.
                         </h1>
-                        
                     </div>
-                    <small className="text-gray-400 block mb-5 text-sm">Bienvenido a tu plataforma</small>
-
-                    {Object.keys(mensaje).length>0 && <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>}
-
-                    <form onSubmit={handleSubmit} className='mt-10'>
-                        <div className="mb-3">
-                            <label className="mb-2 block text-lg font-sans" style={{ color: '#6b6999' }}>Nombre de Usuario</label>
+                    <small className="text-gray-400 block text-center text-sm">Bienvenido a tu plataforma</small>
+    
+                    {Object.keys(mensaje).length > 0 && (
+                        <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>
+                    )}
+    
+                    <form onSubmit={handleSubmit} className="mt-8">
+                        <div className="mb-5">
+                            <label className="block text-base font-sans text-[#6b6999] mb-2">
+                                Nombre de Usuario
+                            </label>
                             <input
                                 type="text"
                                 placeholder="Ingresa tu nombre de usuario"
-                                className="block w-full rounded-full border border-gray-300  focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
-                                name='username'
+                                className="block w-full rounded-full border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-500"
+                                name="username"
                                 onChange={handleChange}
                                 value={form.name}
                             />
                         </div>
-
-                        <div className="mb-3">
-                            <label className="mb-2 block text-lg font-sans" style={{ color: '#6b6999' }} >Contraseña</label>
+    
+                        <div className="mb-5">
+                            <label className="block text-base font-sans text-[#6b6999] mb-2">
+                                Contraseña
+                            </label>
                             <input
                                 type="password"
                                 placeholder="**********"
-                                className="block w-full rounded-full border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500"
-                                name='password'
+                                className="block w-full rounded-full border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-500"
+                                name="password"
                                 onChange={handleChange}
                                 value={form.password}
                             />
                         </div>
-
-                        <div className='flex'>
-                            <input type="checkbox" name="" id="" className='mr-2'/>
+    
+                        <div className="flex items-center mb-4">
+                            <input type="checkbox" className="mr-2" />
                             <p>Recordarme</p>
                         </div>
-
-                        <div className="my-4 border-b-2 border-b-gray-300 py-4 ">
-                        <button className="py-2 w-full md:w-1/2 block text-center bg-gray-500 text-slate-300 border hover:scale-100 duration-300 hover:bg-customBlue hover:text-white rounded-full mx-auto">Iniciar Sesión</button>
-                        </div>
+    
+                        <button className="py-2 w-full bg-gray-500 text-slate-300 border hover:scale-105 duration-300 hover:bg-customBlue hover:text-white rounded-full">
+                            Iniciar Sesión
+                        </button>
                     </form>
-                    
-                    <div className="mt-5 text-xs text-center">
-                        <Link
-                            to="/recovery-account"
-                            className="underline text-sm text-gray-400 hover:text-gray-900"
-                        >
+    
+                    <div className="mt-5 text-center text-sm">
+                        <Link to="/recovery-account" className="text-gray-400 hover:text-gray-900 underline">
                             ¿Olvidaste tu contraseña? | Recuperar cuenta
                         </Link>
                     </div>
-
                 </div>
             </div>
-
-            {/* Segunda mitad: Imagen */}
-            <div
-                className="w-7/12 hidden sm:block bg-[url('/images/atlaslogin.jpg')] bg-no-repeat bg-cover bg-center"
-            ></div>
+    
+            {/* Imagen lateral solo en pantallas grandes */}
+            <div className="hidden sm:block sm:w-1/2 bg-[url('/images/atlaslogin.jpg')] bg-no-repeat bg-cover bg-center h-full"></div>
         </div>
     );
+    
+    
+    
+    
 };
 
 export default Login;

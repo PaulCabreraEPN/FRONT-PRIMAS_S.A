@@ -98,102 +98,93 @@ const SellerDetaill = () => {
 
     return (
         <>
-        <button
-            onClick={() => navigate('/dashboard/sellers')}
-            className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            <button
+                onClick={() => navigate('/dashboard/sellers')}
+                className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
             >
-            ← Atrás
-        </button>
-        <h2 className="text-2xl font-bold">Perfil del Vendedor</h2>
-        <div className="w-2/3 flex justify-center items-center mx-auto mb-4 ">
-            <div className="container mx-auto p-4">
-
-                <div className="image-container">
-                    <img src="/images/seller.png" alt="Seller" className="circular-image" />
-                    <style>
-                    {`
-                        .image-container {
-                        display: flex;
-                        justify-content: center;
-                        }
-                        .circular-image {
-                        width: 150px; /* Ajusta el tamaño según necesites */
-                        height: 150px;
-                        border-radius: 50%; /* Hace los bordes circulares */
-                        object-fit: cover; 
-                        border: 3px solid #205598; /* Opcional: Agrega un borde alrededor */
-                        }
-                    `}
-                    </style>
+                ← Atrás
+            </button>
+    
+            <h2 className="text-2xl font-bold text-center mb-6">Perfil del Vendedor</h2>
+    
+            <div className="w-full max-w-screen-lg mx-auto px-4">
+                <div className="flex justify-center mb-6">
+                    <div className="relative">
+                        <img 
+                            src="/images/seller.png" 
+                            alt="Seller" 
+                            className="w-32 h-32 object-cover rounded-full border-4 border-blue-600"
+                        />
+                    </div>
                 </div>
-            
+    
                 <div className="space-y-4 mt-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block font-bold text-gray-700">Nombres:</label>
                             <p className="text-gray-800 p-2 rounded">{seller?.names || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Apellidos:</label>
                             <p className="text-gray-800 p-2 rounded">{seller?.lastNames || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Número de Identificación:</label>
-                            <p className="text-gray-800 p-2 rounded ">{seller?.numberID || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.numberID || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Nombre de Usuario:</label>
-                            <p className="text-gray-800 p-2 rounded ">{seller?.username || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.username || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Email:</label>
                             <p className="text-gray-800 p-2 rounded">{seller?.email || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Ciudad de Ventas:</label>
-                            <p className="text-gray-800 p-2 rounded ">{seller?.SalesCity || "N/A"}</p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.SalesCity || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Teléfono:</label>
                             <p className="text-gray-800 p-2 rounded">{seller?.PhoneNumber || "N/A"}</p>
                         </div>
-
+    
                         <div>
                             <label className="block font-bold text-gray-700">Estado:</label>
-                            <p className="text-gray-800 p-2 rounded ">
-                                {seller?.status ? "Activo" : "Inactivo"}
-                            </p>
+                            <p className="text-gray-800 p-2 rounded">{seller?.status ? "Activo" : "Inactivo"}</p>
                         </div>
                     </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                     <div>
                         <button
-                        onClick={() => navigate(`/dashboard/sellers/update/${id}`)}
-                        className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                            onClick={() => navigate(`/dashboard/sellers/update/${id}`)}
+                            className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                         >
                             Actualizar
                         </button>
                     </div>
+    
                     <div className="flex justify-end">
                         <button
                             onClick={() => eliminarSeller(id)}
-                            className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                            className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                         >
                             Eliminar
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </>)  
+        </>
+    );
+      
 }
 
 

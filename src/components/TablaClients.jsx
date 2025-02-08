@@ -62,26 +62,26 @@ const ClientList = () => {
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <ToastContainer />
-            <div className="mb-6 flex space-x-4 items-center justify-center">
+            <div className="mb-6 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-center justify-center">
                 <input
                     type="text"
                     placeholder="Ingrese RUC"
                     value={searchRuc}
                     onChange={(e) => setSearchRuc(e.target.value)}
-                    className="border p-3 rounded-lg shadow-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border p-2 rounded mb-2 sm:mb-0 sm:w-64 w-full sm:mr-2"
                 />
-                <button onClick={fetchClientByRuc} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition">
+                <button onClick={fetchClientByRuc} className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 sm:w-auto w-full sm:mr-2">
                     Buscar
                 </button>
-                <button onClick={fetchClients} className="bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700 transition">
+                <button onClick={fetchClients} className="bg-gray-500 text-white px-4 py-2 rounded sm:w-auto w-full">
                     Mostrar Todos
                 </button>
             </div>
-
+    
             {isLoading ? (
-                 <Loader />
+                <Loader />
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {clients.map((client) => (
                         <div key={client.ruc} className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
                             <h2 className="text-xl font-bold text-blue-700">{client.Name}{client.name}</h2>

@@ -33,7 +33,8 @@ const Main = () => {
 
     return (
         <>
-        
+        <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
+        <hr className='my-4' />
         <div
             style={{
                 display: "grid",
@@ -41,6 +42,7 @@ const Main = () => {
                 gap: "20px", // Espaciado entre elementos
             }}
         >
+            
             <div className="card text-center p-5 bg-white shadow-md rounded-lg">
                 <i className="fas fa-shopping-cart fa-2x mb-2 "></i>
                 <h5>Total Pedidos</h5>
