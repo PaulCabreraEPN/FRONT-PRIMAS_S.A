@@ -1,15 +1,23 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthProvider';
 
 const Dashboard = () => {
+  const { auth, cerrarSesion } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Verificar autenticación
+  if (!auth?.token) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen">
       {/* Navbar (Fijo y ocupa todo el ancho) */}
       <div className="bg-[#205599] text-white p-4 flex justify-between items-center fixed w-full top-0 left-0 z-50">
-        {/* Botón para abrir/cerrar Sidebar (manteniendo el icono ☰) */}
+        {/* Botón para abrir/cerrar Sidebar */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="md:hidden text-2xl"
@@ -34,7 +42,10 @@ const Dashboard = () => {
               <button className="block w-full text-left px-4 py-2 hover:bg-gray-200">
                 Configuración
               </button>
-              <button className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200">
+              <button 
+                onClick={cerrarSesion}
+                className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200"
+              >
                 Cerrar sesión
               </button>
             </div>
@@ -44,33 +55,63 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-10 left-0 h-full w-64 bg-[#205599] text-white transform ${
+        className={`fixed top-16 left-0 h-full w-64 bg-[#205599] text-white transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out z-40`}
       >
         <nav className="mt-4">
-          <a href="/dashboard" className="block px-6 py-3 hover:bg-[#2762b2]">
+          <Link 
+            to="/dashboard" 
+            className="block px-6 py-3 hover:bg-[#2762b2]"
+            onClick={() => setIsSidebarOpen(false)}
+          >
             <i className="fas fa-home"></i> Inicio
-          </a>
-          <a href="/dashboard/orders" className="block px-6 py-3 hover:bg-[#2762b2]">
+          </Link>
+          <Link 
+            to="/dashboard/orders" 
+            className="block px-6 py-3 hover:bg-[#2762b2]"
+            onClick={() => setIsSidebarOpen(false)}
+          >
             <i className="fas fa-shopping-cart"></i> Pedidos
-          </a>
-          <a href="/dashboard/clients" className="block px-6 py-3 hover:bg-[#2762b2]">
+          </Link>
+          <Link 
+            to="/dashboard/clients" 
+            className="block px-6 py-3 hover:bg-[#2762b2]"
+            onClick={() => setIsSidebarOpen(false)}
+          >
             <i className="fas fa-users"></i> Clientes
-          </a>
-          <a href="/dashboard/products" className="block px-6 py-3 hover:bg-[#2762b2]">
+          </Link>
+          <Link 
+            to="/dashboard/products" 
+            className="block px-6 py-3 hover:bg-[#2762b2]"
+            onClick={() => setIsSidebarOpen(false)}
+          >
             <i className="fas fa-box"></i> Productos
-          </a>
-          <a href="/dashboard/sellers" className="block px-6 py-3 hover:bg-[#2762b2]">
+          </Link>
+          <Link 
+            to="/dashboard/sellers" 
+            className="block px-6 py-3 hover:bg-[#2762b2]"
+            onClick={() => setIsSidebarOpen(false)}
+          >
             <i className="fas fa-user-cog"></i> Vendedores
-          </a>
+          </Link>
         </nav>
       </div>
 
       {/* Contenido principal */}
       <div className="flex-1 bg-gray-100 p-6 mt-16 md:ml-64">
-        <Outlet />
+        <main>
+          <Outlet />
+        </main>
       </div>
+
+      {/* Overlay para cerrar el menú de perfil al hacer clic fuera */}
+      {isProfileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => setIsProfileMenuOpen(false)}
+        ></div>
+      )}
     </div>
   );
 };

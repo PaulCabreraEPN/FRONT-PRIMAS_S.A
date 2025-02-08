@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Mensaje from '../context/alerts/Mensaje';
+import api from '../services/api';
+import { useAuth } from '../context/AuthProvider';
 
 const Login = () => {
     //Declarciones
+    const { setAuth } = useAuth();
     const frontendUrl = import.meta.env.VITE_URL_FRONTEND;
     const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
     const [mensaje, setMensaje] = useState({})
@@ -27,27 +30,37 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Normalizar valores vacíos
         const normalizedForm = {
             username: form.username.trim() || "",
             password: form.password.trim() || ""
         };
         
         try {
-            const url = `${backendUrl}/login-admin`;
-            const respuesta = await axios.post(url, normalizedForm);
-
-            setform({ username: form.username, password: "" });  // Solo vaciar la contraseña
-            localStorage.setItem("token", respuesta.data.tokenJWT);
+            // Usar el servicio api en lugar de axios directamente
+            const { data } = await api.post('/login-admin', normalizedForm);
+            
+            // Establecer el token en localStorage
+            localStorage.setItem("token", data.tokenJWT);
+            
+            // Establecer el estado de autenticación
+            setAuth({ token: data.tokenJWT });
+            
+            // Limpiar el formulario
+            setform({ username: form.username, password: "" });
+            
+            // Navegar al dashboard
             navigate("/dashboard");
         } catch (error) {
             console.log(error);
-            setMensaje({ respuesta: error.response?.data?.msg || "Error desconocido", tipo: false });
+            setMensaje({ 
+                respuesta: error.response?.data?.msg || "Error desconocido", 
+                tipo: false 
+            });
             setTimeout(() => {
                 setMensaje({});
             }, 5000);
     
-            setform({ username: form.username, password: "" });  // Solo vaciar la contraseña, mantener el username
+            setform({ username: form.username, password: "" });
         }
     };
     

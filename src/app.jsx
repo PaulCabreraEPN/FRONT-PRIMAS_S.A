@@ -16,39 +16,42 @@ import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Proforma from './pages/Proforma';
 import Clients from './pages/Clients';
+import { AuthProvider } from './context/AuthProvider';
 
 
 function App() {
     return (
         <BrowserRouter>
-            <Routes>
-                {/* Rutas públicas */}
-                <Route index element={<LoadingPage />} />
-                <Route path="/" element={<Auth />}>
-                    <Route path="login" element={<Login />} />
-                    <Route path="recovery-account" element={<Forgot />} />
-                </Route>
+            <AuthProvider>
+                <Routes>
+                        {/* Rutas públicas */}
+                        <Route index element={<LoadingPage />} />
+                        <Route path="/" element={<Auth />}>
+                            <Route path="login" element={<Login />} />
+                            <Route path="recovery-account" element={<Forgot />} />
+                        </Route>
 
-                {/* Rutas protegidas */}
-                <Route
-                    path="dashboard/*"
-                    element={
-                        <PrivateRoute>
-                            <Dashboard />
-                        </PrivateRoute>
-                    }
-                >
-                    <Route index element={<Main />} />
-                    <Route path="sellers/" element={<Sellers />} />
-                    <Route path="sellers/:id" element={<SellerDetaill/>} />
-                    <Route path="sellers/register" element={<Register />} />
-                    <Route path="sellers/update/:id" element={<UpdateSeller />} />
-                    <Route path="products/" element={<Products/>} />
-                    <Route path="clients/" element={<Clients/>} />
-                    <Route path='orders/' element={<Orders/>}></Route>
-                    <Route path='orders/:id' element={<Proforma/>}></Route>
-                </Route>
-            </Routes>
+                        {/* Rutas protegidas */}
+                        <Route
+                            path="dashboard/*"
+                            element={
+                                <PrivateRoute>
+                                    <Dashboard />
+                                </PrivateRoute>
+                            }
+                        >
+                            <Route index element={<Main />} />
+                            <Route path="sellers/" element={<Sellers />} />
+                            <Route path="sellers/:id" element={<SellerDetaill/>} />
+                            <Route path="sellers/register" element={<Register />} />
+                            <Route path="sellers/update/:id" element={<UpdateSeller />} />
+                            <Route path="products/" element={<Products/>} />
+                            <Route path="clients/" element={<Clients/>} />
+                            <Route path='orders/' element={<Orders/>}></Route>
+                            <Route path='orders/:id' element={<Proforma/>}></Route>
+                        </Route>
+                    </Routes>
+            </AuthProvider>
         </BrowserRouter>
     );
 }
