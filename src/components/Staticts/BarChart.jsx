@@ -1,4 +1,3 @@
-// BarChart.js
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -23,6 +22,8 @@ const BarChart = () => {
             };
             const response = await axios.get(url, options);
             const data = response.data;
+            console.log(data);
+            
             setsales(data.salesCounts);
             setnames(data.sellerNames);
         } catch (error) {
@@ -74,7 +75,7 @@ const BarChart = () => {
         plugins: {
             title: {
                 display: true,
-                text: 'Top 5 Vendedores',
+                text: 'Total de ventas',
             },
             tooltip: {
                 enabled: true,
@@ -87,7 +88,7 @@ const BarChart = () => {
         },
     };
     return (
-        <div>
+        <div className="w-full h-full p-10">
             <h1 style={{ textAlign: 'center' }}>Top 5 Vendedores</h1>
             <Bar data={data} options={options} />
         </div>

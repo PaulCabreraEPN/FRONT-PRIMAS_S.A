@@ -85,7 +85,7 @@ const DoughnutChart = () => {
     };
 
     return (
-        <div>
+        <div className="w-full h-full p-10">
             <h1 style={{ textAlign: 'center' }}>Ingresos por Vendedor</h1>
             <Doughnut data={doughnutData} options={doughnutOptions} />
         </div>
