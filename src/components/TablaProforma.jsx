@@ -1,12 +1,13 @@
 // src/components/Proforma.js
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Art/Header";
 import Loader from "./Carga";
 
 const TablaProforma = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate()
     const [order, setOrder] = useState({});
     const [customer, setCustomer] = useState({});
     const [products, setProducts] = useState([]);
@@ -56,6 +57,13 @@ const TablaProforma = () => {
     const { _id, netTotal, totalWithTax, discountApplied } = order;
 
     return (
+        <>
+        <button
+                onClick={() => navigate('/dashboard/orders')}
+                className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
+            >
+                ← Atrás
+            </button>
         <div className="container mx-auto p-5 border rounded-lg shadow-lg bg-white">
           <Header />
           <header className="text-center mb-4 mt-4">
@@ -140,6 +148,8 @@ const TablaProforma = () => {
             </div>
 
         </div>
+        </>
+        
       );
     
 };

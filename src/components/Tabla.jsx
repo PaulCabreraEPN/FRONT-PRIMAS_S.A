@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { MdNoteAdd, MdDeleteForever } from "react-icons/md";
+import { MdNoteAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Mensaje from "./Alertas/Mensaje";
 import Loader from "./Carga";
 
 const Tabla = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [sellers, setSellers] = useState([]);
     const [searchId, setSearchId] = useState("");
+    const [statusFilter, setStatusFilter] = useState("Todos"); // Estado para el filtro de activo/inactivo
 
+    // Función para obtener los vendedores
     const listarSellers = async () => {
         setIsLoading(true);
         try {
@@ -32,6 +34,7 @@ const Tabla = () => {
         }
     };
 
+    // Función para buscar un vendedor por cédula
     const buscarSeller = async () => {
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
@@ -62,7 +65,13 @@ const Tabla = () => {
         }
     };
 
-
+    // Función para filtrar vendedores según el estado seleccionado
+    const filterSellers = () => {
+        if (statusFilter === "Todos") return sellers;
+        return sellers.filter(seller => 
+            statusFilter === "Activo" ? seller.status : !seller.status
+        );
+    };
 
     useEffect(() => {
         listarSellers();
@@ -76,7 +85,7 @@ const Tabla = () => {
 
     return (
         <>
-            {/* Sección de búsqueda */}
+            {/* Sección de búsqueda y filtro */}
             <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
                 <input
                     type="text"
@@ -98,6 +107,19 @@ const Tabla = () => {
                     Mostrar Todos
                 </button>
             </div>
+
+            {/* Filtro de estado: Activo / Inactivo */}
+            <div className="p-4 flex justify-center items-center gap-4 rounded-lg mb-4">
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="border p-2 rounded w-64"
+                >
+                    <option value="Todos">Todos</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
     
             {/* Botón de registro */}
             <div className="flex justify-end mb-4 px-4">
@@ -111,11 +133,11 @@ const Tabla = () => {
             </div>
     
             {/* Mensaje cuando no hay registros */}
-            {sellers.length === 0 ? (
+            {filterSellers().length === 0 ? (
                 <Mensaje tipo="error">No existen registros</Mensaje>
             ) : (
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {sellers.map((seller) => (
+                    {filterSellers().map((seller) => (
                         <div
                             key={seller._id}
                             className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer 
@@ -164,11 +186,7 @@ const Tabla = () => {
             )}
         </>
     );
-    
-    
-    
-    
-
 };
 
 export default Tabla;
+

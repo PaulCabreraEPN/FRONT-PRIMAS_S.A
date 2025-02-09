@@ -12,9 +12,11 @@ const TablaOrders = () => {
     const [searchId, setSearchId] = useState("");
     const [orders, setOrders] = useState([]);
     const [orderStates, setOrderStates] = useState({});
+    const [filteredOrders, setFilteredOrders] = useState([]);
+    const [currentStateFilter, setCurrentStateFilter] = useState("all"); // Filtro de estado
     
-    //
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     // Función para obtener pedidos
     const getOrders = async () => {
         try {
@@ -30,7 +32,7 @@ const TablaOrders = () => {
             };
             const response = await axios.get(url, options);
             const data = response.data;
-            
+
             setOrders(data);
             
             // Actualizar estados de los pedidos
@@ -39,6 +41,7 @@ const TablaOrders = () => {
                 newOrderStates[order._id] = order.status;
             });
             setOrderStates(newOrderStates);
+            setFilteredOrders(data);  // Inicialmente, todas las órdenes están filtradas
             
         } catch (error) {
             console.error(error);
@@ -60,7 +63,7 @@ const TablaOrders = () => {
                 }
             };
             const formData = { status: newStatus };
-            
+
             const response = await axios.patch(url, formData, options);
             toast.success(response.data.msg);
 
@@ -93,6 +96,7 @@ const TablaOrders = () => {
 
             // Actualizar el estado del pedido buscado
             setOrderStates({ [response.data._id]: response.data.status });
+            setFilteredOrders([response.data]);
 
         } catch (error) {
             console.error(error);
@@ -122,6 +126,17 @@ const TablaOrders = () => {
         }
     };
 
+    // Filtrar las órdenes según el estado seleccionado
+    const filterByState = (state) => {
+        setCurrentStateFilter(state);
+        if (state === "all") {
+            setFilteredOrders(orders);  // Mostrar todas las órdenes
+        } else {
+            const filtered = orders.filter(order => orderStates[order._id] === state);
+            setFilteredOrders(filtered);
+        }
+    };
+
     if (isLoading) {
         return <Loader />;
     }
@@ -141,12 +156,28 @@ const TablaOrders = () => {
                 <button onClick={searchOrders} className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto">Buscar</button>
                 <button onClick={getOrders} className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto">Mostrar Todos</button>
             </div>
-    
-            {orders.length === 0 ? (
+
+            {/* Filtro por estado */}
+            <div className="flex justify-center gap-4 mb-4">
+                {["all", "Pendiente", "En proceso", "Enviado", "Cancelado"].map((state) => (
+                    <button
+                        key={state}
+                        onClick={() => filterByState(state)}
+                        className={`px-4 py-2 rounded-lg transition-colors ${currentStateFilter === state
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-200 hover:bg-gray-300'
+                        }`}
+                    >
+                        {state === "all" ? "Todos" : state}
+                    </button>
+                ))}
+            </div>
+
+            {filteredOrders.length === 0 ? (
                 <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
-                    {orders.map((order) => (
+                    {filteredOrders.map((order) => (
                         <div key={order._id} className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 relative">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
@@ -161,7 +192,7 @@ const TablaOrders = () => {
                             
                             <p className="text-gray-700">Cliente: {order.customer.Name}</p>
                             <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
-    
+
                             <div className="mt-3">
                                 <p><strong>Vendedor:</strong> {order.seller.names} {order.seller.lastNames}</p>
                                 <p className="mt-2 font-semibold">Productos:</p>
@@ -173,7 +204,7 @@ const TablaOrders = () => {
                                     ))}
                                 </ul>
                             </div>
-    
+
                             {/* Select alineado en la esquina inferior derecha */}
                             <div className="absolute bottom-4 right-4">
                                 <select
@@ -193,7 +224,6 @@ const TablaOrders = () => {
             )}
         </div>
     );
-    
 };
 
 export default TablaOrders;

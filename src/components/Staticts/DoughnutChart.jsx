@@ -3,15 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
+import Loader from '../Carga';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DoughnutChart = () => {
     const [sales, setsales] = useState([]);
     const [names, setnames] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const getSellerTop = async () => {
         try {
+            setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem('token');
             const url = `${backendUrl}/statics/sales-by-seller`;
@@ -29,6 +32,8 @@ const DoughnutChart = () => {
             
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsLoading(false);
         }
     };
 
@@ -83,6 +88,10 @@ const DoughnutChart = () => {
             },
         },
     };
+
+    if (isLoading) {
+        return <Loader />;
+    }
 
     return (
         <div className="w-full h-full p-10">

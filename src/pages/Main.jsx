@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import StatictsBarS from "../components/Staticts/TopSellers";
-import StatictsDouS from "../components/Staticts/BarChart";
+import Loader from "../components/Carga";
+
 
 const Main = () => {
     
     const [counts, setCounts] = useState({})
+    const [isLoading, setIsLoading] = useState(false);
+    
 
     const getAllCount = async() => {
         try {
+            setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
             const url = `${backendUrl}/statics/count`;
@@ -24,12 +28,18 @@ const Main = () => {
             
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsLoading(false);
         }
     }
 
     useEffect(()=>{
         getAllCount()
     },[])
+
+    if (isLoading) {
+        return <Loader />;
+    }
 
     return (
         <>
