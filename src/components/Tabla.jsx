@@ -75,91 +75,99 @@ const Tabla = () => {
     }
 
     return (
-    <>
-        <div className="p-4 text-center rounded-lg mb-4">
-            <input
-                type="text"
-                placeholder="Cédula vendedor"
-                value={searchId}
-                onChange={(e) => setSearchId(e.target.value)}
-                className="border p-2 rounded mb-2 sm:mb-0 sm:w-64 w-full sm:mr-2"
-            />
-            
-            <button onClick={buscarSeller} className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 sm:w-auto w-full sm:mr-2">
-                    Buscar
-            </button>
-            <button onClick={listarSellers} className="bg-gray-500 text-white px-4 py-2 rounded sm:w-auto w-full">
-                    Mostrar Todos
-            </button>
-            
-        </div>
-
-        <div className="flex justify-end items-center mb-4">
-            <button
-                onClick={() => navigate('register')}
-                className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-                <i className="fas fa-user-plus mr-2"></i>
-                Registrar Vendedor
-            </button>
-        </div>
-
-        {
-            sellers.length === 0
-                ? <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
-                :
-                <div
-                    className="pl-3 pr-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        <>
+            {/* Sección de búsqueda */}
+            <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
+                <input
+                    type="text"
+                    placeholder="Cédula vendedor"
+                    value={searchId}
+                    onChange={(e) => setSearchId(e.target.value)}
+                    className="border p-2 rounded w-full sm:w-64 max-w-xs"
+                />
+                <button
+                    onClick={buscarSeller}
+                    className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-blue-600 transition"
                 >
-                    {
-                        sellers.map((seller) => (
-                            <div
-                                className="w-full p-4 flex items-center shadow-lg bg-white relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200"
-                                key={seller._id}
-                                onClick={() => navigate(`/dashboard/sellers/${seller._id}`)} 
-                            >
-                                {/* Imagen del vendedor */}
+                    Buscar
+                </button>
+                <button
+                    onClick={listarSellers}
+                    className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-gray-600 transition"
+                >
+                    Mostrar Todos
+                </button>
+            </div>
+    
+            {/* Botón de registro */}
+            <div className="flex justify-end mb-4 px-4">
+                <button
+                    onClick={() => navigate('register')}
+                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
+                >
+                    <i className="fas fa-user-plus mr-2"></i>
+                    Registrar Vendedor
+                </button>
+            </div>
+    
+            {/* Mensaje cuando no hay registros */}
+            {sellers.length === 0 ? (
+                <Mensaje tipo="error">No existen registros</Mensaje>
+            ) : (
+                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {sellers.map((seller) => (
+                        <div
+                            key={seller._id}
+                            className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer 
+                            hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 rounded-lg overflow-hidden flex flex-col"
+                            onClick={() => navigate(`/dashboard/sellers/${seller._id}`)}
+                        >
+                            {/* Imagen del vendedor */}
+                            <div className="flex justify-center mb-3">
                                 <img
                                     src="/images/seller.png"
-                                    alt="Imagen del vendedor"
-                                    className="w-24 h-24 object-cover rounded-full mr-4"
-                                />
-
-                                {/* Detalles del vendedor */}
-                                <div className="flex-1">
-                                    <h1 className="text-lg font-semibold">Ci: {seller.numberID}</h1>
-                                    <h1 className="text-lg">Nombre: {seller.names}</h1>
-                                    <h1 className="text-lg">Apellidos: {seller.lastNames}</h1>
-                                    <h1 className="text-lg">Ciudad: {seller.SalesCity}</h1>
-                                </div>
-
-                                {/* Estado del vendedor */}
-                                {
-                                    seller.status ?
-                                        <span className="absolute top-2 right-2 bg-blue-100 text-green-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900">
-                                            {"Activo"}
-                                        </span>
-                                        :
-                                        <span className="absolute top-2 right-2 bg-blue-100 text-red-500 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900">
-                                            {"Inactivo"}
-                                        </span>
-                                }
-
-                                {/* Ícono para agregar nota */}
-                                <MdNoteAdd
-                                    className="h-7 w-7 text-slate-800 cursor-pointer ml-2"
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Evitar que el clic en el ícono dispare el clic del div
-                                        navigate(`/dashboard/sellers/${seller._id}`);
-                                    }}
+                                    alt={`Imagen de ${seller.names}`}
+                                    className="w-20 h-20 object-cover rounded-full"
                                 />
                             </div>
-                        ))
-                    }
+    
+                            {/* Detalles del vendedor */}
+                            <div className="text-left px-2">
+                                <p className="text-lg font-semibold"><strong>CI:</strong> {seller.numberID}</p>
+                                <p className="text-lg"><strong>Nombre:</strong> {seller.names}</p>
+                                <p className="text-lg"><strong>Apellidos:</strong> {seller.lastNames}</p>
+                                <p className="text-lg"><strong>Ciudad:</strong> {seller.SalesCity}</p>
+                            </div>
+    
+                            {/* Estado del vendedor */}
+                            <span
+                                className={`absolute top-2 right-2 text-xs font-medium px-2.5 py-0.5 rounded 
+                                ${seller.status ? "bg-green-100 text-green-600 dark:bg-green-900" : "bg-red-100 text-red-600 dark:bg-red-900"}`}
+                            >
+                                {seller.status ? "Activo" : "Inactivo"}
+                            </span>
+    
+                            {/* Ícono para agregar nota */}
+                            <button
+                                aria-label="Agregar nota"
+                                className="absolute bottom-2 right-2"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/dashboard/sellers/${seller._id}`);
+                                }}
+                            >
+                                <MdNoteAdd className="h-6 w-6 text-slate-800 cursor-pointer" />
+                            </button>
+                        </div>
+                    ))}
                 </div>
-        }
-    </>
-);
+            )}
+        </>
+    );
+    
+    
+    
+    
 
 };
 

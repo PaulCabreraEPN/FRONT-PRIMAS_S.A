@@ -55,7 +55,7 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-16 left-0 h-full w-64 bg-[#205599] text-white transform ${
+        className={`fixed top-10 left-0 h-full w-64 bg-[#205599] text-white transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out z-40`}
       >
@@ -99,7 +99,7 @@ const Dashboard = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 bg-gray-100 p-6 mt-16 md:ml-64">
+      <div className="flex-1 p-6 mt-16 md:ml-64">
         <main>
           <Outlet />
         </main>
