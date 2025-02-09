@@ -3,8 +3,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "./Art/Header";
+import Loader from "./Carga";
 
 const TablaProforma = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [order, setOrder] = useState({});
     const [customer, setCustomer] = useState({});
     const [products, setProducts] = useState([]);
@@ -20,7 +22,7 @@ const TablaProforma = () => {
 
     const getOrder = async () => {
         try {
-           
+            setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
             const url = `${backendUrl}/orders/${id}`;
@@ -39,119 +41,106 @@ const TablaProforma = () => {
 
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsLoading(false);
         }
     }
 
     useEffect(()=>{
         getOrder()
 },[])
+    if (isLoading) {
+        return <Loader />;
+    }
 
     const { _id, netTotal, totalWithTax, discountApplied } = order;
 
     return (
-        <div id="proforma" style={{ fontFamily: "Arial, sans-serif", padding: "20px", maxWidth: "800px", margin: "auto", border: "1px solid #ddd" }}>
-            <Header />
-            <br />
-            <div className="flex justify-end">
-                <p><strong>Código: </strong>{_id}</p>
+        <div className="container mx-auto p-5 border rounded-lg shadow-lg bg-white">
+          <Header />
+          <header className="text-center mb-4 mt-4">
+            <h1 className="text-2xl font-bold">PROFORMA</h1>
+          </header>
+      
+          <div className="flex justify-between text-sm mb-4">
+            <p><strong>Código:</strong> {_id}</p>
+          </div>
+      
+          <div className="bg-gray-100 p-4 rounded-md mb-4">
+                <p className="flex justify-between">
+                    <strong>Cliente:</strong>
+                    <span className="ml-auto">{customer.Name}</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>RUC:</strong>
+                    <span className="ml-auto">{customer.Ruc}</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>Dirección:</strong>
+                    <span className="ml-auto">{customer.Address}</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>Teléfono:</strong>
+                    <span className="ml-auto">{customer.telephone}</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>Email:</strong>
+                    <span className="ml-auto">{customer.email}</span>
+                </p>
             </div>
-            <br />
-            <h1 style={{ textAlign: "center" }}>PROFORMA</h1>
-            <br />
-            <p><strong>Cliente:</strong> {customer.Name}</p>
-            <p><strong>RUC:</strong> {customer.Ruc}</p>
-            <p><strong>Dirección:</strong> {customer.Address}</p>
-            <p><strong>Teléfono:</strong> {customer.telephone}</p>
-            <p><strong>Email:</strong> {customer.email}</p>
-            <br />
-            <hr />
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
-                <thead>
-                    <tr>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Código</th>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Descripción</th>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Cantidad</th>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Precio Unitario</th>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Total</th>
-                        <th colSpan="2" style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Desc % - Valor</th>
-                        <th style={{ border: "1px solid #ddd", padding: "8px 20px" }}>Total Final</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((product, index) => (
-                        <tr key={index}>
-                            <td style={{ border: "1px solid #ddd", padding: "8px" }}>{product.productId}</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px" }}>{product.productDetails.product_name}</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>{product.quantity}</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>${product.productDetails.price.toFixed(2)}</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                                ${(product.quantity * product.productDetails.price).toFixed(2)}
-                            </td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>-{discountApplied}%</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>-${(product.productDetails.price * (discountApplied / 100) * product.quantity).toFixed(2)}</td>
-                            <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "right" }}>
-                                ${(product.quantity * product.productDetails.price * (1 - discountApplied / 100)).toFixed(2)}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+      
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border text-sm">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="border p-2">Código</th>
+                  <th className="border p-2">Descripción</th>
+                  <th className="border p-2">Cantidad</th>
+                  <th className="border p-2">Precio Unitario</th>
+                  <th className="border p-2">Total</th>
+                  <th className="border p-2">Desc %</th>
+                  <th className="border p-2">Valor Desc</th>
+                  <th className="border p-2">Total Final</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product, index) => (
+                  <tr key={index} className="text-center border">
+                    <td className="border p-2">{product.productId}</td>
+                    <td className="border p-2">{product.productDetails.product_name}</td>
+                    <td className="border p-2">{product.quantity}</td>
+                    <td className="border p-2">${product.productDetails.price.toFixed(2)}</td>
+                    <td className="border p-2">${(product.quantity * product.productDetails.price).toFixed(2)}</td>
+                    <td className="border p-2">-{discountApplied}%</td>
+                    <td className="border p-2">-${(product.productDetails.price * (discountApplied / 100) * product.quantity).toFixed(2)}</td>
+                    <td className="border p-2">${(product.quantity * product.productDetails.price * (1 - discountApplied / 100)).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
-    
-            <hr />
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr", // Dos columnas
-                    gap: "20px",
-                }}
-                className="mt-3"
-            >
-                <strong>Descuento Aplicado:</strong>
-                <p className="flex justify-end mr-3"> {discountApplied} %</p>
-                <strong>Total Neto:</strong>
-                <p className="flex justify-end mr-3">${netTotal}</p>
-                <strong>Total con IVA 15%:</strong>
-                <strong className="flex justify-end mr-3">${(totalWithTax)}</strong>
-                <strong>Vendedor:</strong>
-                <p className="flex justify-end mr-3">{seller.names} {seller.lastNames}</p>
+          </div>
+      
+          <div className="mt-4 p-4 bg-gray-100 rounded-md">
+                <p className="flex justify-between">
+                    <strong>Descuento Aplicado:</strong>
+                    <span className="ml-auto">{discountApplied} %</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>Total Neto:</strong>
+                    <span className="ml-auto">${netTotal}</span>
+                </p>
+                <p className="flex justify-between">
+                    <strong>Total con IVA 15%:</strong>
+                    <span className="ml-auto">${totalWithTax}</span>
+                </p>
+                <div className="flex justify-between items-center">
+                    <p><strong>Vendedor:</strong></p>
+                    <p className="text-right w-full">{seller.names} {seller.lastNames}</p>
+                </div>
             </div>
-    
-            {/* Media Queries for Responsiveness */}
-            <style jsx>{`
-                @media (max-width: 768px) {
-                    table, th, td {
-                        display: block;
-                        width: 100%;
-                    }
-                    th {
-                        background-color: #f4f4f4;
-                        text-align: left;
-                        padding: 10px;
-                    }
-                    td {
-                        padding: 10px;
-                        text-align: left;
-                        border: none;
-                        border-bottom: 1px solid #ddd;
-                    }
-                    td:before {
-                        content: attr(data-label);
-                        font-weight: bold;
-                        display: inline-block;
-                        width: 120px;
-                    }
-                    .flex {
-                        display: block;
-                        margin-bottom: 10px;
-                    }
-                    .flex.justify-end {
-                        text-align: right;
-                    }
-                }
-            `}</style>
-    
+
         </div>
-    );
+      );
     
 };
 
