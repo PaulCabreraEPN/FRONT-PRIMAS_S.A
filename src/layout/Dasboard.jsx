@@ -13,6 +13,12 @@ const Dashboard = () => {
     return null;
   }
 
+  //Cerrar sesión
+  const handleLogout = () => {
+      localStorage.removeItem("token");
+      navigate("/"); // Redirigir a la página principal
+  };
+
   return (
     <div className="flex h-screen">
       {/* Navbar (Fijo y ocupa todo el ancho) */}
@@ -43,7 +49,7 @@ const Dashboard = () => {
                 Configuración
               </button>
               <button 
-                onClick={cerrarSesion}
+                onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200"
               >
                 Cerrar sesión
