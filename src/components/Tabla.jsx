@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { MdNoteAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import Mensaje from "./Alertas/Mensaje";
 import Loader from "./Carga";
 
@@ -10,20 +9,20 @@ const Tabla = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [sellers, setSellers] = useState([]);
     const [searchId, setSearchId] = useState("");
-    const [statusFilter, setStatusFilter] = useState("Todos"); // Estado para el filtro de activo/inactivo
+    const [statusFilter, setStatusFilter] = useState("Todos"); // Estado inicial: "Todos"
 
-    // Función para obtener los vendedores
+    // Función para listar todos los vendedores
     const listarSellers = async () => {
         setIsLoading(true);
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
             const url = `${backendUrl}/sellers`;
             const options = {
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
             };
             const respuesta = await axios.get(url, options);
             setSellers(respuesta.data);
@@ -38,37 +37,37 @@ const Tabla = () => {
     const buscarSeller = async () => {
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
             const url = `${backendUrl}/sellers-numberid/${searchId}`;
             const options = {
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
             };
             const respuesta = await axios.get(url, options);
 
-            // Acceder directamente a respuesta.data.msg
             const seller = respuesta.data.msg;
 
-            // Corregir la estructura del dato para que coincida con los nombres en el JSX
-            setSellers([{
-                _id: seller._id,
-                numberID: seller.numberID,
-                names: seller.name,  // Cambiar "name" a "names"
-                lastNames: seller.lastNames,
-                SalesCity: seller.SalesCity,
-                status: seller.status
-            }]);
+            setSellers([
+                {
+                    _id: seller._id,
+                    numberID: seller.numberID,
+                    names: seller.name,
+                    lastNames: seller.lastNames,
+                    SalesCity: seller.SalesCity,
+                    status: seller.status,
+                },
+            ]);
         } catch (error) {
             console.log(error);
         }
     };
 
-    // Función para filtrar vendedores según el estado seleccionado
+    // Función para filtrar los vendedores según el estado seleccionado
     const filterSellers = () => {
         if (statusFilter === "Todos") return sellers;
-        return sellers.filter(seller => 
+        return sellers.filter((seller) =>
             statusFilter === "Activo" ? seller.status : !seller.status
         );
     };
@@ -78,14 +77,12 @@ const Tabla = () => {
     }, []);
 
     if (isLoading) {
-        return (
-            <Loader />
-        );
+        return <Loader />;
     }
 
     return (
         <>
-            {/* Sección de búsqueda y filtro */}
+            {/* Sección de búsqueda y filtros */}
             <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
                 <input
                     type="text"
@@ -108,35 +105,39 @@ const Tabla = () => {
                 </button>
             </div>
 
-            {/* Filtro de estado: Activo / Inactivo */}
-            <div className="p-4 flex justify-center items-center gap-4 rounded-lg mb-4">
-                <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="border p-2 rounded w-64"
-                >
-                    <option value="Todos">Todos</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                </select>
+            {/* Filtro de estado con botones */}
+            <div className="flex justify-center gap-4 mb-4">
+                {["Todos", "Activo", "Inactivo"].map((filter) => (
+                    <button
+                        key={filter}
+                        onClick={() => setStatusFilter(filter)}
+                        className={`px-4 py-2 rounded-lg transition ${
+                            statusFilter === filter
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                        {filter}
+                    </button>
+                ))}
             </div>
-    
+
             {/* Botón de registro */}
             <div className="flex justify-end mb-4 px-4">
                 <button
-                    onClick={() => navigate('register')}
+                    onClick={() => navigate("register")}
                     className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
                 >
                     <i className="fas fa-user-plus mr-2"></i>
                     Registrar Vendedor
                 </button>
             </div>
-    
+
             {/* Mensaje cuando no hay registros */}
             {filterSellers().length === 0 ? (
                 <Mensaje tipo="error">No existen registros</Mensaje>
             ) : (
-                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
                     {filterSellers().map((seller) => (
                         <div
                             key={seller._id}
@@ -152,7 +153,7 @@ const Tabla = () => {
                                     className="w-20 h-20 object-cover rounded-full"
                                 />
                             </div>
-    
+
                             {/* Detalles del vendedor */}
                             <div className="text-left px-2">
                                 <p className="text-lg font-semibold"><strong>CI:</strong> {seller.numberID}</p>
@@ -160,7 +161,7 @@ const Tabla = () => {
                                 <p className="text-lg"><strong>Apellidos:</strong> {seller.lastNames}</p>
                                 <p className="text-lg"><strong>Ciudad:</strong> {seller.SalesCity}</p>
                             </div>
-    
+
                             {/* Estado del vendedor */}
                             <span
                                 className={`absolute top-2 right-2 text-xs font-medium px-2.5 py-0.5 rounded 
@@ -168,7 +169,7 @@ const Tabla = () => {
                             >
                                 {seller.status ? "Activo" : "Inactivo"}
                             </span>
-    
+
                             {/* Ícono para agregar nota */}
                             <button
                                 aria-label="Agregar nota"
@@ -178,7 +179,7 @@ const Tabla = () => {
                                     navigate(`/dashboard/sellers/${seller._id}`);
                                 }}
                             >
-                                <MdNoteAdd className="h-6 w-6 text-slate-800 cursor-pointer" />
+                                
                             </button>
                         </div>
                     ))}
@@ -189,4 +190,5 @@ const Tabla = () => {
 };
 
 export default Tabla;
+
 
