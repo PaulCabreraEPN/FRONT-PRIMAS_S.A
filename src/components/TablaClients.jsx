@@ -45,6 +45,8 @@ const ClientList = () => {
                 },
             });
             setClients([response.data.data]);
+            toast.success("Cliente encontrado");
+            
         } catch (error) {
             toast.error("Cliente no encontrado");
         } finally {

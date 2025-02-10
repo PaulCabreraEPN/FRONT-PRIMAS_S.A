@@ -52,6 +52,10 @@ const TablaProducts = () => {
     };
 
     const getProductsById = async () => {
+        if (!searchId) {
+            toast.warn("Ingrese un ID válido");
+            return;
+        }
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");

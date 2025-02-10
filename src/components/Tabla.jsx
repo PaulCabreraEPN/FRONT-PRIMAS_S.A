@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Mensaje from "./Alertas/Mensaje";
 import Loader from "./Carga";
+import { ToastContainer, toast } from "react-toastify";
 
 const Tabla = () => {
     const navigate = useNavigate();
@@ -35,6 +36,11 @@ const Tabla = () => {
 
     // Función para buscar un vendedor por cédula
     const buscarSeller = async () => {
+        if (!searchId) {
+            toast.warn("Ingrese una cédula válida");
+            return;
+        }
+
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
@@ -59,8 +65,15 @@ const Tabla = () => {
                     status: seller.status,
                 },
             ]);
+            toast.success("Vendedor encontrado");
         } catch (error) {
-            console.log(error);
+            const respuesta=error.response.data.msg;
+            if (respuesta === "Vendedor no encontrado") {
+                toast.error(error.response.data.msg);
+            }else{
+                toast.warn(error.response.data.msg);
+            }
+            
         }
     };
 
@@ -82,6 +95,7 @@ const Tabla = () => {
 
     return (
         <>
+            <ToastContainer />
             {/* Sección de búsqueda y filtros */}
             <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
                 <input

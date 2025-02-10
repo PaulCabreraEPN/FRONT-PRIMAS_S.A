@@ -7,21 +7,32 @@ import axios from "axios";
 const Register = () => {
     const navigate = useNavigate();
 
-    // Esquema de validación con Yup
     const validationSchema = Yup.object({
-        names: Yup.string().required("El nombre es obligatorio"),
-        lastNames: Yup.string().required("Los apellidos son obligatorios"),
+        names: Yup.string()
+            .required("Los nombre es obligatorio")
+            .test("two-words", "El nombre debe contener al menos dos nombres", value => 
+                value && value.trim().split(/\s+/).length >= 2
+            ),
+        lastNames: Yup.string()
+            .required("Los apellidos son obligatorios")
+            .test("two-words", "Los apellidos deben contener al menos dos apellidos", value => 
+                value && value.trim().split(/\s+/).length >= 2
+            ),
         numberID: Yup.string()
             .required("El número de identificación es obligatorio")
-            .length(10, "El número de identificación debe tener exactamente 10 dígitos") // Validación de 10 dígitos
-            .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"), // Validación para que sea un número
-        email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio"),
-        SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
+            .length(10, "El número de identificación debe tener exactamente 10 dígitos")
+            .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"),
+        email: Yup.string()
+            .email("El correo debe ser válido")
+            .required("El correo es obligatorio"),
+        SalesCity: Yup.string()
+            .required("La ciudad de venta es obligatoria"),
         PhoneNumber: Yup.string()
-        .required("El número de teléfono es obligatorio")
-        .length(10, "El número de teléfono debe tener exactamente 10 dígitos") // Validación de 10 dígitos
-        .matches(/^\d{10}$/, "El número de teléfono debe ser un número de 10 dígitos"), // Validación para que sea un número
+            .required("El número de teléfono es obligatorio")
+            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+            .matches(/^\d{10}$/, "El número de teléfono debe ser un número de 10 dígitos"),
     });
+    
 
     // Lista de las principales ciudades de Ecuador
     const cities = [
