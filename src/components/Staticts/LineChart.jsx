@@ -25,7 +25,6 @@ const LineChart = () => {
             };
             const response = await axios.get(url, options);
             const data = response.data;
-            console.log(data);
             
             setsales(data.salesByDay);
             setdays(data.weekDays);

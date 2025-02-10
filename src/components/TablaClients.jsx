@@ -93,7 +93,7 @@ const ClientList = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
                     {clients.map((client) => (
                         <div 
-                            key={client.ruc} 
+                            key={client._id} 
                             className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500 max-w-sm w-full overflow-hidden break-words"
                         >
                             <h2 className="text-lg font-bold text-blue-700 whitespace-normal break-words">

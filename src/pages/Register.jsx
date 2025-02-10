@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -18,12 +17,10 @@ const Register = () => {
             .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"), // Validación para que sea un número
         email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio"),
         SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
-        PhoneNumber: Yup.number()
-            .required("El número de teléfono es obligatorio")
-            .positive("El número de teléfono debe ser positivo")
-            .integer("El número de teléfono debe ser un número entero")
-            .min(1000000000, "El número de teléfono debe tener al menos 10 dígitos")
-            .max(9999999999, "El número de teléfono debe tener como máximo 10 dígitos"),
+        PhoneNumber: Yup.string()
+        .required("El número de teléfono es obligatorio")
+        .length(10, "El número de teléfono debe tener exactamente 10 dígitos") // Validación de 10 dígitos
+        .matches(/^\d{10}$/, "El número de teléfono debe ser un número de 10 dígitos"), // Validación para que sea un número
     });
 
     // Lista de las principales ciudades de Ecuador
@@ -201,7 +198,7 @@ const Register = () => {
                                 Telefono:
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 id="PhoneNumber"
                                 name="PhoneNumber"
                                 placeholder="0987654324"

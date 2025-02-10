@@ -26,8 +26,6 @@ const BarChart = () => {
             };
             const response = await axios.get(url, options);
             const data = response.data;
-            console.log(data);
-            
             setsales(data.salesCounts);
             setnames(data.sellerNames);
         } catch (error) {

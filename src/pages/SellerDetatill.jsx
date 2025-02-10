@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Carga";
+import { ToastContainer, toast } from "react-toastify";
 
 const SellerDetaill = () => {
 
@@ -77,8 +78,10 @@ const SellerDetaill = () => {
                 },
             };
             const respuesta = await axios.delete(url, options);
-            alert(respuesta.data.msg);
-            listarSellers(); // Actualizar la lista de vendedores
+            toast.success(respuesta.data.msg);
+                setTimeout(() => {
+                        navigate("/dashboard/sellers");
+                }, 2000); // Actualizar la lista de vendedores
         } catch (error) {
             console.error(error);
             alert("Error al eliminar el vendedor");
@@ -98,6 +101,7 @@ const SellerDetaill = () => {
 
     return (
         <>
+            <ToastContainer />
             <button
                 onClick={() => navigate('/dashboard/sellers')}
                 className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
