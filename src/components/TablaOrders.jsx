@@ -80,6 +80,10 @@ const TablaOrders = () => {
 
     // Función para buscar un pedido por ID
     const searchOrders = async () => {
+        if (!searchId) {
+            toast.warn("Ingrese un código de Orden válido");
+            return;
+        }
         try {
             setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
@@ -93,13 +97,14 @@ const TablaOrders = () => {
             };
             const response = await axios.get(url, options);
             setOrders([response.data]);
+            toast.success("Orden encontrada");
 
             // Actualizar el estado del pedido buscado
             setOrderStates({ [response.data._id]: response.data.status });
             setFilteredOrders([response.data]);
-
+            
         } catch (error) {
-            console.error(error);
+            toast.error("Orden no encontrada");
         } finally {
             setIsLoading(false);
         }
