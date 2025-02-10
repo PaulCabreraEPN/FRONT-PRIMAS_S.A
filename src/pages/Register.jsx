@@ -147,7 +147,7 @@ const Register = () => {
                                 N. Identificacion:
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 id="numberID"
                                 name="numberID"
                                 placeholder="1734567897"
@@ -209,7 +209,7 @@ const Register = () => {
                                 Telefono:
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 id="PhoneNumber"
                                 name="PhoneNumber"
                                 placeholder="0987654324"
