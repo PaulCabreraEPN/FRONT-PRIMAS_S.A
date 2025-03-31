@@ -199,7 +199,7 @@ const TablaOrders = () => {
                             <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
 
                             <div className="mt-3">
-                                <p><strong>Vendedor:</strong> {order.seller.names} {order.seller.lastNames}</p>
+                                <p><strong>Vendedor:</strong> {order.seller?.names} {order.seller?.lastNames}</p>
                                 <p className="mt-2 font-semibold">Productos:</p>
                                 <ul className="list-disc pl-5 text-sm text-gray-700">
                                     {order.products.map((prod) => (

@@ -17,6 +17,10 @@ import Orders from './pages/Orders';
 import Proforma from './pages/Proforma';
 import Clients from './pages/Clients';
 import { AuthProvider } from './context/AuthProvider';
+import RegisterProducts from './pages/RegisterProducts';
+import RegisterCients from './pages/RegisterClients';
+import ClientDetaill from './pages/ClientDetaill';
+import UpdateClient from './pages/UpdateClient';
 
 
 function App() {
@@ -45,8 +49,16 @@ function App() {
                             <Route path="sellers/:id" element={<SellerDetaill/>} />
                             <Route path="sellers/register" element={<Register />} />
                             <Route path="sellers/update/:id" element={<UpdateSeller />} />
+
                             <Route path="products/" element={<Products/>} />
+                            <Route path="products/register" element={<RegisterProducts/>} />
+                            
+
                             <Route path="clients/" element={<Clients/>} />
+                            <Route path="clients/:ruc" element={<ClientDetaill/>} />
+                            <Route path="clients/register" element={<RegisterCients/>} />
+                            <Route path="clients/update/:ruc" element={<UpdateClient/>} />
+
                             <Route path='orders/' element={<Orders/>}></Route>
                             <Route path='orders/:id' element={<Proforma/>}></Route>
                         </Route>

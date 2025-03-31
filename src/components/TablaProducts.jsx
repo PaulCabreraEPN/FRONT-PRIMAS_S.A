@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import Loader from "./Carga";
 
 const TablaProducts = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchId, setSearchId] = useState("");
@@ -154,6 +156,17 @@ const TablaProducts = () => {
                         </button>
                     ))}
                 </div>
+            </div>
+
+            {/* Botón de registro */}
+            <div className="flex justify-end mb-4 px-4">
+                <button
+                    onClick={() => navigate("register")}
+                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
+                >
+                    <i className="fas fa-user-plus mr-2"></i>
+                    Registrar Producto
+                </button>
             </div>
     
             {/* Lista de productos */}
