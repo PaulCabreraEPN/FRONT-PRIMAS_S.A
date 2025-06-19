@@ -26,7 +26,7 @@ const Tabla = () => {
                 },
             };
             const respuesta = await axios.get(url, options);
-            setSellers(respuesta.data);
+            setSellers(respuesta.data.data);
         } catch (error) {
             console.log(error);
         } finally {
@@ -53,27 +53,17 @@ const Tabla = () => {
             };
             const respuesta = await axios.get(url, options);
 
-            const seller = respuesta.data.msg;
-
-            setSellers([
-                {
-                    _id: seller._id,
-                    numberID: seller.numberID,
-                    names: seller.name,
-                    lastNames: seller.lastNames,
-                    SalesCity: seller.SalesCity,
-                    status: seller.status,
-                },
-            ]);
+            const seller = respuesta.data.data;
+            setSellers([seller]);
             toast.success("Vendedor encontrado");
         } catch (error) {
-            const respuesta=error.response.data.msg;
+            const respuesta = error.response.data.msg;
             if (respuesta === "Vendedor no encontrado") {
                 toast.error(error.response.data.msg);
-            }else{
+            } else {
                 toast.warn(error.response.data.msg);
             }
-            
+
         }
     };
 
@@ -125,11 +115,10 @@ const Tabla = () => {
                     <button
                         key={filter}
                         onClick={() => setStatusFilter(filter)}
-                        className={`px-4 py-2 rounded-lg transition ${
-                            statusFilter === filter
+                        className={`px-4 py-2 rounded-lg transition ${statusFilter === filter
                                 ? "bg-blue-500 text-white"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
+                            }`}
                     >
                         {filter}
                     </button>
@@ -193,7 +182,7 @@ const Tabla = () => {
                                     navigate(`/dashboard/sellers/${seller._id}`);
                                 }}
                             >
-                                
+
                             </button>
                         </div>
                     ))}
