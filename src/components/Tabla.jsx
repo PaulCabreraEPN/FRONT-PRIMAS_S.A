@@ -159,7 +159,7 @@ const Tabla = () => {
 
                             {/* Detalles del vendedor */}
                             <div className="text-left px-2">
-                                <p className="text-lg font-semibold"><strong>CI:</strong> {seller.numberID}</p>
+                                <p className="text-lg font-semibold"><strong>CI:</strong> {seller.cedula}</p>
                                 <p className="text-lg"><strong>Nombre:</strong> {seller.names}</p>
                                 <p className="text-lg"><strong>Apellidos:</strong> {seller.lastNames}</p>
                                 <p className="text-lg"><strong>Ciudad:</strong> {seller.SalesCity}</p>
