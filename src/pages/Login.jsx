@@ -39,11 +39,14 @@ const Login = () => {
                 // Usar el servicio api en lugar de axios directamente
                 const { data } = await api.post('/login-admin', normalizedForm);
 
+                // Nievo: Accede correctamente al token desde la respuesta
+                const token =data.data?.token;
+                
                 // Establecer el token en localStorage
-                localStorage.setItem('token', data.tokenJWT);
+                localStorage.setItem('token', token);
 
                 // Establecer el estado de autenticación
-                setAuth({ token: data.tokenJWT });
+                setAuth({ token });
 
                 // Limpiar el formulario
                 formik.resetForm();
