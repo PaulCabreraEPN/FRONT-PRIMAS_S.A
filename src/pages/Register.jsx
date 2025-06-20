@@ -18,7 +18,7 @@ const Register = () => {
             .test("two-words", "Los apellidos deben contener al menos dos apellidos", value => 
                 value && value.trim().split(/\s+/).length >= 2
             ),
-        numberID: Yup.string()
+        cedula: Yup.string()
             .required("El número de identificación es obligatorio")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
             .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"),
@@ -58,7 +58,7 @@ const Register = () => {
         initialValues: {
             names: "",
             lastNames: "",
-            numberID: "",
+            cedula: "",
             email: "",
             SalesCity: "", // Cambiado a string
             PhoneNumber: "",
@@ -143,21 +143,21 @@ const Register = () => {
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="numberID" className="mb-2 block text-sm font-semibold">
+                            <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">
                                 N. Identificacion:
                             </label>
                             <input
                                 type="number"
-                                id="numberID"
-                                name="numberID"
+                                id="cedula"
+                                name="cedula"
                                 placeholder="1734567897"
-                                value={formik.values.numberID}
+                                value={formik.values.cedula}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                             />
-                            {formik.touched.numberID && formik.errors.numberID ? (
-                                <div className="text-red-500 text-sm">{formik.errors.numberID}</div>
+                            {formik.touched.cedula  && formik.errors.cedula? (
+                                <div className="text-red-500 text-sm">{formik.errors.cedula}</div>
                             ) : null}
                         </div>
 
@@ -209,7 +209,7 @@ const Register = () => {
                                 Telefono:
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 id="PhoneNumber"
                                 name="PhoneNumber"
                                 placeholder="0987654324"
