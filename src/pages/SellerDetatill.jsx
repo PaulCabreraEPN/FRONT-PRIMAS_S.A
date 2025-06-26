@@ -102,12 +102,28 @@ const SellerDetaill = () => {
     return (
         <>
             <ToastContainer />
-            <button
-                onClick={() => navigate('/dashboard/sellers')}
-                className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
-            >
-                ← Atrás
-            </button>
+            <div className="flex justify-between items-center mb-4">
+                <button
+                    onClick={() => navigate('/dashboard/sellers')}
+                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
+                >
+                    ← Atrás
+                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => navigate(`/dashboard/sellers/update/${id}`)}
+                        className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    >
+                        Actualizar
+                    </button>
+                    <button
+                        onClick={() => eliminarSeller(id)}
+                        className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </div>
     
             <h2 className="text-2xl font-bold text-center mb-6">Perfil del Vendedor</h2>
     
@@ -163,26 +179,6 @@ const SellerDetaill = () => {
                             <label className="block font-bold text-gray-700">Estado:</label>
                             <p className="text-gray-800 p-2 rounded">{seller?.status ? "Activo" : "Inactivo"}</p>
                         </div>
-                    </div>
-                </div>
-    
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                    <div>
-                        <button
-                            onClick={() => navigate(`/dashboard/sellers/update/${id}`)}
-                            className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        >
-                            Actualizar
-                        </button>
-                    </div>
-    
-                    <div className="flex justify-end">
-                        <button
-                            onClick={() => eliminarSeller(id)}
-                            className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                        >
-                            Eliminar
-                        </button>
                     </div>
                 </div>
             </div>
