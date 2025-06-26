@@ -40,12 +40,12 @@ const SellerDetaill = () => {
 
             const response = await axios.get(url, options);
         
-            const Seller = response.data.msg
+            const Seller = response.data.data
             
             setSeller({
                 names: Seller.names,
                 lastNames: Seller.lastNames,
-                numberID: Seller.numberID,
+                numberID: Seller.cedula,
                 username: Seller.username,
                 email: Seller.email,
                 SalesCity: Seller.SalesCity,
