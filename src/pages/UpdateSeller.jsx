@@ -126,7 +126,7 @@ const UpdateSeller = () => {
     }
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto mt-8 p-4">
             <div className="flex justify-between items-center mb-4">
                 <button
                     onClick={() => navigate(`/dashboard/sellers/${id}`)}
@@ -152,10 +152,12 @@ const UpdateSeller = () => {
                         {isLoading ? "Actualizando..." : "Actualización Completa"}
                     </button>
                 </div>
+                
             </div>
+            
             <h2 className="text-2xl font-bold mb-4">Actualizar Vendedor</h2>
             <ToastContainer />
-            <form className="space-y-4 p-4">
+            <form className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block mb-2">Nombres:</label>
@@ -257,25 +259,7 @@ const UpdateSeller = () => {
                     </div>
                 </div>
 
-                <div className="flex space-x-4 mt-6">
-                    <button
-                        type="button"
-                        onClick={handlePartialUpdate}
-                        disabled={isLoading}
-                        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-                    >
-                        {isLoading ? "Actualizando..." : "Actualización Parcial"}
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={handleFullUpdate}
-                        disabled={isLoading}
-                        className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 disabled:opacity-50"
-                    >
-                        {isLoading ? "Actualizando..." : "Actualización Completa"}
-                    </button>
-                </div>
+                
 
             </form>
         </div>
