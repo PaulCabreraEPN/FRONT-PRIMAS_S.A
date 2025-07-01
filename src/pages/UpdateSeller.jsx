@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
 import Loader from "../components/Carga";
+// Cambio reciente 
 
 const UpdateSeller = () => {
     const [seller, setSeller] = useState({
