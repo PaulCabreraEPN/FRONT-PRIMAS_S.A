@@ -23,9 +23,11 @@ const ClientList = () => {
                 },
             };
             const response = await axios.get(url, options);
-            setClients(response.data);
+            // Acceder a los clientes según la estructura del backend
+            setClients(Array.isArray(response.data.data) ? response.data.data : []);
         } catch (error) {
             toast.error("Error al obtener los clientes");
+            setClients([]);
         } finally {
             setIsLoading(false);
         }
@@ -46,11 +48,17 @@ const ClientList = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setClients([response.data.data]);
-            toast.success("Cliente encontrado");
-            
+            // Acceder al cliente según la estructura del backend
+            if (response.data && response.data.status === "success" && response.data.data) {
+                setClients([response.data.data]);
+                toast.success(response.data.msg || "Cliente encontrado");
+            } else {
+                setClients([]);
+                toast.warn(response.data.msg || "Cliente no encontrado");
+            }
         } catch (error) {
-            toast.error("Cliente no encontrado");
+            toast.error(error.response?.data?.msg || "Cliente no encontrado");
+            setClients([]);
         } finally {
             setIsLoading(false);
         }

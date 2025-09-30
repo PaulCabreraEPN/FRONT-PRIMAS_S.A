@@ -38,16 +38,21 @@ const TablaProducts = () => {
                 },
             };
             const response = await axios.get(url, options);
-            setProducts(response.data);
+            // Acceder a los productos según la estructura del backend
+            const productsArray = Array.isArray(response.data.data)
+                ? response.data.data
+                : [];
+            setProducts(productsArray);
 
             // Guardar los índices originales
             const indices = {};
-            response.data.forEach((product, index) => {
+            productsArray.forEach((product, index) => {
                 indices[product.id] = index;
             });
             setProductsIndices(indices);
         } catch (error) {
             console.error(error);
+            setProducts([]); // Evitar que products quede como undefined o null
         } finally {
             setIsLoading(false);
         }
@@ -69,10 +74,17 @@ const TablaProducts = () => {
                 },
             };
             const respuesta = await axios.get(url, options);
-            setProducts([respuesta.data]);
-            toast.success(respuesta.data.msg || "Producto encontrado");
+            // Acceder al producto según la estructura del backend
+            if (respuesta.data && respuesta.data.status === "success" && respuesta.data.data) {
+                setProducts([respuesta.data.data]);
+                toast.success(respuesta.data.msg || "Producto encontrado");
+            } else {
+                setProducts([]);
+                toast.warn(respuesta.data.msg || "No se encontró el producto");
+            }
         } catch (error) {
             toast.error(error.response?.data?.msg || "Error al buscar el producto");
+            setProducts([]);
         }
     };
 

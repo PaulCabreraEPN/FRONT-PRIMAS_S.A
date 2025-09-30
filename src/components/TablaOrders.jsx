@@ -31,17 +31,16 @@ const TablaOrders = () => {
                 },
             };
             const response = await axios.get(url, options);
-            const data = response.data;
-
-            setOrders(data);
-            
+            // Acceder a las órdenes según la estructura del backend
+            const ordersArray = Array.isArray(response.data.data) ? response.data.data : [];
+            setOrders(ordersArray);
             // Actualizar estados de los pedidos
             const newOrderStates = {};
-            data.forEach(order => {
+            ordersArray.forEach(order => {
                 newOrderStates[order._id] = order.status;
             });
             setOrderStates(newOrderStates);
-            setFilteredOrders(data);  // Inicialmente, todas las órdenes están filtradas
+            setFilteredOrders(ordersArray);  // Inicialmente, todas las órdenes están filtradas
             
         } catch (error) {
             console.error(error);
@@ -96,15 +95,22 @@ const TablaOrders = () => {
                 },
             };
             const response = await axios.get(url, options);
-            setOrders([response.data]);
-            toast.success("Orden encontrada");
-
-            // Actualizar el estado del pedido buscado
-            setOrderStates({ [response.data._id]: response.data.status });
-            setFilteredOrders([response.data]);
-            
+            // Acceder a la orden según la estructura del backend
+            if (response.data && response.data.status === "success" && response.data.data) {
+                setOrders([response.data.data]);
+                toast.success(response.data.msg || "Orden encontrada");
+                // Actualizar el estado del pedido buscado
+                setOrderStates({ [response.data.data._id]: response.data.data.status });
+                setFilteredOrders([response.data.data]);
+            } else {
+                setOrders([]);
+                setFilteredOrders([]);
+                toast.warn(response.data.msg || "Orden no encontrada");
+            }
         } catch (error) {
-            toast.error("Orden no encontrada");
+            toast.error(error.response?.data?.msg || "Orden no encontrada");
+            setOrders([]);
+            setFilteredOrders([]);
         } finally {
             setIsLoading(false);
         }

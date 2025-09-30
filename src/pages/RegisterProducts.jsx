@@ -10,18 +10,20 @@ const RegisterProducts = () => {
     const [image, setImage] = useState(null);
 
     const validationSchema = Yup.object({
-        id: Yup.string().required("El ID del producto es obligatorio"),
+        id: Yup.number().typeError("El ID debe ser numérico").required("El ID del producto es obligatorio"),
         product_name: Yup.string().required("El nombre del producto es obligatorio"),
-        measure: Yup.string().required("La unidad de medida es obligatoria"),
-        price: Yup.number().required("El precio es obligatorio").positive("El precio debe ser positivo"),
-        stock: Yup.number().required("El stock es obligatorio").min(1, "Debe haber al menos 1 unidad en stock"),
+        reference: Yup.string().required("La referencia es obligatoria"),
+        description: Yup.string().required("La descripción es obligatoria"),
+        price: Yup.number().typeError("El precio debe ser numérico").required("El precio es obligatorio").min(0, "El precio no puede ser negativo"),
+        stock: Yup.number().typeError("El stock debe ser numérico").required("El stock es obligatorio").min(0, "El stock no puede ser negativo"),
     });
 
     const formik = useFormik({
         initialValues: {
             id: "",
             product_name: "",
-            measure: "",
+            reference: "",
+            description: "",
             price: "",
             stock: "",
         },
@@ -48,12 +50,16 @@ const RegisterProducts = () => {
                 };
 
                 const response = await axios.post(url, formData, options);
-                toast.success(response.data.message);
-                setTimeout(() => {
-                    navigate("/dashboard/products");
-                }, 2000);
+                if (response.data.status === "success") {
+                    toast.success(response.data.msg || "Producto creado correctamente.");
+                    setTimeout(() => {
+                        navigate("/dashboard/products");
+                    }, 2000);
+                } else {
+                    toast.error(response.data.msg || "Error al registrar el producto");
+                }
             } catch (error) {
-                toast.error(error.response?.data?.message || "Error al registrar el producto");
+                toast.error(error.response?.data?.msg || "Error al registrar el producto");
             }
         },
     });
@@ -75,30 +81,95 @@ const RegisterProducts = () => {
                 <ToastContainer />
                 <h2 className="text-center text-2xl font-bold text-gray-700 mb-6">Registrar Producto</h2>
                 <form onSubmit={formik.handleSubmit} className="space-y-4">
-                    {[
-                        { label: "ID del Producto", name: "id", type: "text" },
-                        { label: "Nombre del Producto", name: "product_name", type: "text" },
-                        { label: "Unidad de Medida", name: "measure", type: "text" },
-                        { label: "Precio", name: "price", type: "number" },
-                        { label: "Stock", name: "stock", type: "number" },
-                    ].map(({ label, name, type }) => (
-                        <div key={name}>
-                            <label htmlFor={name} className="block text-sm font-semibold mb-1">{label}:</label>
-                            <input
-                                type={type}
-                                id={name}
-                                name={name}
-                                value={formik.values[name]}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700"
-                            />
-                            {formik.touched[name] && formik.errors[name] && (
-                                <div className="text-red-500 text-sm">{formik.errors[name]}</div>
-                            )}
-                        </div>
-                    ))}
-
+                    <div>
+                        <label htmlFor="id" className="block text-sm font-semibold mb-1">ID del Producto:</label>
+                        <input
+                            type="number"
+                            id="id"
+                            name="id"
+                            value={formik.values.id}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700"
+                        />
+                        {formik.touched.id && formik.errors.id && (
+                            <div className="text-red-500 text-sm">{formik.errors.id}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="product_name" className="block text-sm font-semibold mb-1">Nombre del Producto:</label>
+                        <input
+                            type="text"
+                            id="product_name"
+                            name="product_name"
+                            value={formik.values.product_name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700"
+                        />
+                        {formik.touched.product_name && formik.errors.product_name && (
+                            <div className="text-red-500 text-sm">{formik.errors.product_name}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="reference" className="block text-sm font-semibold mb-1">Referencia:</label>
+                        <input
+                            type="text"
+                            id="reference"
+                            name="reference"
+                            value={formik.values.reference}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700"
+                        />
+                        {formik.touched.reference && formik.errors.reference && (
+                            <div className="text-red-500 text-sm">{formik.errors.reference}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-semibold mb-1">Descripción:</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            value={formik.values.description}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 min-h-[80px]"
+                        />
+                        {formik.touched.description && formik.errors.description && (
+                            <div className="text-red-500 text-sm">{formik.errors.description}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="price" className="block text-sm font-semibold mb-1">Precio:</label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            value={formik.values.price}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700"
+                        />
+                        {formik.touched.price && formik.errors.price && (
+                            <div className="text-red-500 text-sm">{formik.errors.price}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="stock" className="block text-sm font-semibold mb-1">Stock:</label>
+                        <input
+                            type="number"
+                            id="stock"
+                            name="stock"
+                            value={formik.values.stock}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700"
+                        />
+                        {formik.touched.stock && formik.errors.stock && (
+                            <div className="text-red-500 text-sm">{formik.errors.stock}</div>
+                        )}
+                    </div>
                     <div>
                         <label htmlFor="image" className="block text-sm font-semibold mb-1">Imagen del Producto:</label>
                         <input
@@ -110,7 +181,6 @@ const RegisterProducts = () => {
                             className="block w-full border border-gray-300 rounded-md py-2 px-3"
                         />
                     </div>
-
                     <button type="submit" className="w-full bg-blue-900 text-white py-2 rounded-xl hover:bg-green-400 hover:text-black transition">
                         Registrar
                     </button>

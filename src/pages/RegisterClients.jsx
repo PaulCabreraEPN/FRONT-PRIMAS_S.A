@@ -9,26 +9,24 @@ const RegisterClients = () => {
 
     const validationSchema = Yup.object({
         Name: Yup.string().required("El nombre es obligatorio"),
+        ComercialName: Yup.string(),
         Ruc: Yup.string()
             .required("El RUC es obligatorio")
             .matches(/^\d+$/, "El RUC debe contener solo números"),
-        Address: Yup.string().required("La dirección es obligatoria"),
-        telephone: Yup.string()
-            .required("El teléfono es obligatorio")
-            .matches(/^\d{10}$/, "El teléfono debe tener 10 dígitos"),
+        Address: Yup.string(),
+        telephone: Yup.string(),
         email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio"),
-        credit: Yup.string().required("El crédito es obligatorio"),
-        state: Yup.string().required("El estado es obligatorio"),
+        state: Yup.string(),
     });
 
     const formik = useFormik({
         initialValues: {
             Name: "",
+            ComercialName: "",
             Ruc: "",
             Address: "",
             telephone: "",
             email: "",
-            credit: "",
             state: "",
         },
         validationSchema,
@@ -44,12 +42,16 @@ const RegisterClients = () => {
                     },
                 };
                 const response = await axios.post(url, values, options);
-                toast.success(response.data.message);
-                setTimeout(() => {
-                    navigate("/dashboard/clients");
-                }, 2000);
+                if (response.data.status === "success") {
+                    toast.success(response.data.msg || "Cliente registrado con éxito.");
+                    setTimeout(() => {
+                        navigate("/dashboard/clients");
+                    }, 2000);
+                } else {
+                    toast.error(response.data.msg || "Error al registrar cliente");
+                }
             } catch (error) {
-                toast.error(error.response?.data?.message || "Error al registrar cliente");
+                toast.error(error.response?.data?.msg || "Error al registrar cliente");
             }
         },
     });
@@ -69,35 +71,31 @@ const RegisterClients = () => {
                     </div>
                     <ToastContainer />
                     <form onSubmit={formik.handleSubmit}>
-                        {Object.keys(formik.initialValues).map((field) => (
-                            <div className="mb-3" key={field}>
-                                <label htmlFor={field} className="mb-2 block text-sm font-semibold">
-                                    {field === "Name" ? "Nombre" :
-                                     field === "Ruc" ? "RUC" :
-                                     field === "Address" ? "Dirección" :
-                                     field === "telephone" ? "Teléfono" :
-                                     field === "email" ? "Correo Electrónico" :
-                                     field === "credit" ? "Crédito" :
-                                     field === "state" ? "Estado" : field}:
+                        { [
+                            { label: "Nombre", name: "Name", type: "text", required: true },
+                            { label: "Nombre Comercial", name: "ComercialName", type: "text" },
+                            { label: "RUC", name: "Ruc", type: "text", required: true },
+                            { label: "Dirección", name: "Address", type: "text" },
+                            { label: "Teléfono", name: "telephone", type: "text" },
+                            { label: "Correo Electrónico", name: "email", type: "email", required: true },
+                            { label: "Estado", name: "state", type: "text" },
+                        ].map(({ label, name, type, required }) => (
+                            <div className="mb-3" key={name}>
+                                <label htmlFor={name} className="mb-2 block text-sm font-semibold">
+                                    {label}{required && <span className="text-red-500">*</span>}:
                                 </label>
                                 <input
-                                    type={field === "email" ? "email" : "text"}
-                                    id={field}
-                                    name={field}
-                                    placeholder={`Ingrese ${field === "Name" ? "nombre" :
-                                                                field === "Ruc" ? "RUC" :
-                                                                field === "Address" ? "dirección" :
-                                                                field === "telephone" ? "teléfono" :
-                                                                field === "email" ? "correo electrónico" :
-                                                                field === "credit" ? "crédito" :
-                                                                field === "state" ? "estado" : field}`}
-                                    value={formik.values[field]}
+                                    type={type}
+                                    id={name}
+                                    name={name}
+                                    placeholder={`Ingrese ${label.toLowerCase()}`}
+                                    value={formik.values[name]}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                    className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
                                 />
-                                {formik.touched[field] && formik.errors[field] ? (
-                                    <div className="text-red-500 text-sm">{formik.errors[field]}</div>
+                                {formik.touched[name] && formik.errors[name] ? (
+                                    <div className="text-red-500 text-sm">{formik.errors[name]}</div>
                                 ) : null}
                             </div>
                         ))}

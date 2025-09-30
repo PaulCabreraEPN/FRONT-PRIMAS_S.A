@@ -30,7 +30,7 @@ const UpdateClient = () => {
                 }
             };
             const response = await axios.get(url, options);
-            const clientData = response.data.msg;
+            const clientData = response.data.data;
             if (clientData) {
                 setClient({
                     Name: clientData.Name || "",
@@ -69,8 +69,12 @@ const UpdateClient = () => {
                 }
             };
             const response = await axios.patch(url, client, options);
-            toast.success(response.data.msg);
-            setTimeout(() => navigate("/dashboard/clients"), 2000);
+            if (response.data.status === "success") {
+                toast.success(response.data.msg);
+                setTimeout(() => navigate("/dashboard/clients"), 2000);
+            } else {
+                toast.error(response.data.msg || "Error al actualizar cliente");
+            }
         } catch (error) {
             toast.error(error.response?.data?.error);
         }
