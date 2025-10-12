@@ -102,13 +102,15 @@ const SellerDetaill = () => {
     return (
         <>
             <ToastContainer />
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-end items-center mb-4">
+                {/*
                 <button
                     onClick={() => navigate('/dashboard/sellers')}
                     className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
                 >
                     ← Atrás
                 </button>
+                */}
                 <div className="flex gap-4">
                     <button
                         onClick={() => navigate(`/dashboard/sellers/update/${id}`)}

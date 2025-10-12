@@ -1,3 +1,13 @@
+    // Asigna keywords según el nombre del producto
+    function obtenerKeywords(nombre) {
+        const nombreMayus = (nombre || "").toUpperCase();
+        if (nombreMayus.includes("ROD") || nombreMayus.includes("ROLA") || nombreMayus.includes("ROLITO")) return ["ROD", "ROLA", "ROLITO"];
+        if (nombreMayus.includes("BROCHA") || nombreMayus.includes("PINCEL")) return ["BROCHA", "PINCEL"];
+        if (nombreMayus.includes("ESP") || nombreMayus.includes("ESPATULA")) return ["ESP", "ESPATULA"];
+        if (nombreMayus.includes("LLANA")) return ["LLANA"];
+        if (nombreMayus.includes("EXTENSION") || nombreMayus.includes("BANDEJA") || nombreMayus.includes("CUBETA") || nombreMayus.includes("MANGO")) return ["EXTENSION", "BANDEJA", "CUBETA", "MANGO"];
+        return [];
+    }
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,9 +23,8 @@ const TablaProducts = () => {
     const [currentCategory, setCurrentCategory] = useState("all");
     const [filteredProducts, setFilteredProducts] = useState([]);
 
-    // Definir las categorías y sus palabras clave
+    // Definir las categorías y sus palabras clave 
     const categories = {
-        all: { name: "Todos", keywords: [] },
         rollers: { name: "Rodillos", keywords: ["ROD", "ROLA", "ROLITO"] },
         brushes: { name: "Brochas", keywords: ["BROCHA", "PINCEL"] },
         spatulas: { name: "Espátulas", keywords: ["ESP", "ESPATULA"] },
@@ -40,7 +49,10 @@ const TablaProducts = () => {
             const response = await axios.get(url, options);
             // Acceder a los productos según la estructura del backend
             const productsArray = Array.isArray(response.data.data)
-                ? response.data.data
+                ? response.data.data.map(product => ({
+                    ...product,
+                    keywords: obtenerKeywords(product.product_name)
+                }))
                 : [];
             setProducts(productsArray);
 
@@ -76,7 +88,11 @@ const TablaProducts = () => {
             const respuesta = await axios.get(url, options);
             // Acceder al producto según la estructura del backend
             if (respuesta.data && respuesta.data.status === "success" && respuesta.data.data) {
-                setProducts([respuesta.data.data]);
+                const producto = {
+                    ...respuesta.data.data,
+                    keywords: obtenerKeywords(respuesta.data.data.product_name)
+                };
+                setProducts([producto]);
                 toast.success(respuesta.data.msg || "Producto encontrado");
             } else {
                 setProducts([]);
@@ -91,17 +107,22 @@ const TablaProducts = () => {
     // Función para filtrar productos por categoría
     const filterByCategory = (category) => {
         setCurrentCategory(category);
-        if (category === "all") {
-            setFilteredProducts(products);
-            return;
-        }
-
-        const filtered = products.filter(product =>
-            categories[category].keywords.some(keyword =>
-                product.product_name.toUpperCase().includes(keyword)
-            )
-        );
-        setFilteredProducts(filtered);
+                const selectedCategory = categories[category];
+                if (!selectedCategory || !selectedCategory.keywords) {
+                    // Si la categoría no existe o no tiene keywords, mostrar todos los productos
+                    setFilteredProducts(products);
+                    return;
+                }
+                const filtered = products.filter((product) => {
+                    // Verifica si el producto tiene la propiedad keywords y si alguna coincide
+                    return (
+                        Array.isArray(product.keywords) &&
+                        product.keywords.some((keyword) =>
+                            selectedCategory.keywords.includes(keyword)
+                        )
+                    );
+                });
+                setFilteredProducts(filtered);
     };
 
     // Modificar el useEffect para manejar la carga inicial y el filtrado
@@ -114,7 +135,12 @@ const TablaProducts = () => {
 
     // Agregar otro useEffect para manejar cambios en products o currentCategory
     useEffect(() => {
-        filterByCategory(currentCategory);
+        // Si no hay categoría seleccionada, mostrar todos
+        if (!currentCategory) {
+            setFilteredProducts(products);
+        } else {
+            filterByCategory(currentCategory);
+        }
     }, [products, currentCategory]);
 
 
@@ -152,7 +178,7 @@ const TablaProducts = () => {
                 </button>
             </div>
     
-            {/* Menú de categorías */}
+            {/* Menú de categorías  */}
             <div className="p-4 mb-4">
                 <div className="flex flex-wrap justify-center gap-2">
                     {Object.entries(categories).map(([key, value]) => (

@@ -102,7 +102,10 @@ const Tabla = () => {
                     Buscar
                 </button>
                 <button
-                    onClick={listarSellers}
+                    onClick={() => {
+                        listarSellers();
+                        setStatusFilter("Todos");
+                    }}
                     className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-gray-600 transition"
                 >
                     Mostrar Todos
@@ -111,7 +114,7 @@ const Tabla = () => {
 
             {/* Filtro de estado con botones */}
             <div className="flex justify-center gap-4 mb-4">
-                {["Todos", "Activo", "Inactivo"].map((filter) => (
+                {["Activo", "Inactivo"].map((filter) => (
                     <button
                         key={filter}
                         onClick={() => setStatusFilter(filter)}

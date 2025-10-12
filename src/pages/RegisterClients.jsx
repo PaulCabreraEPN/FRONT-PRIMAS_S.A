@@ -60,6 +60,7 @@ const RegisterClients = () => {
         <div className="flex">
             <div className="bg-white flex justify-center items-center w-full">
                 <div className="md:w-1/2">
+                    {/*
                     <div className="flex justify-start mb-8">
                         <button
                             onClick={() => navigate("/dashboard/clients")}
@@ -69,6 +70,7 @@ const RegisterClients = () => {
                             Atrás
                         </button>
                     </div>
+                    */}
                     <ToastContainer />
                     <form onSubmit={formik.handleSubmit}>
                         { [

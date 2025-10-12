@@ -94,13 +94,14 @@ const Register = () => {
             <div className="bg-white flex justify-center items-center w-full">
                 <div className="md:w-1/2">
                     <div className="flex justify-start mb-8">
+                        {/*
                         <button
                             onClick={() => navigate("/dashboard/sellers")}
-                            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors mb-4"
                         >
-                            <i className="fas fa-arrow-left mr-2"></i>
-                            Atrás
+                            <i className="fas fa-arrow-left mr-2"></i>Atrás
                         </button>
+                        */}
                     </div>
                     <ToastContainer />
                     <form onSubmit={formik.handleSubmit}>

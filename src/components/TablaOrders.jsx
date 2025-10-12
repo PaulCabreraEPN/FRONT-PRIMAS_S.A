@@ -140,12 +140,8 @@ const TablaOrders = () => {
     // Filtrar las órdenes según el estado seleccionado
     const filterByState = (state) => {
         setCurrentStateFilter(state);
-        if (state === "all") {
-            setFilteredOrders(orders);  // Mostrar todas las órdenes
-        } else {
-            const filtered = orders.filter(order => orderStates[order._id] === state);
-            setFilteredOrders(filtered);
-        }
+        const filtered = orders.filter(order => orderStates[order._id] === state);
+        setFilteredOrders(filtered);
     };
 
     if (isLoading) {
@@ -170,7 +166,7 @@ const TablaOrders = () => {
 
             {/* Filtro por estado */}
             <div className="flex justify-center gap-4 mb-4">
-                {["all", "Pendiente", "En proceso", "Enviado", "Cancelado"].map((state) => (
+                {["Pendiente", "En proceso", "Enviado", "Cancelado"].map((state) => (
                     <button
                         key={state}
                         onClick={() => filterByState(state)}
@@ -179,7 +175,7 @@ const TablaOrders = () => {
                             : 'bg-gray-200 hover:bg-gray-300'
                         }`}
                     >
-                        {state === "all" ? "Todos" : state}
+                        {state}
                     </button>
                 ))}
             </div>
