@@ -9,6 +9,8 @@ const Tabla = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [sellers, setSellers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchId, setSearchId] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos"); // Estado inicial: "Todos"
 
@@ -79,6 +81,11 @@ const Tabla = () => {
         listarSellers();
     }, []);
 
+    // Resetear página cuando cambian sellers o el filtro
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [sellers, statusFilter]);
+
     if (isLoading) {
         return <Loader />;
     }
@@ -143,8 +150,14 @@ const Tabla = () => {
             {filterSellers().length === 0 ? (
                 <Mensaje tipo="error">No existen registros</Mensaje>
             ) : (
+                <>
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-10">
-                    {filterSellers().map((seller) => (
+                    {(() => {
+                        const filtered = filterSellers();
+                        const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+                        const startIndex = (currentPage - 1) * itemsPerPage;
+                        const currentItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+                        return currentItems.map((seller) => (
                         <div
                             key={seller._id}
                             className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
@@ -190,8 +203,46 @@ const Tabla = () => {
                                 </span>
                             </div>
                         </div>
-                    ))}
+                        ));
+                    })()}
                 </div>
+
+                {/* Controles de paginación */}
+                {filterSellers().length > itemsPerPage && (
+                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-4">
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                        >
+                            Anterior
+                        </button>
+
+                        <div className="flex gap-1 sm:gap-2 items-center">
+                            {Array.from({ length: Math.max(1, Math.ceil(filterSellers().length / itemsPerPage)) }).map((_, idx) => {
+                                const pageNum = idx + 1;
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => setCurrentPage(pageNum)}
+                                        className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filterSellers().length / itemsPerPage), p + 1))}
+                            disabled={currentPage === Math.ceil(filterSellers().length / itemsPerPage)}
+                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === Math.ceil(filterSellers().length / itemsPerPage) ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
+                </>
             )}
         </>
     );

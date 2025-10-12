@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 const ClientList = () => {
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchRuc, setSearchRuc] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -71,6 +73,11 @@ const ClientList = () => {
         initializeProducts();
     }, []);
 
+    // Resetear la página cuando cambian los clientes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [clients]);
+
     return (
         <div className="p-6 min-h-screen">
             <ToastContainer />
@@ -113,8 +120,13 @@ const ClientList = () => {
             {isLoading ? (
                 <Loader />
             ) : (
+                <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 px-4">
-                    {clients.map((client) => (
+                    {(() => {
+                        const totalPages = Math.max(1, Math.ceil(clients.length / itemsPerPage));
+                        const startIndex = (currentPage - 1) * itemsPerPage;
+                        const currentItems = clients.slice(startIndex, startIndex + itemsPerPage);
+                        return currentItems.map((client) => (
                         <div 
                             key={client.Ruc || client.ruc} 
                             className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
@@ -130,8 +142,46 @@ const ClientList = () => {
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Crédito:</strong> <span className="font-semibold">{client.credit}</span></p>
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Estado:</strong> <span className="font-semibold">{client.state}</span></p>
                         </div>
-                    ))}
+                        ));
+                    })()}
                 </div>
+
+                {/* Controles de paginación */}
+                {clients.length > itemsPerPage && (
+                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-4">
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                        >
+                            Anterior
+                        </button>
+
+                        <div className="flex gap-1 sm:gap-2 items-center">
+                            {Array.from({ length: Math.max(1, Math.ceil(clients.length / itemsPerPage)) }).map((_, idx) => {
+                                const pageNum = idx + 1;
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => setCurrentPage(pageNum)}
+                                        className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.min(Math.ceil(clients.length / itemsPerPage), p + 1))}
+                            disabled={currentPage === Math.ceil(clients.length / itemsPerPage)}
+                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === Math.ceil(clients.length / itemsPerPage) ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
+                </>
             )}
         </div>
     );
