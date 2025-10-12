@@ -113,22 +113,22 @@ const ClientList = () => {
             {isLoading ? (
                 <Loader />
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 px-4">
                     {clients.map((client) => (
                         <div 
                             key={client.Ruc || client.ruc} 
-                            className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500 max-w-sm w-full overflow-hidden break-words"
+                            className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
                             onClick={() => navigate(`/dashboard/clients/${client.Ruc || client.ruc}`)}
                         >
-                            <h2 className="text-lg font-bold text-blue-700 whitespace-normal break-words">
+                            <h2 className="text-xl font-bold text-gray-800 whitespace-normal break-words">
                                 {client.Name || client.name}
                             </h2>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>RUC:</strong> {client.Ruc || client.ruc}</p>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>Dirección:</strong> {client.Address || client.address}</p>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>Teléfono:</strong> {client.telephone}</p>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>Email:</strong> {client.email}</p>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>Crédito:</strong> {client.credit}</p>
-                            <p className="text-gray-700 whitespace-normal break-words"><strong>Estado:</strong> {client.state}</p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>RUC:</strong> <span className="font-semibold">{client.Ruc || client.ruc}</span></p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Dirección:</strong> <span className="font-semibold">{client.Address || client.address}</span></p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Teléfono:</strong> <span className="font-semibold">{client.telephone}</span></p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Email:</strong> <span className="font-semibold">{client.email}</span></p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Crédito:</strong> <span className="font-semibold">{client.credit}</span></p>
+                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Estado:</strong> <span className="font-semibold">{client.state}</span></p>
                         </div>
                     ))}
                 </div>

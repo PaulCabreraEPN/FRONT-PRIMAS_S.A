@@ -213,45 +213,45 @@ const TablaProducts = () => {
                     <p className="text-gray-500">No hay productos disponibles</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-4">
                     {filteredProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 relative overflow-hidden"
+                            className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
                         >
-                            {/* Número del producto */}
-                            <div className="absolute top-0 left-0 bg-blue-500 text-white w-8 h-8 flex items-center justify-center rounded-tl-xl">
-                                {productsIndices[product.id] + 1}
-                            </div>
-    
-                            {/* Contenido del producto */}
-                            <div className="flex flex-col sm:flex-row">
-                                {/* Imagen del producto */}
-                                <div className="w-full sm:w-1/3 p-4 flex items-center justify-center h-[200px] sm:h-[250px]">
+                            {/* Contenido del producto (diseño igual a Tabla.jsx, imagen a la derecha) */}
+                            <div className="flex flex-col md:flex-row items-center gap-4">
+                                <div className="flex-1 text-left">
+                                    <div className="flex flex-col gap-2">
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>ID:</strong> <span className="font-semibold">{product.id}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-700"><strong>Precio:</strong> <span className="font-semibold">{product.price}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-700"><strong>Stock:</strong> <span className="font-semibold">{product.stock}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-700"><strong>Medida:</strong> <span className="font-semibold">{product.measure}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Imagen del producto a la derecha con mismo tamaño que en Tabla.jsx pero no circular */}
+                                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
                                     <img
                                         src={product.imgUrl}
                                         alt={`Imagen de ${product.product_name}`}
-                                        className="max-w-full max-h-full object-contain rounded-lg"
+                                        className="w-20 h-20 md:w-24 md:h-24 object-contain rounded-lg shadow-sm"
                                     />
-                                </div>
-    
-                                {/* Detalles del producto */}
-                                <div className="w-full sm:w-2/3 p-4 text-left space-y-2 overflow-auto">
-                                    <p className="text-lg font-semibold text-gray-800">
-                                        <strong>ID:</strong> {product.id}
-                                    </p>
-                                    <p className="text-lg text-gray-700">
-                                        <strong>Producto:</strong> {product.product_name}
-                                    </p>
-                                    <p className="text-lg text-gray-700">
-                                        <strong>Precio:</strong> {product.price}
-                                    </p>
-                                    <p className="text-lg text-gray-700">
-                                        <strong>Stock:</strong> {product.stock}
-                                    </p>
-                                    <p className="text-lg text-gray-700">
-                                        <strong>Medida:</strong> {product.measure}
-                                    </p>
                                 </div>
                             </div>
                         </div>

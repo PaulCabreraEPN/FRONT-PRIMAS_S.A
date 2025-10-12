@@ -143,50 +143,52 @@ const Tabla = () => {
             {filterSellers().length === 0 ? (
                 <Mensaje tipo="error">No existen registros</Mensaje>
             ) : (
-                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
+                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-10">
                     {filterSellers().map((seller) => (
                         <div
                             key={seller._id}
-                            className="w-full max-w-sm p-4 shadow-lg bg-white relative cursor-pointer 
-                            hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 rounded-lg overflow-hidden flex flex-col"
+                            className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
                             onClick={() => navigate(`/dashboard/sellers/${seller._id}`)}
                         >
-                            {/* Imagen del vendedor */}
-                            <div className="flex justify-center mb-3">
-                                <img
-                                    src="/images/seller.png"
-                                    alt={`Imagen de ${seller.names}`}
-                                    className="w-20 h-20 object-cover rounded-full"
-                                />
+                            <div className="flex flex-col md:flex-row items-center gap-4">
+                                {/* Información del vendedor en grid para mejor distribución */}
+                                <div className="flex-1 text-left">
+                                    <div className="flex flex-col gap-2">
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>CI:</strong> <span className="font-semibold">{seller.cedula}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Nombre:</strong> <span className="font-semibold">{seller.names}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Apellidos:</strong> <span className="font-semibold">{seller.lastNames}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Ciudad:</strong> <span className="font-semibold">{seller.SalesCity || '-'}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Imagen del vendedor */}
+                                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
+                                    <img
+                                        src={seller.image || "/images/seller.png"}
+                                        alt={`Imagen de ${seller.names}`}
+                                        className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm"
+                                    />
+                                </div>
                             </div>
 
-                            {/* Detalles del vendedor */}
-                            <div className="text-left px-2">
-                                <p className="text-lg font-semibold"><strong>CI:</strong> {seller.cedula}</p>
-                                <p className="text-lg"><strong>Nombre:</strong> {seller.names}</p>
-                                <p className="text-lg"><strong>Apellidos:</strong> {seller.lastNames}</p>
-                                <p className="text-lg"><strong>Ciudad:</strong> {seller.SalesCity}</p>
+                            {/* Pie: estado en la parte inferior derecha con sombra */}
+                            <div className="mt-4 border-t pt-3 flex items-center justify-between bg-white">
+                                <div />
+                                <span className={`text-sm font-medium px-3 py-1 rounded ${seller.status ? "bg-green-50 text-green-700 border border-green-100" : "bg-red-50 text-red-700 border border-red-100"}`}>
+                                    {seller.status ? "Activo" : "Inactivo"}
+                                </span>
                             </div>
-
-                            {/* Estado del vendedor */}
-                            <span
-                                className={`absolute top-2 right-2 text-xs font-medium px-2.5 py-0.5 rounded 
-                                ${seller.status ? "bg-green-100 text-green-600 dark:bg-green-900" : "bg-red-100 text-red-600 dark:bg-red-900"}`}
-                            >
-                                {seller.status ? "Activo" : "Inactivo"}
-                            </span>
-
-                            {/* Ícono para agregar nota */}
-                            <button
-                                aria-label="Agregar nota"
-                                className="absolute bottom-2 right-2"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/dashboard/sellers/${seller._id}`);
-                                }}
-                            >
-
-                            </button>
                         </div>
                     ))}
                 </div>
