@@ -58,8 +58,8 @@ const RegisterClients = () => {
 
     return (
         <div className="flex">
-            <div className="bg-white flex justify-center items-center w-full">
-                <div className="md:w-1/2">
+            <div className="bg-white flex justify-center items-start w-full pt-2 pb-4">
+                <div className="w-full md:w-11/12 lg:w-3/4 mx-auto">
                     {/*
                     <div className="flex justify-start mb-8">
                         <button
@@ -72,41 +72,137 @@ const RegisterClients = () => {
                     </div>
                     */}
                     <ToastContainer />
-                    <form onSubmit={formik.handleSubmit}>
-                        { [
-                            { label: "Nombre", name: "Name", type: "text", required: true },
-                            { label: "Nombre Comercial", name: "ComercialName", type: "text" },
-                            { label: "RUC", name: "Ruc", type: "text", required: true },
-                            { label: "Dirección", name: "Address", type: "text" },
-                            { label: "Teléfono", name: "telephone", type: "text" },
-                            { label: "Correo Electrónico", name: "email", type: "email", required: true },
-                            { label: "Estado", name: "state", type: "text" },
-                        ].map(({ label, name, type, required }) => (
-                            <div className="mb-3" key={name}>
-                                <label htmlFor={name} className="mb-2 block text-sm font-semibold">
-                                    {label}{required && <span className="text-red-500">*</span>}:
-                                </label>
-                                <input
-                                    type={type}
-                                    id={name}
-                                    name={name}
-                                    placeholder={`Ingrese ${label.toLowerCase()}`}
-                                    value={formik.values[name]}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
-                                />
-                                {formik.touched[name] && formik.errors[name] ? (
-                                    <div className="text-red-500 text-sm">{formik.errors[name]}</div>
-                                ) : null}
+                    <fieldset className="border border-gray-200 rounded-lg p-4 bg-white">
+                        <legend className="px-2 text-lg font-semibold text-gray-700">Registrar Cliente</legend>
+                        <form onSubmit={formik.handleSubmit}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="Name" className="mb-2 block text-sm font-semibold">Nombre{<span className="text-red-500">*</span>}:</label>
+                                    <input
+                                        type="text"
+                                        id="Name"
+                                        name="Name"
+                                        placeholder="Ingrese nombre"
+                                        value={formik.values.Name}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.Name && formik.errors.Name && (
+                                        <div className="text-red-500 text-sm">{formik.errors.Name}</div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial:</label>
+                                    <input
+                                        type="text"
+                                        id="ComercialName"
+                                        name="ComercialName"
+                                        placeholder="Ingrese nombre comercial"
+                                        value={formik.values.ComercialName}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.ComercialName && formik.errors.ComercialName && (
+                                        <div className="text-red-500 text-sm">{formik.errors.ComercialName}</div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="Ruc" className="mb-2 block text-sm font-semibold">RUC{<span className="text-red-500">*</span>}:</label>
+                                    <input
+                                        type="text"
+                                        id="Ruc"
+                                        name="Ruc"
+                                        placeholder="Ingrese RUC"
+                                        value={formik.values.Ruc}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.Ruc && formik.errors.Ruc && (
+                                        <div className="text-red-500 text-sm">{formik.errors.Ruc}</div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono:</label>
+                                    <input
+                                        type="text"
+                                        id="telephone"
+                                        name="telephone"
+                                        placeholder="Ingrese teléfono"
+                                        value={formik.values.telephone}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.telephone && formik.errors.telephone && (
+                                        <div className="text-red-500 text-sm">{formik.errors.telephone}</div>
+                                    )}
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label htmlFor="Address" className="mb-2 block text-sm font-semibold">Dirección:</label>
+                                    <input
+                                        type="text"
+                                        id="Address"
+                                        name="Address"
+                                        placeholder="Ingrese dirección"
+                                        value={formik.values.Address}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.Address && formik.errors.Address && (
+                                        <div className="text-red-500 text-sm">{formik.errors.Address}</div>
+                                    )}
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico{<span className="text-red-500">*</span>}:</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        placeholder="Ingrese correo"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.email && formik.errors.email && (
+                                        <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="state" className="mb-2 block text-sm font-semibold">Estado:</label>
+                                    <input
+                                        type="text"
+                                        id="state"
+                                        name="state"
+                                        placeholder="Ingrese estado"
+                                        value={formik.values.state}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
+                                    />
+                                    {formik.touched.state && formik.errors.state && (
+                                        <div className="text-red-500 text-sm">{formik.errors.state}</div>
+                                    )}
+                                </div>
                             </div>
-                        ))}
-                        <div className="mb-3">
-                            <button className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
-                                Registrar
-                            </button>
-                        </div>
-                    </form>
+
+                            <div className="mt-4">
+                                <button className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
+                                    Registrar
+                                </button>
+                            </div>
+                        </form>
+                    </fieldset>
                 </div>
             </div>
         </div>
