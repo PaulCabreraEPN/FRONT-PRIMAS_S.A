@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Mensaje from "./Alertas/Mensaje";
@@ -9,6 +9,10 @@ const Tabla = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [sellers, setSellers] = useState([]);
+    const [allSellers, setAllSellers] = useState([]); // lista maestra para filtros
+    const [searchActive, setSearchActive] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchId, setSearchId] = useState("");
@@ -29,6 +33,10 @@ const Tabla = () => {
             };
             const respuesta = await axios.get(url, options);
             setSellers(respuesta.data.data);
+            setAllSellers(respuesta.data.data);
+            console.debug('[Tabla] listarSellers: fetched', respuesta.data.data.length, 'sellers');
+            // Al listar todos, nos aseguramos de salir del modo búsqueda
+            setSearchActive(false);
         } catch (error) {
             console.log(error);
         } finally {
@@ -57,6 +65,9 @@ const Tabla = () => {
 
             const seller = respuesta.data.data;
             setSellers([seller]);
+            // Activar modo búsqueda para mostrar sólo el resultado encontrado
+            setSearchActive(true);
+            console.debug('[Tabla] buscarSeller: found', seller ? seller._id : null, seller);
             toast.success("Vendedor encontrado");
         } catch (error) {
             const respuesta = error.response.data.msg;
@@ -71,8 +82,16 @@ const Tabla = () => {
 
     // Función para filtrar los vendedores según el estado seleccionado
     const filterSellers = () => {
-        if (statusFilter === "Todos") return sellers;
-        return sellers.filter((seller) =>
+        // Si no hay filtro (Todos) devolvemos la lista maestra completa
+        // Esto asegura que después de realizar una búsqueda y tener "sellers"
+        // con solo el resultado, al seleccionar "Todos" se muestren todos los registros.
+        if (statusFilter === "Todos") {
+            // Si estamos en modo búsqueda, mostrar los resultados de la búsqueda
+            if (searchActive) return sellers;
+            return allSellers;
+        }
+        // Si hay filtro, aplicarlo también sobre la lista maestra para que funcione tras una búsqueda
+        return allSellers.filter((seller) =>
             statusFilter === "Activo" ? seller.status : !seller.status
         );
     };
@@ -86,6 +105,24 @@ const Tabla = () => {
         setCurrentPage(1);
     }, [sellers, statusFilter]);
 
+    // Cerrar el menú si se hace click fuera o se presiona Escape
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
+        };
+        const handleKey = (e) => {
+            if (e.key === 'Escape') setMenuOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKey);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKey);
+        };
+    }, [menuRef]);
+
     if (isLoading) {
         return <Loader />;
     }
@@ -93,58 +130,65 @@ const Tabla = () => {
     return (
         <>
             <ToastContainer />
-            {/* Sección de búsqueda y filtros */}
-            <div className="p-4 flex flex-col sm:flex-row justify-center items-center gap-4 rounded-lg mb-4 w-full">
-                <input
-                    type="text"
-                    placeholder="Cédula vendedor"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                    className="border p-2 rounded w-full sm:w-64 max-w-xs"
-                />
-                <button
-                    onClick={buscarSeller}
-                    className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-blue-600 transition"
-                >
-                    Buscar
-                </button>
-                <button
-                    onClick={() => {
-                        listarSellers();
-                        setStatusFilter("Todos");
-                    }}
-                    className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-gray-600 transition"
-                >
-                    Mostrar Todos
-                </button>
+            {/* Cabecera: menú desplegable ☰ (izq), búsqueda + botones (centro), registrar (derecha) */}
+            <div className="p-4 mb-4 w-full">
+                <div className="flex items-center gap-4">
+
+                    {/* Menú desplegable ☰ y búsqueda inmediatamente a su derecha */}
+                    <div className="flex items-center gap-3">
+                        <div className="relative" ref={menuRef}>
+                            <button
+                                onClick={() => setMenuOpen((v) => !v)}
+                                className="p-2 rounded-md bg-white border shadow-sm hover:bg-gray-50"
+                                aria-haspopup="true"
+                                aria-expanded={menuOpen}
+                                id="menu-button"
+                            >
+                                <span className="text-xl">☰</span>
+                            </button>
+                            {/* Menu: aparece solo cuando menuOpen = true */}
+                            {menuOpen && (
+                                <div className="absolute left-0 mt-2 w-64 sm:w-72 bg-white border rounded shadow-lg z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
+                                    <button onClick={() => { setStatusFilter('Todos'); listarSellers(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
+                                    <button onClick={() => { setStatusFilter('Activo'); setSearchActive(false); setSellers(allSellers); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Activo</button>
+                                    <button onClick={() => { setStatusFilter('Inactivo'); setSearchActive(false); setSellers(allSellers); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Inactivo</button>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="Cédula vendedor"
+                                value={searchId}
+                                onChange={(e) => setSearchId(e.target.value)}
+                                className="border p-2 rounded w-44 max-w-xs"
+                            />
+                            <button
+                                onClick={buscarSeller}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                            >
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Botón Registrar a la derecha */}
+                    <div className="ml-auto">
+                        <button
+                            onClick={() => navigate("register")}
+                            className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
+                        >
+                            <i className="fas fa-user-plus mr-2"></i>
+                            Registrar Vendedor
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            {/* Filtro de estado con botones */}
-            <div className="flex justify-center gap-4 mb-4">
-                {["Activo", "Inactivo"].map((filter) => (
-                    <button
-                        key={filter}
-                        onClick={() => setStatusFilter(filter)}
-                        className={`px-4 py-2 rounded-lg transition ${statusFilter === filter
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                            }`}
-                    >
-                        {filter}
-                    </button>
-                ))}
-            </div>
+            {/* Filtros de estado movidos al menú ☰ */}
 
-            {/* Botón de registro */}
-            <div className="flex justify-end mb-4 px-4">
-                <button
-                    onClick={() => navigate("register")}
-                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
-                >
-                    <i className="fas fa-user-plus mr-2"></i>
-                    Registrar Vendedor
-                </button>
-            </div>
+            {/* (Botón de registro principal está en la cabecera) */}
 
             {/* Mensaje cuando no hay registros */}
             {filterSellers().length === 0 ? (
