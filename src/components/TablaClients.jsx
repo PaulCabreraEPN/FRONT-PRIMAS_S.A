@@ -26,7 +26,9 @@ const ClientList = () => {
             };
             const response = await axios.get(url, options);
             // Acceder a los clientes según la estructura del backend
-            setClients(Array.isArray(response.data.data) ? response.data.data : []);
+            const arr = Array.isArray(response.data.data) ? response.data.data : [];
+            setClients(arr);
+            setCurrentPage(1);
         } catch (error) {
             toast.error("Error al obtener los clientes");
             setClients([]);
@@ -53,6 +55,7 @@ const ClientList = () => {
             // Acceder al cliente según la estructura del backend
             if (response.data && response.data.status === "success" && response.data.data) {
                 setClients([response.data.data]);
+                setCurrentPage(1);
                 toast.success(response.data.msg || "Cliente encontrado");
             } else {
                 setClients([]);
@@ -61,6 +64,7 @@ const ClientList = () => {
         } catch (error) {
             toast.error(error.response?.data?.msg || "Cliente no encontrado");
             setClients([]);
+            setCurrentPage(1);
         } finally {
             setIsLoading(false);
         }
@@ -82,38 +86,44 @@ const ClientList = () => {
         <div className="p-6 min-h-screen">
             <ToastContainer />
     
-            {/* Sección de búsqueda */}
-            <div className="mb-6 flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                <input
-                    type="text"
-                    placeholder="Ingrese RUC"
-                    value={searchRuc}
-                    onChange={(e) => setSearchRuc(e.target.value)}
-                    className="border p-2 rounded w-full sm:w-64 max-w-xs"
-                />
-                <button
-                    onClick={fetchClientByRuc}
-                    className="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-blue-600 transition"
-                >
-                    Buscar
-                </button>
-                <button
-                    onClick={fetchClients}
-                    className="bg-gray-500 text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-gray-600 transition"
-                >
-                    Mostrar Todos
-                </button>
-            </div>
+            {/* Cabecera: búsqueda y acciones a la izquierda, registrar a la derecha */}
+            <div className="p-4 mb-4 w-full">
+                <div className="flex items-center gap-4">
 
-            {/* Botón de registro */}
-            <div className="flex justify-end mb-4 px-4">
-                <button
-                    onClick={() => navigate("register")}
-                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
-                >
-                    <i className="fas fa-user-plus mr-2"></i>
-                    Registrar cliente
-                </button>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="Ingrese RUC"
+                                value={searchRuc}
+                                onChange={(e) => setSearchRuc(e.target.value)}
+                                className="border p-2 rounded w-44 max-w-xs"
+                            />
+                            <button
+                                onClick={fetchClientByRuc}
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                            >
+                                Buscar
+                            </button>
+                            <button
+                                onClick={fetchClients}
+                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition"
+                            >
+                                Mostrar Todos
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="ml-auto">
+                        <button
+                            onClick={() => navigate("register")}
+                            className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
+                        >
+                            <i className="fas fa-user-plus mr-2"></i>
+                            Registrar cliente
+                        </button>
+                    </div>
+                </div>
             </div>
     
             {/* Loader mientras carga */}
