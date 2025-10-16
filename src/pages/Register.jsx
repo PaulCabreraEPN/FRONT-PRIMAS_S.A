@@ -87,15 +87,16 @@ const Register = () => {
     });
 
     return (
-        <div className="flex">
+        <div>
+            <h1 className='font-black text-4xl text-gray-500'>Registrar Vendedor</h1>
+
+            <hr className='my-4' />
+
             <div className="bg-white flex justify-center items-start w-full pt-2 pb-4">
                 <div className="w-full md:w-11/12 lg:w-3/4 mx-auto">
-                    <div className="flex justify-start mb-6">
-                        {/* back button optional */}
-                    </div>
                     <ToastContainer />
                     <fieldset className="border border-gray-200 rounded-lg p-4 bg-white">
-                        <legend className="px-2 text-lg font-semibold text-gray-700">Registrar Vendedor</legend>
+                        <legend className="px-2 text-lg font-semibold text-gray-700">Datos del Vendedor</legend>
                         <form onSubmit={formik.handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
