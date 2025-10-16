@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Carga";
@@ -18,6 +18,7 @@ function obtenerKeywords(nombre) {
 const TablaProducts = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchId, setSearchId] = useState("");
     const [productsIndices, setProductsIndices] = useState({});
@@ -25,6 +26,9 @@ const TablaProducts = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6; // 2 filas de 3 columnas
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+    const [searchActive, setSearchActive] = useState(false);
 
     const categories = {
         rollers: { name: "Rodillos", keywords: ["ROD", "ROLA", "ROLITO"] },
@@ -54,13 +58,14 @@ const TablaProducts = () => {
                 }))
                 : [];
             setProducts(productsArray);
-            return productsArray;
+            setAllProducts(productsArray);
 
             const indices = {};
             productsArray.forEach((product, index) => {
                 indices[product.id] = index;
             });
             setProductsIndices(indices);
+            return productsArray;
         } catch (error) {
             console.error(error);
             setProducts([]);
@@ -69,12 +74,13 @@ const TablaProducts = () => {
         }
     };
 
-    // Mostrar todos: recarga productos y fuerza filteredProducts a todos
     const handleMostrarTodos = async () => {
         const all = await getProducts();
         // si getProducts falla, all puede ser undefined
         const arr = Array.isArray(all) ? all : [];
         setCurrentCategory("all");
+        // Salimos del modo búsqueda cuando mostramos todos
+        setSearchActive(false);
         setFilteredProducts(arr);
         setCurrentPage(1);
     };
@@ -100,7 +106,11 @@ const TablaProducts = () => {
                     ...respuesta.data.data,
                     keywords: obtenerKeywords(respuesta.data.data.product_name)
                 };
+                // Activar modo búsqueda antes de actualizar productos
+                setSearchActive(true);
                 setProducts([producto]);
+                setFilteredProducts([producto]);
+                setCurrentPage(1);
                 toast.success(respuesta.data.msg || "Producto encontrado");
             } else {
                 setProducts([]);
@@ -112,14 +122,21 @@ const TablaProducts = () => {
         }
     };
 
-    const filterByCategory = (category) => {
+    const filterByCategory = async (category) => {
         setCurrentCategory(category);
+        // Si no tenemos la lista maestra, la cargamos primero (incluso si `products` contiene solo el resultado de búsqueda)
+        if (!allProducts || allProducts.length === 0) {
+            await getProducts();
+        }
+        // Al filtrar por categoría usamos la lista maestra `allProducts` para que
+        // las categorías funcionen correctamente incluso después de una búsqueda
+        const source = Array.isArray(allProducts) && allProducts.length ? allProducts : products;
         const selectedCategory = categories[category];
         if (!selectedCategory || !selectedCategory.keywords) {
-            setFilteredProducts(products);
+            setFilteredProducts(source);
             return;
         }
-        const filtered = products.filter((product) => {
+        const filtered = source.filter((product) => {
             return (
                 Array.isArray(product.keywords) &&
                 product.keywords.some((keyword) => selectedCategory.keywords.includes(keyword))
@@ -136,12 +153,36 @@ const TablaProducts = () => {
     }, []);
 
     useEffect(() => {
-        if (!currentCategory) {
-            setFilteredProducts(products);
-        } else {
-            filterByCategory(currentCategory);
-        }
-    }, [products, currentCategory]);
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
+        };
+        const handleKey = (e) => {
+            if (e.key === 'Escape') setMenuOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKey);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKey);
+        };
+    }, [menuRef]);
+
+    useEffect(() => {
+        const applyCategory = async () => {
+            if (searchActive) {
+                setFilteredProducts(products);
+                return;
+            }
+            if (!currentCategory) {
+                setFilteredProducts(products);
+            } else {
+                await filterByCategory(currentCategory);
+            }
+        };
+        applyCategory();
+    }, [products, currentCategory, searchActive]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -156,37 +197,52 @@ const TablaProducts = () => {
     return (
         <>
             <ToastContainer />
-            <div className="p-4 text-center rounded-lg mb-4">
-                <input
-                    type="text"
-                    placeholder="ID del producto"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                    className="border p-2 rounded mb-2 sm:mb-0 sm:w-64 w-full sm:mr-2"
-                />
-                <button onClick={getProductsById} className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 sm:w-auto w-full sm:mr-2">Buscar</button>
-                <button onClick={handleMostrarTodos} className="bg-gray-500 text-white px-4 py-2 rounded sm:w-auto w-full">Mostrar Todos</button>
-            </div>
+            {/* Cabecera: menú desplegable (izq), búsqueda (centro), registrar (derecha) */}
+            <div className="p-4 mb-4 w-full">
+                <div className="flex items-center gap-4">
 
-            <div className="p-4 mb-4">
-                <div className="flex flex-wrap justify-center gap-2">
-                    {Object.entries(categories).map(([key, value]) => (
-                        <button
-                            key={key}
-                            onClick={() => setCurrentCategory(key)}
-                            className={`px-4 py-2 rounded-lg transition-colors ${currentCategory === key ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-                        >
-                            {value.name}
+                    <div className="flex items-center gap-3">
+                        <div className="relative" ref={menuRef}>
+                            <button
+                                onClick={() => setMenuOpen((v) => !v)}
+                                className="p-2 rounded-md bg-white border shadow-sm hover:bg-gray-50"
+                                aria-haspopup="true"
+                                aria-expanded={menuOpen}
+                                id="menu-button-products"
+                            >
+                                <span className="text-xl">☰</span>
+                            </button>
+                            {menuOpen && (
+                                <div className="absolute left-0 mt-2 w-56 bg-white border rounded shadow-lg z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button-products">
+                            <button onClick={async () => { setCurrentCategory('all'); await handleMostrarTodos(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
+                            <button onClick={async () => { setSearchActive(false); await filterByCategory('rollers'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Rodillos</button>
+                            <button onClick={async () => { setSearchActive(false); await filterByCategory('brushes'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Brochas</button>
+                            <button onClick={async () => { setSearchActive(false); await filterByCategory('spatulas'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Espátulas</button>
+                            <button onClick={async () => { setSearchActive(false); await filterByCategory('trowels'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Llanas</button>
+                            <button onClick={async () => { setSearchActive(false); await filterByCategory('accessories'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Accesorios</button>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                placeholder="ID del producto"
+                                value={searchId}
+                                onChange={(e) => setSearchId(e.target.value)}
+                                className="border p-2 rounded w-44 max-w-xs"
+                            />
+                            <button onClick={getProductsById} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Buscar</button>
+                        </div>
+                    </div>
+
+                    <div className="ml-auto">
+                        <button onClick={() => navigate("register")} className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+                            <i className="fas fa-user-plus mr-2"></i>
+                            Registrar Producto
                         </button>
-                    ))}
+                    </div>
                 </div>
-            </div>
-
-            <div className="flex justify-end mb-4 px-4">
-                <button onClick={() => navigate("register")} className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
-                    <i className="fas fa-user-plus mr-2"></i>
-                    Registrar Producto
-                </button>
             </div>
 
             {filteredProducts.length === 0 ? (
