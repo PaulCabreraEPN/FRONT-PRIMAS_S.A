@@ -9,7 +9,7 @@ const Register = () => {
 
     const validationSchema = Yup.object({
         names: Yup.string()
-            .required("Los nombre es obligatorio")
+            .required("Los nombre som obligatorios")
             .test("two-words", "El nombre debe contener al menos dos nombres", value =>
                 value && value.trim().split(/\s+/).length >= 2
             ),

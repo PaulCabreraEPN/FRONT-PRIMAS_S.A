@@ -38,15 +38,17 @@ const ClientList = () => {
     };
 
     const fetchClientByRuc = async () => {
-        if (!searchRuc) {
-            toast.warn("Ingrese un RUC válido");
+        const ruc = String(searchRuc || "").trim();
+        // Validación: exactamente 13 dígitos y sólo números
+        if (!/^[0-9]{13}$/.test(ruc)) {
+            toast.warn("Ingrese un RUC válido de 13 dígitos (solo números)");
             return;
         }
         setIsLoading(true);
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const response = await axios.get(`${backendUrl}/clients/${searchRuc}`, {
+            const response = await axios.get(`${backendUrl}/clients/${ruc}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,

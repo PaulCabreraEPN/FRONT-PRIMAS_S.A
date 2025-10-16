@@ -46,15 +46,17 @@ const Tabla = () => {
 
     // Función para buscar un vendedor por cédula
     const buscarSeller = async () => {
-        if (!searchId) {
-            toast.warn("Ingrese una cédula válida");
+        const cedula = String(searchId || "").trim();
+        // Validación: exactamente 10 caracteres y sólo dígitos
+        if (!/^[0-9]{10}$/.test(cedula)) {
+            toast.warn("Ingrese una cédula válida de 10 dígitos (solo números)");
             return;
         }
 
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/sellers-numberid/${searchId}`;
+            const url = `${backendUrl}/sellers-numberid/${cedula}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",

@@ -84,15 +84,17 @@ const TablaOrders = () => {
 
     // Función para buscar un pedido por ID
     const searchOrders = async () => {
-        if (!searchId) {
-            toast.warn("Ingrese un código de Orden válido");
+        const code = String(searchId || "").trim();
+        // Validación: exactamente 24 caracteres alfanuméricos
+        if (!/^[a-zA-Z0-9]{24}$/.test(code)) {
+            toast.warn("Ingrese un código de Orden válido de 24 caracteres (letras y números)");
             return;
         }
         try {
             setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/orders/${searchId}`;
+            const url = `${backendUrl}/orders/${code}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",

@@ -86,14 +86,16 @@ const TablaProducts = () => {
     };
 
     const getProductsById = async () => {
-        if (!searchId) {
-            toast.warn("Ingrese un ID válido");
+        const id = String(searchId || "").trim();
+        // Validación: exactamente 5 dígitos y solo números
+        if (!/^[0-9]{5}$/.test(id)) {
+            toast.warn("Ingrese un ID válido de 5 dígitos (solo números)");
             return;
         }
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/products/${searchId}`;
+            const url = `${backendUrl}/products/${id}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",
