@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { MdNoteAdd } from "react-icons/md";
 
 const TablaOrders = () => {
-    // Estados
+    // Estados subidos
     const [isLoading, setIsLoading] = useState(false);
     const [searchId, setSearchId] = useState("");
     const [orders, setOrders] = useState([]);
