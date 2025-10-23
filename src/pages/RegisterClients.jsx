@@ -8,13 +8,23 @@ const RegisterClients = () => {
     const navigate = useNavigate();
 
     const validationSchema = Yup.object({
-        Name: Yup.string().required("El nombre es obligatorio"),
-        ComercialName: Yup.string(),
+        Name: Yup.string()
+            .required("El nombre es obligatorio")
+            .test("two-words", "Debe ingresar al menos dos nombres", value =>
+                value && value.trim().split(/\s+/).length >= 2
+            ),
+        ComercialName: Yup.string()
+        .required("El nombre comercial es obligatorio"),
         Ruc: Yup.string()
             .required("El RUC es obligatorio")
+            .length(13,"El RUC debe tener exactamente 13 digitos")
             .matches(/^\d+$/, "El RUC debe contener solo números"),
-        Address: Yup.string(),
-        telephone: Yup.string(),
+        Address: Yup.string()
+            .required("La dirección es obligatoria"),
+        telephone: Yup.string()
+            .required("El telefono es obligatorio")
+            .length(10,"El telefono debe tener exactamente 10 digitos")
+            .matches(/^\d+$/, "El telefono debe contener solo números"),
         email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio"),
         state: Yup.string(),
     });
@@ -117,7 +127,7 @@ const RegisterClients = () => {
                                 <div>
                                     <label htmlFor="Ruc" className="mb-2 block text-sm font-semibold">RUC{<span className="text-red-500">*</span>}:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         id="Ruc"
                                         name="Ruc"
                                         placeholder="Ingrese RUC"
@@ -134,7 +144,7 @@ const RegisterClients = () => {
                                 <div>
                                     <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         id="telephone"
                                         name="telephone"
                                         placeholder="Ingrese teléfono"

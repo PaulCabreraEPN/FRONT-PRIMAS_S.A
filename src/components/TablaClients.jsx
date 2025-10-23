@@ -39,6 +39,11 @@ const ClientList = () => {
 
     const fetchClientByRuc = async () => {
         const ruc = String(searchRuc || "").trim();
+        // Validación: campo vacío
+        if (!ruc) {
+            toast.warn("Ingrese un cliente en el cuadro de busqueda");
+            return;
+        }
         // Validación: exactamente 13 dígitos y sólo números
         if (!/^[0-9]{13}$/.test(ruc)) {
             toast.warn("Ingrese un RUC válido de 13 dígitos (solo números)");
