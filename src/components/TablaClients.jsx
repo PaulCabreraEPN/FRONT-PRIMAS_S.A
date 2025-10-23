@@ -156,7 +156,6 @@ const ClientList = () => {
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Dirección:</strong> <span className="font-semibold">{client.Address || client.address}</span></p>
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Teléfono:</strong> <span className="font-semibold">{client.telephone}</span></p>
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Email:</strong> <span className="font-semibold">{client.email}</span></p>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Crédito:</strong> <span className="font-semibold">{client.credit}</span></p>
                             <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Estado:</strong> <span className="font-semibold">{client.state}</span></p>
                         </div>
                         ));
