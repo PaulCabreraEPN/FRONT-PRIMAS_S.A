@@ -85,6 +85,11 @@ const TablaOrders = () => {
     // Función para buscar un pedido por ID
     const searchOrders = async () => {
         const code = String(searchId || "").trim();
+        // Validación: campo vacío
+        if (!code) {
+            toast.warn("Ingrese un pedido en el cuadro de búsqueda");
+            return;
+        }
         // Validación: exactamente 24 caracteres alfanuméricos
         if (!/^[a-zA-Z0-9]{24}$/.test(code)) {
             toast.warn("Ingrese un código de Orden válido de 24 caracteres (letras y números)");
