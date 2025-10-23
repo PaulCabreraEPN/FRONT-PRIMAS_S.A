@@ -87,6 +87,11 @@ const TablaProducts = () => {
 
     const getProductsById = async () => {
         const id = String(searchId || "").trim();
+        // Validación: campo vacío -> mensaje específico
+        if (!id) {
+            toast.warn("Ingrese un producto en el cuadro de busqueda");
+            return;
+        }
         // Validación: exactamente 5 dígitos y solo números
         if (!/^[0-9]{5}$/.test(id)) {
             toast.warn("Ingrese un ID válido de 5 dígitos (solo números)");
