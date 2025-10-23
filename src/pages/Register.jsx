@@ -9,19 +9,19 @@ const Register = () => {
 
     const validationSchema = Yup.object({
         names: Yup.string()
-            .required("Los nombre som obligatorios")
-            .test("two-words", "El nombre debe contener al menos dos nombres", value =>
+            .required("Los nombres som obligatorios")
+            .test("two-words", "Debe ingresar al menos dos nombres", value =>
                 value && value.trim().split(/\s+/).length >= 2
             ),
         lastNames: Yup.string()
             .required("Los apellidos son obligatorios")
-            .test("two-words", "Los apellidos deben contener al menos dos apellidos", value =>
+            .test("two-words", "Debe ingresar al menos dos apellidos", value =>
                 value && value.trim().split(/\s+/).length >= 2
             ),
         cedula: Yup.string()
             .required("El número de identificación es obligatorio")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de identificación debe ser un número de 10 dígitos"),
+            .matches(/^\d{10}$/, "El número de identificación debe contener unicamente números"),
         email: Yup.string()
             .email("El correo debe ser válido")
             .required("El correo es obligatorio"),
@@ -30,7 +30,7 @@ const Register = () => {
         PhoneNumber: Yup.string()
             .required("El número de teléfono es obligatorio")
             .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de teléfono debe ser un número de 10 dígitos"),
+            .matches(/^\d{10}$/, "El número de teléfono debe contener unicamente números"),
     });
 
     const cities = [
@@ -134,7 +134,7 @@ const Register = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">N. Identificacion <span className="text-red-500">*</span>:</label>
+                                    <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">N° Identificacion <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="number"
                                         id="cedula"
@@ -168,7 +168,7 @@ const Register = () => {
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label htmlFor="SalesCity" className="mb-2 block text-sm font-semibold">Ciudad de Venta:</label>
+                                    <label htmlFor="SalesCity" className="mb-2 block text-sm font-semibold">Ciudad de Venta<span className="text-red-500">*</span>:</label>
                                     <select
                                         id="SalesCity"
                                         name="SalesCity"

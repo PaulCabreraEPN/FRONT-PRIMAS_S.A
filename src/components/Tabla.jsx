@@ -47,6 +47,11 @@ const Tabla = () => {
     // Función para buscar un vendedor por cédula
     const buscarSeller = async () => {
         const cedula = String(searchId || "").trim();
+        // Validación: campo vacío -> mensaje específico
+        if (!cedula) {
+            toast.warn("Ingrese un vendedor en el cuadro de búsqueda");
+            return;
+        }
         // Validación: exactamente 10 caracteres y sólo dígitos
         if (!/^[0-9]{10}$/.test(cedula)) {
             toast.warn("Ingrese una cédula válida de 10 dígitos (solo números)");
