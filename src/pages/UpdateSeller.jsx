@@ -45,7 +45,7 @@ const UpdateSeller = () => {
                 setSeller({
                     names: sellerData.names || "",
                     lastNames: sellerData.lastNames || "",
-                    numberID: sellerData.cedula || "", 
+                    numberID: sellerData.cedula || "",
                     username: sellerData.username || "",
                     email: sellerData.email || "",
                     SalesCity: sellerData.SalesCity || "",
@@ -101,140 +101,154 @@ const UpdateSeller = () => {
 
     if (isLoading) {
         return (
-            <Loader />   
+            <Loader />
         );
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="flex justify-between items-center mb-4">
-                <div>
+        <div>
+             <h1 className='font-black text-4xl text-gray-500'>Actualizar Vendedor</h1>
+
+            <hr className='my-4' />
+
+            <div className="container mx-auto p-4">
+                {/* 
+                
+                
+                <div className="mb-4">
                     <button
                         onClick={() => navigate(`/dashboard/sellers/${id}`)}
-                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full sm:w-auto"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
                     >
                         ← Atrás
                     </button>
                 </div>
-                <div className="flex gap-4">
-                    <button
-                        type="button"
-                        onClick={handlePartialUpdate}
-                        disabled={isLoading}
-                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                    >
-                        {isLoading ? "Actualizando..." : "Actualizar"}
-                    </button>
+                */}
+                <ToastContainer />
+                <div className="bg-white flex justify-center items-start w-full pt-2 pb-4">
+                    <div className="w-full md:w-11/12 lg:w-3/4 mx-auto">
+                        <fieldset className="border border-gray-200 rounded-lg p-4 bg-white">
+                            <legend className="px-2 text-lg font-semibold text-gray-700">Datos del Vendedor</legend>
+                            <form onSubmit={handlePartialUpdate}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="names" className="mb-2 block text-sm font-semibold">Nombres:</label>
+                                        <input
+                                            type="text"
+                                            id="names"
+                                            name="names"
+                                            placeholder="Ana Maria"
+                                            value={seller?.names || ""}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="lastNames" className="mb-2 block text-sm font-semibold">Apellidos:</label>
+                                        <input
+                                            type="text"
+                                            id="lastNames"
+                                            name="lastNames"
+                                            placeholder="Perez Rodriguez"
+                                            value={seller?.lastNames || ""}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="numberID" className="mb-2 block text-sm font-semibold">N° Identificación:</label>
+                                        <input
+                                            type="number"
+                                            id="numberID"
+                                            name="numberID"
+                                            placeholder="1734567897"
+                                            value={seller?.numberID || ""}
+                                            onChange={handleChange}
+                                            disabled
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 bg-gray-100"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="username" className="mb-2 block text-sm font-semibold">Nombre de Usuario:</label>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            name="username"
+                                            placeholder="usuario123"
+                                            value={seller?.username || ""}
+                                            onChange={handleChange}
+                                            disabled
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 bg-gray-100"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico:</label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            placeholder="correo@ejemplo.com"
+                                            value={seller?.email || ""}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="SalesCity" className="mb-2 block text-sm font-semibold">Ciudad de Ventas:</label>
+                                        <input
+                                            type="text"
+                                            id="SalesCity"
+                                            name="SalesCity"
+                                            placeholder="Quito"
+                                            value={seller?.SalesCity || ""}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Teléfono:</label>
+                                        <input
+                                            type="number"
+                                            id="PhoneNumber"
+                                            name="PhoneNumber"
+                                            placeholder="0987654324"
+                                            value={seller?.PhoneNumber || ""}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="status" className="mb-2 block text-sm font-semibold">Estado:</label>
+                                        <select
+                                            id="status"
+                                            name="status"
+                                            value={seller.status.toString()}
+                                            onChange={(e) => setSeller({ ...seller, status: e.target.value === "true" })}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        >
+                                            <option value="true">Activo</option>
+                                            <option value="false">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4">
+                                    <button type="submit" className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
+                                        {isLoading ? 'Actualizando...' : 'Actualizar'}
+                                    </button>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
-            
-            <h2 className="text-2xl font-bold mb-4">Actualizar Vendedor</h2>
-            <ToastContainer />
-            <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block mb-2">Nombres:</label>
-                        <input
-                            type="text"
-                            id="names"
-                            name="names"
-                            value={seller?.names || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Apellidos:</label>
-                        <input
-                            type="text"
-                            id="lastNames"
-                            name="lastNames"
-                            value={seller?.lastNames || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Número de Identificación:</label>
-                        <input
-                            type="number"
-                            id="numberID"
-                            name="numberID"
-                            value={seller?.numberID || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                            disabled
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Nombre de Usuario:</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={seller?.username || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                            disabled
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Email:</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={seller?.email || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Ciudad de Ventas:</label>
-                        <input
-                            type="text"
-                            id="SalesCity"
-                            name="SalesCity"
-                            value={seller?.SalesCity || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Teléfono:</label>
-                        <input
-                            type="number"
-                            id="PhoneNumber"
-                            name="PhoneNumber"
-                            value={seller?.PhoneNumber || ""}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-2">Estado:</label>
-                        <select
-                            name="status"
-                            value={seller.status.toString()}
-                            onChange={(e) => setSeller({...seller, status: e.target.value === "true"})}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="true">Activo</option>
-                            <option value="false">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-
-                
-
-            </form>
         </div>
     );
 }
