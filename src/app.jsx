@@ -11,7 +11,6 @@ import Dashboard from './layout/Dasboard';
 import Main from './pages/Main';
 import Sellers from './pages/Sellers';
 import UpdateSeller from './pages/UpdateSeller';
-import SellerDetaill from './pages/SellerDetatill';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Proforma from './pages/Proforma';
@@ -19,7 +18,6 @@ import Clients from './pages/Clients';
 import { AuthProvider } from './context/AuthProvider';
 import RegisterProducts from './pages/RegisterProducts';
 import RegisterCients from './pages/RegisterClients';
-import ClientDetaill from './pages/ClientDetaill';
 import UpdateClient from './pages/UpdateClient';
 
 
@@ -46,7 +44,7 @@ function App() {
                         >
                             <Route index element={<Main />} />
                             <Route path="sellers/" element={<Sellers />} />
-                            <Route path="sellers/:id" element={<SellerDetaill/>} />
+                            
                             <Route path="sellers/register" element={<Register />} />
                             <Route path="sellers/update/:id" element={<UpdateSeller />} />
 
@@ -55,7 +53,7 @@ function App() {
                             
 
                             <Route path="clients/" element={<Clients/>} />
-                            <Route path="clients/:ruc" element={<ClientDetaill/>} />
+                            {/* La ruta de detalle por RUC se ha eliminado: se utiliza un modal desde `Clients`/`TablaClients` */}
                             <Route path="clients/register" element={<RegisterCients/>} />
                             <Route path="clients/update/:ruc" element={<UpdateClient/>} />
 

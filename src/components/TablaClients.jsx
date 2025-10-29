@@ -11,6 +11,9 @@ const ClientList = () => {
     const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchRuc, setSearchRuc] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalClient, setModalClient] = useState(null);
+    const [modalLoading, setModalLoading] = useState(false);
 
     const fetchClients = async () => {
         setIsLoading(true);
@@ -84,6 +87,57 @@ const ClientList = () => {
         initializeProducts();
     }, []);
 
+    // Abrir modal y cargar información del cliente por RUC
+    const openClientModal = async (ruc) => {
+        setModalOpen(true);
+        setModalLoading(true);
+        try {
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem('token');
+            const url = `${backendUrl}/clients/${ruc}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const response = await axios.get(url, options);
+            setModalClient(response.data.data);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al cargar cliente');
+            setModalClient(null);
+        } finally {
+            setModalLoading(false);
+        }
+    };
+
+    // Eliminar cliente desde el modal
+    const eliminarClientFromModal = async (id) => {
+        const confirmDelete = window.confirm('¿Seguro que deseas eliminar este cliente?');
+        if (!confirmDelete) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const url = `${backendUrl}/clients/delete/${id}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            await axios.delete(url, options);
+            toast.success('Cliente eliminado con éxito');
+            setModalOpen(false);
+            setModalClient(null);
+            setTimeout(() => fetchClients(), 800);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al eliminar el cliente');
+        }
+    };
+
     // Resetear la página cuando cambian los clientes
     useEffect(() => {
         setCurrentPage(1);
@@ -147,7 +201,7 @@ const ClientList = () => {
                         <div 
                             key={client.Ruc || client.ruc} 
                             className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
-                            onClick={() => navigate(`/dashboard/clients/${client.Ruc || client.ruc}`)}
+                            onClick={() => openClientModal(client.Ruc || client.ruc)}
                         >
                             <h2 className="text-xl font-bold text-gray-800 whitespace-normal break-words">
                                 {client.Name || client.name}
@@ -161,6 +215,70 @@ const ClientList = () => {
                         ));
                     })()}
                 </div>
+
+                {/* Modal: detalle cliente */}
+                {modalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                        <div className="absolute inset-0 bg-black/50" onClick={() => setModalOpen(false)} />
+                        <div role="dialog" aria-modal="true" className="relative z-10 w-full max-w-3xl bg-white rounded-lg shadow-2xl overflow-hidden ring-1 ring-black/5">
+                            <div className="flex items-center justify-between px-5 py-3 border-b bg-white">
+                                <h3 className="text-lg font-semibold">Detalle del Cliente</h3>
+                                <button aria-label="Cerrar" onClick={() => setModalOpen(false)} className="text-gray-500 hover:text-gray-800 p-2 rounded-md">✕</button>
+                            </div>
+
+                            <div className="p-5">
+                                {modalLoading ? (
+                                    <div className="flex justify-center py-8"><Loader /></div>
+                                ) : modalClient ? (
+                                    <div className="flex flex-col md:flex-row gap-6">
+                                        <div className="md:w-40 flex items-center justify-center md:justify-start">
+                                            <div className="bg-gray-50 p-3 rounded-lg">
+                                                <img src={modalClient.image || '/images/seller.png'} alt={`Imagen ${modalClient.Name || modalClient.name}`} className="w-36 h-36 md:w-44 md:h-44 object-cover rounded-full border-4 border-blue-600" />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Nombre</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Name || modalClient.name || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">RUC</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Ruc || modalClient.ruc || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Dirección</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Address || modalClient.address || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Teléfono</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.telephone || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Email</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.email || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Estado</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.state || 'N/A'}</dd>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-center py-4 text-gray-600">No se encontraron datos</p>
+                                )}
+                            </div>
+
+                            <div className="px-5 py-4 bg-gray-50 border-t flex items-center justify-end gap-3">
+                                <button onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-md bg-white border text-sm text-gray-700 hover:bg-gray-100">Cancelar</button>
+                                <button onClick={() => { if(modalClient) navigate(`/dashboard/clients/update/${modalClient.Ruc || modalClient.ruc}`); }} className="px-4 py-2 rounded-md bg-green-600 text-white text-sm hover:bg-green-700">Actualizar</button>
+                                <button onClick={() => { if(modalClient) eliminarClientFromModal(modalClient._id || modalClient.id); }} className="px-4 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Controles de paginación */}
                 {clients.length > itemsPerPage && (

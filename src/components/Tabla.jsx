@@ -17,6 +17,9 @@ const Tabla = () => {
     const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchId, setSearchId] = useState("");
     const [statusFilter, setStatusFilter] = useState("Todos"); // Estado inicial: "Todos"
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalSeller, setModalSeller] = useState(null);
+    const [modalLoading, setModalLoading] = useState(false);
 
     // Función para listar todos los vendedores
     const listarSellers = async () => {
@@ -107,6 +110,61 @@ const Tabla = () => {
         listarSellers();
     }, []);
 
+    // Abrir modal y cargar datos del vendedor por id
+    const openSellerModal = async (id) => {
+        setModalOpen(true);
+        setModalLoading(true);
+        try {
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem("token");
+            const url = `${backendUrl}/sellers/${id}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const respuesta = await axios.get(url, options);
+            setModalSeller(respuesta.data.data);
+            console.debug('[Tabla] openSellerModal: loaded', respuesta.data.data._id);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error cargando vendedor');
+            setModalSeller(null);
+        } finally {
+            setModalLoading(false);
+        }
+    };
+
+    // Eliminar vendedor desde el modal (reusa la lógica de SellerDetatill)
+    const eliminarSellerFromModal = async (id) => {
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este vendedor?");
+        if (!confirmacion) return;
+
+        try {
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem("token");
+            const url = `${backendUrl}/deleteSellerinfo/${id}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const respuesta = await axios.delete(url, options);
+            toast.success(respuesta.data.msg || 'Vendedor eliminado');
+            setModalOpen(false);
+            setModalSeller(null);
+            // refrescar lista
+            setTimeout(() => {
+                listarSellers();
+            }, 800);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al eliminar el vendedor');
+        }
+    };
+
     // Resetear página cuando cambian sellers o el filtro
     useEffect(() => {
         setCurrentPage(1);
@@ -120,7 +178,10 @@ const Tabla = () => {
             }
         };
         const handleKey = (e) => {
-            if (e.key === 'Escape') setMenuOpen(false);
+            if (e.key === 'Escape') {
+                setMenuOpen(false);
+                setModalOpen(false);
+            }
         };
         document.addEventListener('mousedown', handleClickOutside);
         document.addEventListener('keydown', handleKey);
@@ -191,6 +252,88 @@ const Tabla = () => {
                         </button>
                     </div>
                 </div>
+
+                {/* Modal mejorado: detalle vendedor */}
+                {modalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                        <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={() => setModalOpen(false)} />
+
+                        <div role="dialog" aria-modal="true" className="relative z-10 w-full max-w-3xl bg-white rounded-lg shadow-2xl overflow-hidden ring-1 ring-black/5">
+                            {/* Header */}
+                            <div className="flex items-center justify-between px-5 py-3 border-b bg-white">
+                                <div className="flex items-center gap-3">
+                                    <h3 className="text-lg font-semibold">Detalle del Vendedor</h3>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button aria-label="Cerrar" onClick={() => setModalOpen(false)} className="text-gray-500 hover:text-gray-800 p-2 rounded-md">✕</button>
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="p-5">
+                                {modalLoading ? (
+                                    <div className="flex justify-center py-8"><Loader /></div>
+                                ) : modalSeller ? (
+                                    <div className="flex flex-col md:flex-row gap-6">
+                                        {/* Imagen */}
+                                        <div className="md:w-40 flex items-center justify-center md:justify-start">
+                                            <div className="bg-gray-50 p-3 rounded-lg">
+                                                <img src={modalSeller.image || '/images/seller.png'} alt={`Imagen ${modalSeller.names}`} className="w-36 h-36 md:w-44 md:h-44 object-cover rounded-full border-4 border-blue-600" />
+                                            </div>
+                                        </div>
+
+                                        {/* Datos */}
+                                        <div className="flex-1">
+                                            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Nombres</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.names || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Apellidos</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.lastNames || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Cédula</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.cedula || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Usuario</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.username || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Email</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.email || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Ciudad de Ventas</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.SalesCity || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Teléfono</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.PhoneNumber || 'N/A'}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt className="text-xs text-gray-500">Estado</dt>
+                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.status ? 'Activo' : 'Inactivo'}</dd>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-center py-4 text-gray-600">No se encontraron datos</p>
+                                )}
+                            </div>
+
+                            {/* Footer */}
+                            <div className="px-5 py-4 bg-gray-50 border-t flex items-center justify-end gap-3">
+                                <button onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-md bg-white border text-sm text-gray-700 hover:bg-gray-100">Cancelar</button>
+                                <button onClick={() => { if(modalSeller) navigate(`/dashboard/sellers/update/${modalSeller._id}`); }} className="px-4 py-2 rounded-md bg-green-600 text-white text-sm hover:bg-green-700">Actualizar</button>
+                                <button onClick={() => { if(modalSeller) eliminarSellerFromModal(modalSeller._id); }} className="px-4 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Filtros de estado movidos al menú ☰ */}
@@ -208,12 +351,12 @@ const Tabla = () => {
                         const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
                         const startIndex = (currentPage - 1) * itemsPerPage;
                         const currentItems = filtered.slice(startIndex, startIndex + itemsPerPage);
-                        return currentItems.map((seller) => (
-                        <div
-                            key={seller._id}
-                            className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
-                            onClick={() => navigate(`/dashboard/sellers/${seller._id}`)}
-                        >
+                            return currentItems.map((seller) => (
+                            <div
+                                key={seller._id}
+                                className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
+                                onClick={() => openSellerModal(seller._id)}
+                            >
                             <div className="flex flex-col md:flex-row items-center gap-4">
                                 {/* Información del vendedor en grid para mejor distribución */}
                                 <div className="flex-1 text-left">
