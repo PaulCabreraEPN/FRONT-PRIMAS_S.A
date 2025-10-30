@@ -7,20 +7,26 @@ import LineChart from './LineChart';
 const StatictsBarS = () => {
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-          {/* Columna Izquierda (2 filas) */}
-          <div className="flex flex-col gap-6">
-            <div className="bg-white shadow-md rounded-lg p-0 flex justify-center items-center h-auto min-h-40">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+          {/* Tarjeta 1: BarChart */}
+          <div className="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between">
+            <div className="flex-1 flex justify-center items-center">
               <BarChart className="w-full h-full" />
             </div>
-            <div className="bg-white shadow-md rounded-lg p-0 flex justify-center items-center h-auto min-h-40">
+          </div>
+
+          {/* Tarjeta 2: LineChart */}
+          <div className="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between">
+            <div className="flex-1 flex justify-center items-center">
               <LineChart className="w-full h-full" />
             </div>
           </div>
-          
-          {/* Columna Derecha (1 sola fila) */}
-          <div className="bg-white shadow-md rounded-lg p-0 flex justify-center items-center h-auto min-h-80">
-            <DoughnutChart className="w-full h-full" />
+
+          {/* Tarjeta 3: DoughnutChart */}
+          <div className="bg-white shadow-md rounded-lg p-6 flex flex-col justify-between">
+            <div className="flex-1 flex justify-center items-center">
+              <DoughnutChart className="w-full h-full" />
+            </div>
           </div>
         </div>
       );

@@ -1,6 +1,6 @@
 // DoughnutChart.js
 import React, { useEffect, useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
 import Loader from '../Carga';
@@ -25,9 +25,10 @@ const DoughnutChart = () => {
                 },
             };
             const response = await axios.get(url, options);
-            const data = response.data;
-            setnames(data.names);
-            setsales(data.totalSales);
+            // El backend devuelve { status, code, msg, data: { names, totalSales } }
+            const data = response.data?.data || {};
+            setnames(data.names || []);
+            setsales(data.totalSales || []);
             
             
         } catch (error) {
@@ -41,51 +42,43 @@ const DoughnutChart = () => {
         getSellerTop();
     }, []);
 
-    const doughnutData = {
+    // generar paleta dinámica según la cantidad de vendedores
+    const palette = [
+        'rgba(59, 130, 246, 0.8)', // blue-500
+        'rgba(16, 185, 129, 0.8)', // green-500
+        'rgba(139, 92, 246, 0.8)', // purple-500
+        'rgba(245, 158, 11, 0.8)', // amber-500
+        'rgba(239, 68, 68, 0.8)',  // red-500
+        'rgba(20, 184, 166, 0.8)', // teal-500
+        'rgba(99, 102, 241, 0.8)', // indigo-500
+    ];
+
+    const backgroundColor = sales.map((_, i) => palette[i % palette.length]);
+    const borderColor = backgroundColor.map(c => c.replace('0.8', '1'));
+
+    const pieData = {
         labels: names,
         datasets: [
             {
-                label: 'Pedidos generados $',
+                label: 'Ventas totales',
                 data: sales,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    'rgba(255, 205, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 99, 71, 0.6)',
-                    'rgba(255, 165, 0, 0.6)',
-                    'rgba(0, 255, 255, 0.6)',
-                    'rgba(128, 0, 128, 0.6)',
-                ],
-                borderColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(255, 159, 64)',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
-                    'rgb(153, 102, 255)',
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 99, 71)',
-                    'rgb(255, 165, 0)',
-                    'rgb(0, 255, 255)',
-                    'rgb(128, 0, 128)',
-                ],
-                borderWidth: 1.5,
+                backgroundColor,
+                borderColor,
+                borderWidth: 1,
             },
         ],
     };
 
-    const doughnutOptions = {
+    const pieOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             title: {
                 display: true,
-                text: 'Ventas generadas',
+                text: 'Ventas por Vendedor',
             },
-            tooltip: {
-                enabled: true,
-            },
+            tooltip: { enabled: true },
+            legend: { position: 'right' },
         },
     };
 
@@ -94,9 +87,11 @@ const DoughnutChart = () => {
     }
 
     return (
-        <div className="w-full h-full p-10">
-            <h1 style={{ textAlign: 'center' }}>Ingresos por Vendedor</h1>
-            <Doughnut data={doughnutData} options={doughnutOptions} />
+        <div className="w-full h-64 p-6">
+            <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas por Vendedor</div>
+            <div className="w-full h-full">
+                <Pie data={pieData} options={pieOptions} />
+            </div>
         </div>
     );
 };
