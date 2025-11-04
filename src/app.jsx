@@ -12,6 +12,7 @@ import Main from './pages/Main';
 import Sellers from './pages/Sellers';
 import UpdateSeller from './pages/UpdateSeller';
 import Products from './pages/Products';
+import UpdateProduct from './pages/UpdateProducts';
 import Orders from './pages/Orders';
 import Proforma from './pages/Proforma';
 import Clients from './pages/Clients';
@@ -44,16 +45,15 @@ function App() {
                         >
                             <Route index element={<Main />} />
                             <Route path="sellers/" element={<Sellers />} />
-                            
                             <Route path="sellers/register" element={<Register />} />
                             <Route path="sellers/update/:id" element={<UpdateSeller />} />
 
                             <Route path="products/" element={<Products/>} />
                             <Route path="products/register" element={<RegisterProducts/>} />
+                            <Route path="products/update/:id" element={<UpdateProduct/>} />
                             
 
                             <Route path="clients/" element={<Clients/>} />
-                            {/* La ruta de detalle por RUC se ha eliminado: se utiliza un modal desde `Clients`/`TablaClients` */}
                             <Route path="clients/register" element={<RegisterCients/>} />
                             <Route path="clients/update/:ruc" element={<UpdateClient/>} />
 

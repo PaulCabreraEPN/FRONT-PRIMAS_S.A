@@ -29,6 +29,9 @@ const TablaProducts = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const [searchActive, setSearchActive] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalProduct, setModalProduct] = useState(null);
+    const [modalLoading, setModalLoading] = useState(false);
 
     const categories = {
         rollers: { name: "Rodillos", keywords: ["ROD", "ROLA", "ROLITO"] },
@@ -126,6 +129,67 @@ const TablaProducts = () => {
         } catch (error) {
             toast.error(error.response?.data?.msg || "Error al buscar el producto");
             setProducts([]);
+        }
+    };
+
+    const openProductModal = async (id) => {
+        try {
+            setModalLoading(true);
+            setModalOpen(true);
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem('token');
+            const url = `${backendUrl}/products/${id}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const res = await axios.get(url, options);
+            const data = res.data?.data || null;
+            if (data) {
+                setModalProduct({ ...data, keywords: obtenerKeywords(data.product_name) });
+            } else {
+                toast.warn(res.data?.msg || 'No se encontró el producto');
+                setModalProduct(null);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.msg || 'Error al obtener detalle del producto');
+            setModalProduct(null);
+            setModalOpen(false);
+        } finally {
+            setModalLoading(false);
+        }
+    };
+
+    const eliminarProductFromModal = async (id) => {
+        if (!confirm('¿Confirma que desea eliminar este producto?')) return;
+        try {
+            setModalLoading(true);
+            const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const token = localStorage.getItem('token');
+            const url = `${backendUrl}/products/delete/${id}`;
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+            const res = await axios.delete(url, options);
+            if (res.data && (res.data.status === 'success' || res.data.status === 'warning')) {
+                toast.success(res.data.msg || 'Producto eliminado');
+                // refrescar lista
+                await handleMostrarTodos();
+                setModalOpen(false);
+            } else {
+                toast.warn(res.data?.msg || 'No se pudo eliminar el producto');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.msg || 'Error al eliminar el producto');
+        } finally {
+            setModalLoading(false);
         }
     };
 
@@ -260,7 +324,7 @@ const TablaProducts = () => {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-4">
                         {currentItems.map((product) => (
-                            <div key={product.id} className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg">
+                            <div key={product.id} onClick={() => openProductModal(product.id)} className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg" role="button" tabIndex={0}>
                                 <div className="flex flex-col md:flex-row items-center gap-4">
                                     <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
@@ -288,6 +352,65 @@ const TablaProducts = () => {
                             </div>
                         ))}
                     </div>
+
+                    {/* Modal de detalle de producto */}
+                    {modalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpen(false)}></div>
+                            <div className="relative bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-2/3">
+                                <div className="flex justify-between items-center p-4 border-b">
+                                    <h3 className="text-lg font-semibold">Detalle del Producto</h3>
+                                    <button className="text-gray-500 hover:text-gray-700" onClick={() => setModalOpen(false)}>✕</button>
+                                </div>
+                                <div className="p-6 flex flex-col md:flex-row gap-6">
+                                    <div className="flex-shrink-0 w-full md:w-48 flex items-center justify-center">
+                                        {modalLoading ? (
+                                            <div>Cargando...</div>
+                                        ) : modalProduct ? (
+                                            <img src={modalProduct.imgUrl} alt={modalProduct.product_name} className="w-40 h-40 object-contain rounded-md shadow-sm" />
+                                        ) : (
+                                            <div className="text-gray-500">No hay datos</div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <p className="text-sm text-gray-600">ID</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.id}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Nombre</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.product_name}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Referencia</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.reference}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Precio</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.price}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Stock</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.stock}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600">Medida</p>
+                                            <p className="font-semibold text-gray-800">{modalProduct?.measure}</p>
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <p className="text-sm text-gray-600">Descripción</p>
+                                            <p className="text-gray-700 text-sm">{modalProduct?.description}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end gap-3 p-4 border-t">
+                                    <button onClick={() => setModalOpen(false)} className="px-4 py-2 bg-white border rounded text-gray-700 hover:bg-gray-50">Cancelar</button>
+                                    <button onClick={() => { setModalOpen(false); navigate(`/dashboard/products/update/${modalProduct?.id}`); }} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Actualizar</button>
+                                    <button onClick={() => eliminarProductFromModal(modalProduct?.id)} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {totalPages > 1 && (
                         <div className="flex justify-center items-center gap-2 sm:gap-3 mt-4">
