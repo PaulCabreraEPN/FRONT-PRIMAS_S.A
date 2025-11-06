@@ -114,8 +114,8 @@ const TablaProforma = () => {
                 <th className="border p-2">Cantidad</th>
                 <th className="border p-2">Precio Unitario</th>
                 <th className="border p-2">Total</th>
-                <th className="border p-2">Desc %</th>
-                <th className="border p-2">Valor Desc</th>
+                <th className="border p-2">Descuento unitario</th>
+                <th className="border p-2">Valor Descontado</th>
                 <th className="border p-2">Total Final</th>
               </tr>
             </thead>
@@ -124,11 +124,11 @@ const TablaProforma = () => {
                 products.map((product, index) => (
                   <tr key={index} className="text-center border">
                     <td className="border p-2">{product.productId}</td>
-                    <td className="border p-2">{product.productDetails?.product_name || "-"}</td>
+                    <td className="border p-2 text-left">{product.productDetails?.product_name || "-"}</td>
                     <td className="border p-2">{product.quantity}</td>
                     <td className="border p-2">${product.productDetails?.price?.toFixed(2) || "0.00"}</td>
                     <td className="border p-2">${(product.quantity * (product.productDetails?.price || 0)).toFixed(2)}</td>
-                    <td className="border p-2">-{discountApplied}%</td>
+                    <td className="border p-2">${((product.productDetails?.price || 0) * 0.15).toFixed(3)}</td>
                     <td className="border p-2">-${((product.productDetails?.price || 0) * (discountApplied / 100) * product.quantity).toFixed(2)}</td>
                     <td className="border p-2">${(product.quantity * (product.productDetails?.price || 0) * (1 - discountApplied / 100)).toFixed(2)}</td>
                   </tr>
