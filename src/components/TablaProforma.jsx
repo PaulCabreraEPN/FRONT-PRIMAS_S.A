@@ -128,8 +128,8 @@ const TablaProforma = () => {
                     <td className="border p-2">{product.quantity}</td>
                     <td className="border p-2">${product.productDetails?.price?.toFixed(2) || "0.00"}</td>
                     <td className="border p-2">${(product.quantity * (product.productDetails?.price || 0)).toFixed(2)}</td>
-                    <td className="border p-2">${((product.productDetails?.price || 0) * 0.15).toFixed(3)}</td>
-                    <td className="border p-2">-${((product.productDetails?.price || 0) * (discountApplied / 100) * product.quantity).toFixed(2)}</td>
+                    <td className="border p-2">{`$${(Math.floor(((product.productDetails?.price || 0) * 0.15) * 100) / 100).toFixed(2)}`}</td>
+                    <td className="border p-2">{`-$${(Math.round((((product.productDetails?.price || 0) * (discountApplied / 100) * product.quantity) + Number.EPSILON) * 100) / 100).toFixed(2)}`}</td>
                     <td className="border p-2">${(product.quantity * (product.productDetails?.price || 0) * (1 - discountApplied / 100)).toFixed(2)}</td>
                   </tr>
                 ))
