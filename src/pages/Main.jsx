@@ -69,9 +69,11 @@ const Main = () => {
 
     return (
         <>
-        <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
-        <hr className='my-4' />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div id="main-header">
+                    <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
+                    <hr className='my-4' />
+                </div>
+                <div id="top-cards" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {/* Card: Orders */}
             <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
                 <div className="flex-shrink-0 mr-4 text-blue-600">

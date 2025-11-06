@@ -73,10 +73,7 @@ const DoughnutChart = () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            title: {
-                display: true,
-                text: 'Ventas por Vendedor',
-            },
+            title: { display: false }, // desactivado para evitar duplicidad con el header
             tooltip: { enabled: true },
             legend: { position: 'right' },
         },
@@ -87,9 +84,9 @@ const DoughnutChart = () => {
     }
 
     return (
-        <div className="w-full h-64 p-6">
+        <div className="w-full h-full min-h-0">
             <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas por Vendedor</div>
-            <div className="w-full h-full">
+            <div className="w-full h-full min-h-0">
                 <Pie data={pieData} options={pieOptions} />
             </div>
         </div>

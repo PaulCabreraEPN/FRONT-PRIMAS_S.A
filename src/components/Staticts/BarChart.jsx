@@ -70,10 +70,7 @@ const BarChart = () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            title: {
-                display: true,
-                text: 'Top 5 Vendedores',
-            },
+            title: { display: false }, // desactivado para evitar título duplicado (usamos el header manual)
             legend: { display: false },
             tooltip: {
                 enabled: true,
@@ -102,9 +99,9 @@ const BarChart = () => {
     }
 
     return (
-        <div className="w-full h-64 p-4">
+        <div className="w-full h-full min-h-0">
             <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Top 5 Vendedores</div>
-            <div className="w-full h-full">
+            <div className="w-full h-full min-h-0">
                 <Bar data={data} options={options} />
             </div>
         </div>

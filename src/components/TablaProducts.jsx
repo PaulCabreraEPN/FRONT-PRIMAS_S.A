@@ -255,6 +255,52 @@ const TablaProducts = () => {
         applyCategory();
     }, [products, currentCategory, searchActive]);
 
+    // Filtrado en vivo: mientras se escribe en el input de búsqueda
+    useEffect(() => {
+        const term = String(searchId || "").trim();
+        // Si no hay lista maestra, no intentamos filtrar (inicialice primero)
+        if (!Array.isArray(allProducts) || allProducts.length === 0) return;
+
+        if (!term) {
+            // Restaurar según la categoría actual
+            if (!currentCategory || currentCategory === 'all') {
+                setFilteredProducts(allProducts);
+            } else {
+                // Aplicar filtro por categoría sobre la lista maestra
+                const selectedCategory = categories[currentCategory];
+                if (!selectedCategory) {
+                    setFilteredProducts(allProducts);
+                } else {
+                    const filtered = allProducts.filter((product) =>
+                        Array.isArray(product.keywords) && product.keywords.some(k => selectedCategory.keywords.includes(k))
+                    );
+                    setFilteredProducts(filtered);
+                }
+            }
+            setSearchActive(false);
+            setCurrentPage(1);
+            return;
+        }
+
+        const lower = term.toLowerCase();
+        // Base: respetar la categoría seleccionada
+        const base = (currentCategory && currentCategory !== 'all')
+            ? allProducts.filter((product) => Array.isArray(product.keywords) && product.keywords.some(k => categories[currentCategory]?.keywords.includes(k)))
+            : allProducts;
+
+        const filtered = base.filter((p) => {
+            return (
+                String(p.id || '').includes(term) ||
+                String(p.product_name || '').toLowerCase().includes(lower) ||
+                String(p.reference || '').toLowerCase().includes(lower)
+            );
+        });
+
+        setFilteredProducts(filtered);
+        setSearchActive(true);
+        setCurrentPage(1);
+    }, [searchId, allProducts, currentCategory]);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [products, currentCategory]);
@@ -285,12 +331,12 @@ const TablaProducts = () => {
                             </button>
                             {menuOpen && (
                                 <div className="absolute left-0 mt-2 w-56 bg-white border rounded shadow-lg z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button-products">
-                            <button onClick={async () => { setCurrentCategory('all'); await handleMostrarTodos(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
-                            <button onClick={async () => { setSearchActive(false); await filterByCategory('rollers'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Rodillos</button>
-                            <button onClick={async () => { setSearchActive(false); await filterByCategory('brushes'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Brochas</button>
-                            <button onClick={async () => { setSearchActive(false); await filterByCategory('spatulas'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Espátulas</button>
-                            <button onClick={async () => { setSearchActive(false); await filterByCategory('trowels'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Llanas</button>
-                            <button onClick={async () => { setSearchActive(false); await filterByCategory('accessories'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Accesorios</button>
+                                    <button onClick={async () => { setCurrentCategory('all'); await handleMostrarTodos(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
+                                    <button onClick={async () => { setSearchActive(false); await filterByCategory('rollers'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Rodillos</button>
+                                    <button onClick={async () => { setSearchActive(false); await filterByCategory('brushes'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Brochas</button>
+                                    <button onClick={async () => { setSearchActive(false); await filterByCategory('spatulas'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Espátulas</button>
+                                    <button onClick={async () => { setSearchActive(false); await filterByCategory('trowels'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Llanas</button>
+                                    <button onClick={async () => { setSearchActive(false); await filterByCategory('accessories'); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Accesorios</button>
                                 </div>
                             )}
                         </div>
@@ -302,8 +348,8 @@ const TablaProducts = () => {
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-44 max-w-xs"
+                                aria-label="Buscar producto por ID, nombre o referencia"
                             />
-                            <button onClick={getProductsById} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Buscar</button>
                         </div>
                     </div>
 

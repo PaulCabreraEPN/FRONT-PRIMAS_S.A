@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const ClientList = () => {
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
+    const [allClients, setAllClients] = useState([]); // lista maestra
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6; // 2 filas de 3 columnas
     const [searchRuc, setSearchRuc] = useState("");
@@ -31,6 +32,7 @@ const ClientList = () => {
             // Acceder a los clientes según la estructura del backend
             const arr = Array.isArray(response.data.data) ? response.data.data : [];
             setClients(arr);
+            setAllClients(arr);
             setCurrentPage(1);
         } catch (error) {
             toast.error("Error al obtener los clientes");
@@ -143,6 +145,26 @@ const ClientList = () => {
         setCurrentPage(1);
     }, [clients]);
 
+    // Filtrado en vivo: mientras se escribe en el input searchRuc (filtra por RUC o nombre)
+    useEffect(() => {
+        const term = String(searchRuc || "").trim();
+        if (!term) {
+            setClients(allClients);
+            setCurrentPage(1);
+            return;
+        }
+
+        const lower = term.toLowerCase();
+        const filtered = (Array.isArray(allClients) ? allClients : []).filter((c) => {
+            const ruc = String(c.Ruc || c.ruc || '');
+            const name = String(c.Name || c.name || '').toLowerCase();
+            return ruc.includes(term) || name.includes(lower);
+        });
+
+        setClients(filtered);
+        setCurrentPage(1);
+    }, [searchRuc, allClients]);
+
     return (
         <div className="p-6 min-h-screen">
             <ToastContainer />
@@ -155,17 +177,12 @@ const ClientList = () => {
                         <div className="flex items-center gap-2">
                             <input
                                 type="text"
-                                placeholder="Ingrese RUC"
+                                placeholder="Ingrese RUC o nombre"
                                 value={searchRuc}
                                 onChange={(e) => setSearchRuc(e.target.value)}
                                 className="border p-2 rounded w-44 max-w-xs"
+                                aria-label="Buscar cliente por RUC o nombre"
                             />
-                            <button
-                                onClick={fetchClientByRuc}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                            >
-                                Buscar
-                            </button>
                             <button
                                 onClick={fetchClients}
                                 className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition"

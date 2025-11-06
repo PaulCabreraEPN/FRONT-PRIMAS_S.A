@@ -100,11 +100,43 @@ const Tabla = () => {
             if (searchActive) return sellers;
             return allSellers;
         }
-        // Si hay filtro, aplicarlo también sobre la lista maestra para que funcione tras una búsqueda
-        return allSellers.filter((seller) =>
+        // Si hay filtro, aplicarlo también sobre la lista maestra o sobre los resultados de búsqueda
+        const source = searchActive ? sellers : allSellers;
+        return source.filter((seller) =>
             statusFilter === "Activo" ? seller.status : !seller.status
         );
     };
+
+    // Filtrado en vivo: cuando el usuario escribe en el cuadro de búsqueda
+    useEffect(() => {
+        const term = String(searchId || "").trim();
+        // Si el campo está vacío, restauramos la lista completa y desactivamos el modo búsqueda
+        if (!term) {
+            setSellers(allSellers);
+            setSearchActive(false);
+            setCurrentPage(1);
+            return;
+        }
+
+        // Fuente base: respetar el filtro de estado actual
+        const base = statusFilter === 'Todos'
+            ? allSellers
+            : allSellers.filter((seller) => statusFilter === 'Activo' ? seller.status : !seller.status);
+
+        const lower = term.toLowerCase();
+        const filtered = base.filter((s) => {
+            return (
+                String(s.cedula || '') .includes(term) ||
+                String(s.names || '').toLowerCase().includes(lower) ||
+                String(s.lastNames || '').toLowerCase().includes(lower) ||
+                String(s.username || '').toLowerCase().includes(lower)
+            );
+        });
+
+        setSellers(filtered);
+        setSearchActive(true);
+        setCurrentPage(1);
+    }, [searchId, allSellers, statusFilter]);
 
     useEffect(() => {
         listarSellers();
@@ -231,13 +263,8 @@ const Tabla = () => {
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-44 max-w-xs"
+                                aria-label="Buscar vendedor por cédula, nombre o usuario"
                             />
-                            <button
-                                onClick={buscarSeller}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                            >
-                                Buscar
-                            </button>
                         </div>
                     </div>
 

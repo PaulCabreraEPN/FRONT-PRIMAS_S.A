@@ -11,6 +11,7 @@ const TablaOrders = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [searchId, setSearchId] = useState("");
     const [orders, setOrders] = useState([]);
+    const [allOrders, setAllOrders] = useState([]); // lista maestra
     const [orderStates, setOrderStates] = useState({});
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +39,7 @@ const TablaOrders = () => {
             // Acceder a las órdenes según la estructura del backend
             const ordersArray = Array.isArray(response.data.data) ? response.data.data : [];
             setOrders(ordersArray);
+            setAllOrders(ordersArray);
             // Actualizar estados de los pedidos
             const newOrderStates = {};
             ordersArray.forEach(order => {
@@ -173,10 +175,42 @@ const TablaOrders = () => {
     // Filtrar las órdenes según el estado seleccionado
     const filterByState = (state) => {
         setCurrentStateFilter(state);
-        const filtered = orders.filter(order => orderStates[order._id] === state);
+        const source = Array.isArray(allOrders) && allOrders.length ? allOrders : orders;
+        const filtered = source.filter(order => orderStates[order._id] === state);
         setFilteredOrders(filtered);
         setCurrentPage(1);
     };
+
+    // Filtrado en vivo: cuando el usuario escribe en el input searchId
+    useEffect(() => {
+        const term = String(searchId || "").trim();
+        // Si no hay término, restauramos según el filtro de estado actual
+        if (!term) {
+            if (currentStateFilter === 'all') {
+                setFilteredOrders(allOrders);
+            } else {
+                const base = Array.isArray(allOrders) && allOrders.length ? allOrders : orders;
+                setFilteredOrders(base.filter(o => orderStates[o._id] === currentStateFilter));
+            }
+            setCurrentPage(1);
+            return;
+        }
+
+        const lower = term.toLowerCase();
+        const base = currentStateFilter === 'all' ? (Array.isArray(allOrders) ? allOrders : orders) : (Array.isArray(allOrders) && allOrders.length ? allOrders.filter(o => orderStates[o._id] === currentStateFilter) : orders.filter(o => orderStates[o._id] === currentStateFilter));
+
+        const filtered = (base || []).filter((o) => {
+            const codeMatch = String(o._id || '').includes(term);
+            const sellerName = (o.seller && ((o.seller.names || '') + ' ' + (o.seller.lastNames || ''))) || '';
+            const sellerMatch = sellerName.toLowerCase().includes(lower);
+            const clientName = (o.customer && (o.customer.Name || o.customer.name || '')) || '';
+            const clientMatch = clientName.toLowerCase().includes(lower);
+            return codeMatch || sellerMatch || clientMatch;
+        });
+
+        setFilteredOrders(filtered);
+        setCurrentPage(1);
+    }, [searchId, allOrders, currentStateFilter, orderStates, orders]);
 
     if (isLoading) {
         return <Loader />;
@@ -218,12 +252,12 @@ const TablaOrders = () => {
                         <div className="flex items-center gap-2">
                             <input
                                 type="text"
-                                placeholder="Código de Orden"
+                                placeholder="Código de Orden, vendedor o cliente"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
-                                className="border p-2 rounded w-44 max-w-xs"
+                                className="border p-2 rounded w-64 max-w-xs"
+                                aria-label="Buscar orden por código, vendedor o cliente"
                             />
-                            <button onClick={searchOrders} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Buscar</button>
                         </div>
                     </div>
 

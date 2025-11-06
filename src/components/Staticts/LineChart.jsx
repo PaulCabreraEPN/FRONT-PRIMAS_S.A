@@ -60,6 +60,14 @@ const LineChart = () => {
         ],
     };
 
+    // Calcular máximo para sugerir un tope entero en el eje Y
+    const maxYValue = Array.isArray(sales) && sales.length ? Math.max(...sales) : 1;
+    let suggestedMaxY = Math.max(1, Math.ceil(maxYValue));
+    // Elegir stepSize: si el rango es grande usamos saltos de 5, en caso contrario 1
+    const stepSize = suggestedMaxY > 10 ? 5 : 1;
+    // Ajustar suggestedMaxY al múltiplo de stepSize más cercano hacia arriba
+    suggestedMaxY = Math.ceil(suggestedMaxY / stepSize) * stepSize;
+
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -88,6 +96,7 @@ const LineChart = () => {
             },
             y: {
                 beginAtZero: true,
+                suggestedMax: suggestedMaxY,
                 grid: {
                     display: true,
                     drawBorder: false,
@@ -96,6 +105,7 @@ const LineChart = () => {
                 },
                 ticks: {
                     color: '#374151',
+                    stepSize: stepSize,
                 },
             },
         },
@@ -106,9 +116,9 @@ const LineChart = () => {
     }
 
     return (
-        <div className="w-full h-64 p-4">
+        <div className="w-full h-full p-4 min-h-0">
             <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas Semana</div>
-            <div className="w-full h-full">
+            <div className="w-full h-full min-h-0">
                 <Line data={data} options={options} />
             </div>
         </div>
