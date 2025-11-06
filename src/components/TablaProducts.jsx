@@ -389,6 +389,9 @@ const TablaProducts = () => {
                                         <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
                                             <div>
+                                                <p className="text-sm text-gray-800"><strong>ID:</strong> <span className="font-semibold">{product.id}</span></p>
+                                            </div>
+                                            <div>
                                                 <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
                                             </div>
                                             <div>
@@ -398,7 +401,7 @@ const TablaProducts = () => {
                                                 <p className="text-sm text-gray-700"><strong>Stock:</strong> <span className="font-semibold">{product.stock}</span></p>
                                             </div>
                                             <div>
-                                                <p className="text-sm text-gray-700"><strong>Medida:</strong> <span className="font-semibold">{product.measure}</span></p>
+                                                <p className="text-sm text-gray-700"><strong>Referencia:</strong> <span className="font-semibold">{product.reference}</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -450,10 +453,7 @@ const TablaProducts = () => {
                                             <p className="text-sm text-gray-600">Stock</p>
                                             <p className="font-semibold text-gray-800">{modalProduct?.stock}</p>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-600">Medida</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.measure}</p>
-                                        </div>
+                                        
                                         <div className="md:col-span-2">
                                             <p className="text-sm text-gray-600">Descripción</p>
                                             <p className="text-gray-700 text-sm">{modalProduct?.description}</p>
