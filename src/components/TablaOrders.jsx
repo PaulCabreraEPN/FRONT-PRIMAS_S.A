@@ -172,6 +172,22 @@ const TablaOrders = () => {
         }
     };
 
+    // Clases para el badge que muestra el estado seleccionado (igual alto que el input: py-2)
+    const getStateBadgeClasses = (state) => {
+        switch (state) {
+            case 'Pendiente':
+                return 'text-sm font-medium px-3 py-2 rounded bg-yellow-50 text-yellow-700 border border-yellow-100';
+            case 'En proceso':
+                return 'text-sm font-medium px-3 py-2 rounded bg-blue-50 text-blue-700 border border-blue-100';
+            case 'Enviado':
+                return 'text-sm font-medium px-3 py-2 rounded bg-green-50 text-green-700 border border-green-100';
+            case 'Cancelado':
+                return 'text-sm font-medium px-3 py-2 rounded bg-red-50 text-red-700 border border-red-100';
+            default:
+                return 'text-sm font-medium px-3 py-2 rounded bg-gray-100 text-gray-800 border border-gray-200';
+        }
+    };
+
     // Filtrar las órdenes según el estado seleccionado
     const filterByState = (state) => {
         setCurrentStateFilter(state);
@@ -258,6 +274,14 @@ const TablaOrders = () => {
                                 className="border p-2 rounded w-64 max-w-xs"
                                 aria-label="Buscar orden por código, vendedor o cliente"
                             />
+                        </div>
+
+                        {/* Badge que muestra el filtro de estado actual */}
+                        <div className="ml-3">
+                            <span className={getStateBadgeClasses(currentStateFilter)} aria-live="polite" title={`Estado: ${currentStateFilter === 'all' ? 'Todos' : currentStateFilter}`}>
+                                <span className="mr-2 text-xs text-gray-500">Estado</span>
+                                <span className="font-semibold">{currentStateFilter === 'all' ? 'Todos' : currentStateFilter}</span>
+                            </span>
                         </div>
                     </div>
 

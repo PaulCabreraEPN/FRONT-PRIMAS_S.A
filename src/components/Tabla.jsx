@@ -21,6 +21,13 @@ const Tabla = () => {
     const [modalSeller, setModalSeller] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
 
+    // Clases para el badge que muestra el filtro activo (armoniza con los badges existentes)
+    const getBadgeClasses = (filter) => {
+        if (filter === 'Activo') return 'text-sm font-medium px-3 py-2 rounded bg-green-50 text-green-700 border border-green-100';
+        if (filter === 'Inactivo') return 'text-sm font-medium px-3 py-2 rounded bg-red-50 text-red-700 border border-red-100';
+        return 'text-sm font-medium px-3 py-2 rounded bg-gray-100 text-gray-800 border border-gray-200';
+    };
+
     // Función para listar todos los vendedores
     const listarSellers = async () => {
         setIsLoading(true);
@@ -256,7 +263,7 @@ const Tabla = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                             <input
                                 type="text"
                                 placeholder="Cédula vendedor"
@@ -265,7 +272,15 @@ const Tabla = () => {
                                 className="border p-2 rounded w-44 max-w-xs"
                                 aria-label="Buscar vendedor por cédula, nombre o usuario"
                             />
-                        </div>
+                            </div>
+
+                            {/* Badge que muestra el filtro seleccionado actualmente */}
+                            <div className="ml-3">
+                                <span className={getBadgeClasses(statusFilter)} aria-live="polite" title={`Filtro: ${statusFilter}`}>
+                                    <span className="mr-2 text-xs text-gray-500">Filtro</span>
+                                    <span className="font-semibold">{statusFilter}</span>
+                                </span>
+                            </div>
                     </div>
 
                     {/* Botón Registrar a la derecha */}

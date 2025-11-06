@@ -41,6 +41,12 @@ const TablaProducts = () => {
         accessories: { name: "Accesorios", keywords: ["EXTENSION", "BANDEJA", "CUBETA", "MANGO"] }
     };
 
+    // Clase para badges de categoría (mismo alto que el input: py-2)
+    const getCategoryBadgeClasses = (cat) => {
+        if (!cat || cat === 'all') return 'text-sm font-medium px-3 py-2 rounded bg-gray-100 text-gray-800 border border-gray-200';
+        return 'text-sm font-medium px-3 py-2 rounded bg-blue-50 text-blue-700 border border-blue-100';
+    };
+
     const getProducts = async () => {
         setIsLoading(true);
         try {
@@ -351,6 +357,14 @@ const TablaProducts = () => {
                                 aria-label="Buscar producto por ID, nombre o referencia"
                             />
                         </div>
+
+                        {/* Badge que muestra la categoría actual */}
+                        <div className="ml-3">
+                            <span className={getCategoryBadgeClasses(currentCategory)} aria-live="polite" title={`Categoría: ${categories[currentCategory]?.name || 'Todos'}`}>
+                                <span className="mr-2 text-xs text-gray-500">Categoría</span>
+                                <span className="font-semibold">{categories[currentCategory]?.name || 'Todos'}</span>
+                            </span>
+                        </div>
                     </div>
 
                     <div className="ml-auto">
@@ -372,11 +386,8 @@ const TablaProducts = () => {
                         {currentItems.map((product) => (
                             <div key={product.id} onClick={() => openProductModal(product.id)} className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg" role="button" tabIndex={0}>
                                 <div className="flex flex-col md:flex-row items-center gap-4">
-                                    <div className="flex-1 text-left">
+                                        <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
-                                            <div>
-                                                <p className="text-sm text-gray-800"><strong>ID:</strong> <span className="font-semibold">{product.id}</span></p>
-                                            </div>
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
                                             </div>
