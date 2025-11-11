@@ -22,9 +22,18 @@ const RegisterClients = () => {
         Address: Yup.string()
             .required("La dirección es obligatoria"),
         telephone: Yup.string()
-            .required("El telefono es obligatorio")
-            .length(10,"El telefono debe tener exactamente 10 digitos")
-            .matches(/^\d+$/, "El telefono debe contener solo números"),
+            .required("El número de teléfono es obligatorio")
+            
+            .test(
+                "no-negative",
+                "El número de teléfono no puede ser negativo",
+                function (value) {
+                    if (!value) return false;
+                    // si contiene '-' será negativo o formato inválido
+                    return !value.includes("-");
+                }
+            )
+            .length(10, "El número de teléfono debe tener exactamente 10 dígitos"),
         email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio"),
         state: Yup.string(),
     });
