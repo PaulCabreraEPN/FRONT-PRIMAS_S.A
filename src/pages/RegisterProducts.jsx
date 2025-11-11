@@ -17,7 +17,20 @@ const RegisterProducts = () => {
             .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
         reference: Yup.string().required("La referencia es obligatoria"),
         description: Yup.string().required("La descripción es obligatoria"),
-        price: Yup.number().typeError("El precio debe ser numérico").required("El precio es obligatorio").min(0, "El precio no puede ser negativo"),
+        price: Yup.number()
+            .typeError("El precio debe ser numérico")
+            .required("El precio es obligatorio")
+            .min(0, "El precio no puede ser negativo")
+            .test(
+                "price-format",
+                "El precio puede tener hasta 4 dígitos enteros y hasta 2 decimales",
+                function (value) {
+                    if (value === undefined || value === null || value === "") return false;
+                    const str = String(value);
+                    // acepta hasta 4 dígitos en la parte entera y opcionalmente hasta 2 decimales
+                    return /^\d{1,4}(\.\d{1,2})?$/.test(str);
+                }
+            ),
         stock: Yup.number().typeError("El stock debe ser numérico").required("El stock es obligatorio").min(0, "El stock no puede ser negativo"),
     });
 
