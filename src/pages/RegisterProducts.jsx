@@ -11,7 +11,10 @@ const RegisterProducts = () => {
 
     const validationSchema = Yup.object({
         id: Yup.number().typeError("El ID debe ser numérico").required("El ID del producto es obligatorio"),
-        product_name: Yup.string().required("El nombre del producto es obligatorio"),
+        product_name: Yup.string()
+            .required("El nombre del producto es obligatorio")
+            .min(6, "El nombre del producto debe tener al menos 6 caracteres")
+            .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
         reference: Yup.string().required("La referencia es obligatoria"),
         description: Yup.string().required("La descripción es obligatoria"),
         price: Yup.number().typeError("El precio debe ser numérico").required("El precio es obligatorio").min(0, "El precio no puede ser negativo"),
