@@ -9,14 +9,52 @@ const Register = () => {
 
     const validationSchema = Yup.object({
         names: Yup.string()
-            .required("Los nombres som obligatorios")
-            .test("two-words", "Debe ingresar al menos dos nombres", value =>
-                value && value.trim().split(/\s+/).length >= 2
+            .required("Los nombres son obligatorios")
+            .min(3, "Los nombres deben tener al menos 3 caracteres")
+            .max(41, "Los nombres deben tener como máximo 20 caracteres")
+            .test("two-words", "Debe ingresar exactamente dos nombres", value =>
+                value && value.trim().split(/\s+/).length === 2
+            )
+            .test(
+                "each-name-length",
+                "Cada nombre debe tener entre 3 y 20 caracteres",
+                function (value) {
+                    if (!value) return false;
+                    const parts = value.trim().split(/\s+/);
+                    if (parts.length !== 2) return false;
+                    const first = parts[0];
+                    const second = parts[1];
+                    return (
+                        first.length >= 3 &&
+                        first.length <= 20 &&
+                        second.length >= 3 &&
+                        second.length <= 20
+                    );
+                }
             ),
         lastNames: Yup.string()
             .required("Los apellidos son obligatorios")
-            .test("two-words", "Debe ingresar al menos dos apellidos", value =>
-                value && value.trim().split(/\s+/).length >= 2
+            .min(3, "Los apellidos deben tener al menos 3 caracteres")
+            .max(41, "Los apellidos deben tener como máximo 20 caracteres")
+            .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
+                value && value.trim().split(/\s+/).length === 2
+            )
+            .test(
+                "each-lastname-length",
+                "Cada apellido debe tener entre 3 y 20 caracteres",
+                function (value) {
+                    if (!value) return false;
+                    const parts = value.trim().split(/\s+/);
+                    if (parts.length !== 2) return false;
+                    const first = parts[0];
+                    const second = parts[1];
+                    return (
+                        first.length >= 3 &&
+                        first.length <= 20 &&
+                        second.length >= 3 &&
+                        second.length <= 20
+                    );
+                }
             ),
         cedula: Yup.string()
             .required("El número de identificación es obligatorio")
