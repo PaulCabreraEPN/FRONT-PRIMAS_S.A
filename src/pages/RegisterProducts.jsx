@@ -34,7 +34,19 @@ const RegisterProducts = () => {
                     return /^\d{1,4}(\.\d{1,2})?$/.test(str);
                 }
             ),
-        stock: Yup.number().typeError("El stock debe ser numérico").required("El stock es obligatorio").min(0, "El stock no puede ser negativo"),
+        stock: Yup.number()
+            .typeError("El stock debe ser numérico")
+            .required("El stock es obligatorio")
+            .test(
+                "stock-format",
+                "El stock debe ser un entero sin decimales y hasta 3 dígitos",
+                function (value) {
+                    if (value === undefined || value === null || value === "") return false;
+                    const str = String(value);
+                    // acepta solo enteros de 1 a 3 dígitos (0 a 999)
+                    return /^\d{1,3}$/.test(str);
+                }
+            ),
     });
 
     const formik = useFormik({
