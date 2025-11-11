@@ -20,7 +20,9 @@ const RegisterClients = () => {
             .length(13,"El RUC debe tener exactamente 13 digitos")
             .matches(/^\d+$/, "El RUC debe contener solo números"),
         Address: Yup.string()
-            .required("La dirección es obligatoria"),
+            .required("La dirección es obligatoria")
+            .min(20, "La dirección debe tener al menos 20 caracteres")
+            .max(60, "La dirección debe tener como máximo 60 caracteres"),
         telephone: Yup.string()
             .required("El número de teléfono es obligatorio")
             
