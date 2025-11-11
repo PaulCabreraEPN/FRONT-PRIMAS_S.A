@@ -16,7 +16,10 @@ const RegisterProducts = () => {
             .min(6, "El nombre del producto debe tener al menos 6 caracteres")
             .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
         reference: Yup.string().required("La referencia es obligatoria"),
-        description: Yup.string().required("La descripción es obligatoria"),
+        description: Yup.string()
+            .required("La descripción es obligatoria")
+            .min(30, "La descripción debe tener al menos 30 caracteres")
+            .max(300, "La descripción debe tener como máximo 300 caracteres"),
         price: Yup.number()
             .typeError("El precio debe ser numérico")
             .required("El precio es obligatorio")
