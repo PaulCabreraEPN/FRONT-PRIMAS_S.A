@@ -67,7 +67,6 @@ const Register = () => {
             .required("La ciudad de venta es obligatoria"),
         PhoneNumber: Yup.string()
             .required("El número de teléfono es obligatorio")
-            .matches(/^\d{10}$/, "El número de teléfono debe contener únicamente números")
             .test(
                 "no-negative",
                 "El número de teléfono no puede ser negativo",
@@ -200,7 +199,7 @@ const Register = () => {
                                 <div>
                                     <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Telefono <span className="text-red-500">*</span>:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         id="PhoneNumber"
                                         name="PhoneNumber"
                                         placeholder="0987654324"
