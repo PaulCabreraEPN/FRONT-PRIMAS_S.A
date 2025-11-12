@@ -89,7 +89,8 @@ const UpdateProduct = () => {
             toast.success(response.data?.msg || 'Producto actualizado');
             navigate("/dashboard/products");
         } catch (error) {
-            toast.error(error.response?.data?.msg || error.response?.data?.error || 'Error al actualizar');
+            toast.error(error.response?.data?.error)
+            console.log(error)
         } finally {
             setIsLoading(false);
         }

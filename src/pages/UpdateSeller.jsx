@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
 import Loader from "../components/Carga";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 // Cambio reciente 
 
 const UpdateSeller = () => {
@@ -61,37 +63,127 @@ const UpdateSeller = () => {
         }
     }
 
-    const handleChange = (e) => {
-        const value = e.target.name === 'status'
-            ? e.target.value === ''  // convierte el string a booleano
-            : e.target.value;
-        setSeller({
-            ...seller,
-            [e.target.name]: value
-        })
-    }
+    // formik will handle changes; keep seller state as source for initialValues
 
-    // Actualización parcial (PATCH)
-    const handlePartialUpdate = async (e) => {
-        e.preventDefault();
-        try {
-            const token = localStorage.getItem('token');
-            const backUrl = import.meta.env.VITE_URL_BACKEND_API;
-            const url = `${backUrl}/updateSeller/${id}`;
-            const options = {
-                headers: {
-                    'Content-type': 'application/json',
-                    Authorization: `Bearer ${token}`
+    const validationSchema = Yup.object({
+        names: Yup.string()
+            .required("Los nombres son obligatorios")
+            .min(3, "Los nombres deben tener al menos 3 caracteres")
+            .max(41, "Los nombres deben tener como máximo 20 caracteres")
+            .test("two-words", "Debe ingresar exactamente dos nombres", value =>
+                value && value.trim().split(/\s+/).length === 2
+            )
+            .test(
+                "each-name-length",
+                "Cada nombre debe tener entre 3 y 20 caracteres",
+                function (value) {
+                    if (!value) return false;
+                    const parts = value.trim().split(/\s+/);
+                    if (parts.length !== 2) return false;
+                    const first = parts[0];
+                    const second = parts[1];
+                    return (
+                        first.length >= 3 &&
+                        first.length <= 20 &&
+                        second.length >= 3 &&
+                        second.length <= 20
+                    );
                 }
+            ),
+        lastNames: Yup.string()
+            .required("Los apellidos son obligatorios")
+            .min(3, "Los apellidos deben tener al menos 3 caracteres")
+            .max(41, "Los apellidos deben tener como máximo 20 caracteres")
+            .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
+                value && value.trim().split(/\s+/).length === 2
+            )
+            .test(
+                "each-lastname-length",
+                "Cada apellido debe tener entre 3 y 20 caracteres",
+                function (value) {
+                    if (!value) return false;
+                    const parts = value.trim().split(/\s+/);
+                    if (parts.length !== 2) return false;
+                    const first = parts[0];
+                    const second = parts[1];
+                    return (
+                        first.length >= 3 &&
+                        first.length <= 20 &&
+                        second.length >= 3 &&
+                        second.length <= 20
+                    );
+                }
+            ),
+        email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio"),
+        SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
+        PhoneNumber: Yup.string()
+            .required("El número de teléfono es obligatorio")
+            .test(
+                "no-negative",
+                "El número de teléfono no puede ser negativo",
+                function (value) {
+                    if (!value) return false;
+                    return !value.includes("-");
+                }
+            )
+            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+    });
+
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            names: seller.names || "",
+            lastNames: seller.lastNames || "",
+            numberID: seller.numberID || "",
+            username: seller.username || "",
+            email: seller.email || "",
+            SalesCity: seller.SalesCity || "",
+            PhoneNumber: seller.PhoneNumber || "",
+            status: seller.status === undefined ? true : seller.status
+        },
+        validationSchema,
+        onSubmit: async (values, { setErrors }) => {
+            let success = false;
+            try {
+                setIsLoading(true);
+                const token = localStorage.getItem('token');
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/updateSeller/${id}`;
+                const options = {
+                    headers: {
+                        'Content-type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    }
+                };
+                const response = await axios.patch(url, values, options);
+                toast.success(response.data.data || response.data.msg || 'Vendedor actualizado');
+                success = true;
+            } catch (error) {
+                const resp = error.response?.data || {};
+                const generalMsg = resp.msg || resp.error || resp.message;
+                if (generalMsg) toast.error(generalMsg);
+
+                // errors as object { field: 'msg' }
+                if (resp.errors && typeof resp.errors === 'object' && !Array.isArray(resp.errors)) {
+                    setErrors(resp.errors);
+                } else if (Array.isArray(resp.errors)) {
+                    const byField = {};
+                    resp.errors.forEach(e => {
+                        if (e.param) byField[e.param] = e.msg || e.message;
+                    });
+                    setErrors(byField);
+                    resp.errors.forEach(e => { if (e.msg) toast.error(e.msg); });
+                } else {
+                    console.log('UpdateSeller error:', error);
+                }
+            } finally {
+                setIsLoading(false);
+                if (success) setTimeout(() => navigate('/dashboard/sellers'), 2000);
             }
-            const response = await axios.patch(url, seller, options);
-            setTimeout(() => navigate("/dashboard/sellers"), 2000);
-            toast.success(response.data.data)
-        } catch (error) {
-            toast.error(error.response?.data?.error)
-            console.log(error)
         }
-    };
+    });
+
+    // handlePartialUpdate removed — Formik maneja el submit
 
     useEffect(() => {
         if (id) {
@@ -129,7 +221,7 @@ const UpdateSeller = () => {
                     <div className="w-full md:w-11/12 lg:w-3/4 mx-auto">
                         <fieldset className="border border-gray-200 rounded-lg p-4 bg-white">
                             <legend className="px-2 text-lg font-semibold text-gray-700">Datos del Vendedor</legend>
-                            <form onSubmit={handlePartialUpdate}>
+                            <form onSubmit={formik.handleSubmit}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label htmlFor="names" className="mb-2 block text-sm font-semibold">Nombres:</label>
@@ -138,10 +230,14 @@ const UpdateSeller = () => {
                                             id="names"
                                             name="names"
                                             placeholder="Ana Maria"
-                                            value={seller?.names || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.names}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.names && formik.errors.names ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.names}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -151,10 +247,14 @@ const UpdateSeller = () => {
                                             id="lastNames"
                                             name="lastNames"
                                             placeholder="Perez Rodriguez"
-                                            value={seller?.lastNames || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.lastNames}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.lastNames && formik.errors.lastNames ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.lastNames}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -164,8 +264,9 @@ const UpdateSeller = () => {
                                             id="numberID"
                                             name="numberID"
                                             placeholder="1734567897"
-                                            value={seller?.numberID || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.numberID}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             disabled
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 bg-gray-100"
                                         />
@@ -178,8 +279,9 @@ const UpdateSeller = () => {
                                             id="username"
                                             name="username"
                                             placeholder="usuario123"
-                                            value={seller?.username || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.username}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             disabled
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 bg-gray-100"
                                         />
@@ -192,10 +294,14 @@ const UpdateSeller = () => {
                                             id="email"
                                             name="email"
                                             placeholder="correo@ejemplo.com"
-                                            value={seller?.email || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.email}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.email && formik.errors.email ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.email}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -205,10 +311,14 @@ const UpdateSeller = () => {
                                             id="SalesCity"
                                             name="SalesCity"
                                             placeholder="Quito"
-                                            value={seller?.SalesCity || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.SalesCity}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.SalesCity && formik.errors.SalesCity ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.SalesCity}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -218,10 +328,14 @@ const UpdateSeller = () => {
                                             id="PhoneNumber"
                                             name="PhoneNumber"
                                             placeholder="0987654324"
-                                            value={seller?.PhoneNumber || ""}
-                                            onChange={handleChange}
+                                            value={formik.values.PhoneNumber}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.PhoneNumber && formik.errors.PhoneNumber ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.PhoneNumber}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -229,12 +343,13 @@ const UpdateSeller = () => {
                                         <select
                                             id="status"
                                             name="status"
-                                            value={seller.status.toString()}
-                                            onChange={(e) => setSeller({ ...seller, status: e.target.value === "true" })}
+                                            value={formik.values.status.toString()}
+                                            onChange={(e) => formik.setFieldValue('status', e.target.value === 'true')}
+                                            onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         >
-                                            <option value="true">Activo</option>
-                                            <option value="false">Inactivo</option>
+                                            <option value={true}>Activo</option>
+                                            <option value={false}>Inactivo</option>
                                         </select>
                                     </div>
                                 </div>
