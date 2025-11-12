@@ -34,20 +34,15 @@ const Dashboard = () => {
         <h1 className="text-xl font-bold">Bienvenido, Administrador</h1>
         
         <div className="relative">
-          <i className="fas fa-bell mx-3 cursor-pointer"></i>
           <i
             className="fas fa-user-circle text-2xl cursor-pointer"
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            aria-haspopup="true"
+            aria-expanded={isProfileMenuOpen}
           ></i>
 
           {isProfileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg overflow-hidden">
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-200">
-                Perfil
-              </button>
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-200">
-                Configuración
-              </button>
+            <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg overflow-hidden z-50">
               <button 
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200"
