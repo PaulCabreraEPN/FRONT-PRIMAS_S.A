@@ -31,7 +31,7 @@ vi.mock('react-router-dom', async () => {
 import UpdateProduct from '../pages/UpdateProducts';
 import * as axiosModule from 'axios';
 
-describe('UpdateProduct page', () => {
+describe('Página de actualización de producto', () => {
   const getMock = axiosModule.__getMock;
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('UpdateProduct page', () => {
 
   afterEach(() => vi.clearAllMocks());
 
-  it('fetches product and fills the form fields', async () => {
+  it('obtiene el producto y completa los campos del formulario', async () => {
     const productData = {
       product_name: 'Test Product',
       measure: 'u',

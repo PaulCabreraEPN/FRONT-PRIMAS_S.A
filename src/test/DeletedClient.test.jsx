@@ -7,7 +7,7 @@ import axios from 'axios';
 
 vi.mock('axios');
 
-describe('DeletedClient - TablaClients', () => {
+describe('Eliminación de cliente - TablaClients', () => {
   afterEach(() => {
     vi.resetAllMocks();
     try { vi.useRealTimers(); } catch (e) { /* ignore */ }

@@ -39,7 +39,7 @@ import * as apiModule from '../services/api';
 import * as AuthModule from '../context/AuthProvider';
 import * as RouterModule from 'react-router-dom';
 
-describe('Login page', () => {
+describe('Página de Login', () => {
   const postMock = apiModule.__postMock;
   const setAuthMock = AuthModule.__setAuthMock;
   const navigateMock = RouterModule.__navigateMock;
@@ -55,7 +55,7 @@ describe('Login page', () => {
     vi.clearAllMocks();
   });
 
-  it('submits credentials and navigates on success', async () => {
+  it('envía credenciales y navega al iniciarse sesión correctamente', async () => {
     // Preparar el mock del API para devolver token
     postMock.mockResolvedValueOnce({ data: { data: { token: 'fake-token' } } });
 
