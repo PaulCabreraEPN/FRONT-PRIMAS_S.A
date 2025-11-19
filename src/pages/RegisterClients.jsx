@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -7,12 +8,66 @@ import axios from "axios";
 const RegisterClients = () => {
     const navigate = useNavigate();
 
-    const validationSchema = Yup.object({
+    const [allClients, setAllClients] = useState([]);
+
+    useEffect(() => {
+        const getAllClients = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/clients`;
+                const options = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const resp = await axios.get(url, options);
+                const payload = resp.data;
+                let clients = [];
+
+                if (Array.isArray(payload)) {
+                    clients = payload;
+                } else if (Array.isArray(payload?.clients)) {
+                    clients = payload.clients;
+                } else if (Array.isArray(payload?.data)) {
+                    clients = payload.data;
+                } else {
+                    // buscar la primera propiedad que sea un array
+                    const maybeArray = Object.values(payload || {}).find(v => Array.isArray(v));
+                    if (Array.isArray(maybeArray)) {
+                        clients = maybeArray;
+                    } else if (payload && typeof payload === 'object') {
+                        // si es un objeto plano con clientes como propiedades, convertir a array
+                        clients = Object.values(payload).filter(v => v && typeof v === 'object');
+                    }
+                }
+
+                setAllClients(clients);
+            } catch (err) {
+                console.error("Error cargando clientes:", err?.response?.data?.msg || err.message);
+            }
+        };
+        getAllClients();
+    }, []);
+
+    const validationSchema = useMemo(() => Yup.object({
         Name: Yup.string()
             .required("El nombre es obligatorio")
+            .test("unique-name", "Ya existe un cliente con ese nombre", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                const valNorm = normalize(value);
+                const exists = allClients.some(c => {
+                    const name = c?.Name ?? c?.name ?? "";
+                    return normalize(name) === valNorm;
+                });
+                return !exists;
+            })
             .test("two-words", "Debe ingresar al menos dos nombres", value =>
                 value && value.trim().split(/\s+/).length >= 2
             ),
+            
         ComercialName: Yup.string()
         .required("El nombre comercial es obligatorio"),
         Ruc: Yup.string()
@@ -35,10 +90,31 @@ const RegisterClients = () => {
                     return !value.includes("-");
                 }
             )
-            .length(10, "El número de teléfono debe tener exactamente 10 dígitos"),
-        email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio"),
+            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+            .test("unique-telephone", "Ya existe un cliente con ese teléfono", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const normalizePhone = (s = "") => s.toString().replace(/\D/g, "").trim();
+                const valNorm = normalizePhone(value);
+                const exists = allClients.some(c => {
+                    const phone = c?.telephone ?? c?.Telephone ?? c?.phone ?? "";
+                    return normalizePhone(phone) === valNorm;
+                });
+                return !exists;
+            }),
+        email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio")
+            .test("unique-email", "Ya existe un cliente con ese correo", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const valNorm = value.toString().toLowerCase().trim();
+                const exists = allClients.some(c => {
+                    const mail = c?.email ?? c?.Email ?? c?.correo ?? "";
+                    return mail.toString().toLowerCase().trim() === valNorm;
+                });
+                return !exists;
+            }),
         state: Yup.string(),
-    });
+    }), [allClients]);
 
     const formik = useFormik({
         initialValues: {
@@ -76,6 +152,13 @@ const RegisterClients = () => {
             }
         },
     });
+
+    useEffect(() => {
+        // cuando cambian los clientes recargados, revalidar el campo Name
+        if (formik && formik.values && formik.values.Name) {
+            formik.validateField("Name");
+        }
+    }, [allClients]);
 
     return (
         <div>
@@ -186,7 +269,7 @@ const RegisterClients = () => {
                                     )}
                                 </div>
 
-                                <div className="md:col-span-2">
+                                <div className="md:col-span-1">
                                     <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico{<span className="text-red-500">*</span>}:</label>
                                     <input
                                         type="email"
@@ -203,18 +286,20 @@ const RegisterClients = () => {
                                     )}
                                 </div>
 
-                                <div>
+                                <div className="md:col-span-1">
                                     <label htmlFor="state" className="mb-2 block text-sm font-semibold">Estado:</label>
-                                    <input
-                                        type="text"
+                                    <select
                                         id="state"
                                         name="state"
-                                        placeholder="Ingrese estado"
                                         value={formik.values.state}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
-                                        className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
-                                    />
+                                        className="block w-full rounded-md border border-gray-300 bg-white focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-2 text-gray-500"
+                                    >
+                                        <option value="" disabled>Seleccione estado</option>
+                                        <option value="al día">al día</option>
+                                        <option value="en deuda">en deuda</option>
+                                    </select>
                                     {formik.touched.state && formik.errors.state && (
                                         <div className="text-red-500 text-sm">{formik.errors.state}</div>
                                     )}
