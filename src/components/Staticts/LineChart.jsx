@@ -117,7 +117,7 @@ const LineChart = () => {
 
     return (
         <div className="w-full h-full p-4 min-h-0">
-            <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas Semana</div>
+            <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas por Semana</div>
             <div className="w-full h-full min-h-0">
                 <Line data={data} options={options} />
             </div>
