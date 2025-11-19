@@ -69,10 +69,10 @@ const RegisterClients = () => {
                         navigate("/dashboard/clients");
                     }, 2000);
                 } else {
-                    toast.error(response.data.msg || "Error al registrar cliente");
+                    console.error(response.data.msg || "Error al registrar cliente");
                 }
             } catch (error) {
-                toast.error(error.response?.data?.msg || "Error al registrar cliente");
+                console.error(error.response?.data?.msg || "Error al registrar cliente");
             }
         },
     });
@@ -155,7 +155,7 @@ const RegisterClients = () => {
                                 <div>
                                     <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono:</label>
                                     <input
-                                        type="number"
+                                        type="text"
                                         id="telephone"
                                         name="telephone"
                                         placeholder="Ingrese teléfono"
