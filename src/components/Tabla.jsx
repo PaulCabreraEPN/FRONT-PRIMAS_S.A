@@ -256,9 +256,9 @@ const Tabla = () => {
                             {/* Menu: aparece solo cuando menuOpen = true */}
                             {menuOpen && (
                                 <div className="absolute left-0 mt-2 w-64 sm:w-72 bg-white border rounded shadow-lg z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
-                                    <button onClick={() => { setStatusFilter('Todos'); listarSellers(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
-                                    <button onClick={() => { setStatusFilter('Activo'); setSearchActive(false); setSellers(allSellers); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Activo</button>
-                                    <button onClick={() => { setStatusFilter('Inactivo'); setSearchActive(false); setSellers(allSellers); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Inactivo</button>
+                                    <button onClick={() => { setStatusFilter('Todos'); setSearchActive(false); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
+                                    <button onClick={() => { setStatusFilter('Activo'); setSearchActive(false); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Activo</button>
+                                    <button onClick={() => { setStatusFilter('Inactivo'); setSearchActive(false); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Inactivo</button>
                                 </div>
                             )}
                         </div>
