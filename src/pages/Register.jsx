@@ -127,7 +127,8 @@ const Register = () => {
                     navigate("/dashboard/sellers");
                 }, 2000);
             } catch (error) {
-                toast.error(error.response?.data?.msg);
+                // Registrar en consola en lugar de mostrar un toast: usar únicamente Yup para validaciones
+                console.error('Register error:', error.response?.data?.msg || error.message || error);
             }
         },
     });
