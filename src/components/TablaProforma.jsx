@@ -114,7 +114,7 @@ const TablaProforma = () => {
                 <th className="border p-2">Cantidad</th>
                 <th className="border p-2">Precio Unitario</th>
                 <th className="border p-2">Total</th>
-                <th className="border p-2">Descuento unitario</th>
+                <th className="border p-2">Descuento Unitario</th>
                 <th className="border p-2">Valor Descontado</th>
                 <th className="border p-2">Total Final</th>
               </tr>
