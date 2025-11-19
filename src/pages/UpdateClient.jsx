@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Loader from "../components/Carga";
@@ -10,13 +10,14 @@ const UpdateClient = () => {
     const [client, setClient] = useState({
         Name: "",
         Ruc: "",
+        ComercialName: "",
         Address: "",
         telephone: "",
         email: "",
-        credit: "",
         state: ""
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [allClients, setAllClients] = useState([]);
     const { ruc } = useParams();
     const navigate = useNavigate();
 
@@ -37,47 +38,94 @@ const UpdateClient = () => {
                 setClient({
                     Name: clientData.Name || "",
                     Ruc: clientData.Ruc || "",
+                    ComercialName: clientData.ComercialName || "",
                     Address: clientData.Address || "",
                     telephone: clientData.telephone || "",
                     email: clientData.email || "",
-                    credit: clientData.credit || "",
                     state: clientData.state || ""
                 });
             }
         } catch (error) {
-            toast.error(error.response?.data?.msg);
+            // Registrar error en consola en lugar de mostrar un toast: usar únicamente Yup para validaciones
+            console.error('GetClient error:', error.response?.data?.msg || error.message || error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Migrated to Formik + Yup
-    const validationSchema = Yup.object({
-        Name: Yup.string()
-            .required("El nombre es obligatorio")
-            .min(3, "El nombre debe tener al menos 3 caracteres"),
-        Address: Yup.string()
-            .required("La dirección es obligatoria")
-            .min(20, "La dirección debe tener al menos 20 caracteres")
-            .max(60, "La dirección debe tener como máximo 60 caracteres"),
-        telephone: Yup.string()
-            .required("El teléfono es obligatorio")
-            .test("no-negative", "El teléfono no puede contener '-'", value => !value || !value.includes('-'))
-            .matches(/^\d{10}$/, "El teléfono debe contener exactamente 10 dígitos"),
-        email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio"),
-        credit: Yup.string().nullable(),
-        state: Yup.string().nullable()
-    });
+    const getAllClients = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+            const url = `${backUrl}/clients`;
+            const options = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+            const resp = await axios.get(url, options);
+            setAllClients(resp.data?.data || []);
+        } catch (err) {
+            console.error('No se pudo obtener lista de clientes:', err);
+            setAllClients([]);
+        }
+    };
+
+    // Migrated to Formik + Yup (validation schema memoized to use local clients list)
+    const validationSchema = useMemo(() => {
+        const clients = allClients || [];
+        return Yup.object({
+            Name: Yup.string()
+                .required("El nombre es obligatorio")
+                .min(3, "El nombre debe tener al menos 3 caracteres")
+                .test('unique-name', 'El nombre ya está registrado', function (value) {
+                    if (!value) return true;
+                    if (!clients.length) return true; // allow if clients not loaded
+                    const nameNorm = value.trim().toLowerCase();
+                    const exists = clients.some(c => c.Name && (c.Ruc !== ruc) && c.Name.trim().toLowerCase() === nameNorm);
+                    return !exists;
+                }),
+            ComercialName: Yup.string()
+                .nullable()
+                .min(2, "El nombre comercial debe tener al menos 2 caracteres")
+                .max(60, "El nombre comercial debe tener como máximo 60 caracteres"),
+            Address: Yup.string()
+                .required("La dirección es obligatoria")
+                .min(20, "La dirección debe tener al menos 20 caracteres")
+                .max(60, "La dirección debe tener como máximo 60 caracteres"),
+            telephone: Yup.string()
+                .required("El teléfono es obligatorio")
+                .test("no-negative", "El teléfono no puede contener '-'", value => !value || !value.includes('-'))
+                .matches(/^\d{10}$/, "El teléfono debe contener exactamente 10 dígitos")
+                .test('unique-phone', 'El teléfono ya está registrado', function (value) {
+                    if (!value) return true;
+                    if (!clients.length) return true;
+                    const phoneNorm = value.replace(/\D/g, '');
+                    const exists = clients.some(c => c.telephone && (c.Ruc !== ruc) && (c.telephone.replace(/\D/g, '') === phoneNorm));
+                    return !exists;
+                }),
+            email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio")
+                .test('unique-email', 'El email ya está registrado', function (value) {
+                    if (!value) return true;
+                    if (!clients.length) return true;
+                    const emailNorm = value.trim().toLowerCase();
+                    const exists = clients.some(c => c.email && (c.Ruc !== ruc) && (c.email.trim().toLowerCase() === emailNorm));
+                    return !exists;
+                }),
+            state: Yup.string().nullable()
+        });
+    }, [allClients, ruc]);
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             Name: client.Name || "",
             Ruc: client.Ruc || "",
+            ComercialName: client.ComercialName || "",
             Address: client.Address || "",
             telephone: client.telephone || "",
             email: client.email || "",
-            credit: client.credit || "",
             state: client.state || ""
         },
         validationSchema,
@@ -104,7 +152,7 @@ const UpdateClient = () => {
             } catch (error) {
                 const resp = error.response?.data || {};
                 const generalMsg = resp.msg || resp.error || resp.message;
-                if (generalMsg) toast.error(generalMsg);
+                if (generalMsg) console.error('UpdateClient error:', generalMsg);
 
                 if (resp.errors && typeof resp.errors === 'object' && !Array.isArray(resp.errors)) {
                     setErrors(resp.errors);
@@ -112,9 +160,9 @@ const UpdateClient = () => {
                     const byField = {};
                     resp.errors.forEach(e => { if (e.param) byField[e.param] = e.msg || e.message; });
                     setErrors(byField);
-                    resp.errors.forEach(e => { if (e.msg) toast.error(e.msg); });
+                    resp.errors.forEach(e => { if (e.msg) console.error('UpdateClient field error:', e.msg); });
                 } else {
-                    console.log('UpdateClient error:', error);
+                    console.log('UpdateClient error (unexpected):', error);
                 }
             } finally {
                 setIsLoading(false);
@@ -127,6 +175,8 @@ const UpdateClient = () => {
         if (ruc) {
             getClient();
         }
+        // Load all clients once for local uniqueness validations
+        getAllClients();
     }, [ruc]);
 
     if (isLoading) {
@@ -241,31 +291,36 @@ const UpdateClient = () => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="credit" className="mb-2 block text-sm font-semibold">Crédito:</label>
+                                        <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial:</label>
                                         <input
                                             type="text"
-                                            id="credit"
-                                            name="credit"
-                                            placeholder="N/D"
-                                            value={formik.values.credit}
+                                            id="ComercialName"
+                                            name="ComercialName"
+                                            placeholder="Nombre comercial (opcional)"
+                                            value={formik.values.ComercialName}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.ComercialName && formik.errors.ComercialName ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.ComercialName}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
                                         <label htmlFor="state" className="mb-2 block text-sm font-semibold">Estado:</label>
-                                        <input
-                                            type="text"
+                                        <select
                                             id="state"
                                             name="state"
-                                            placeholder="Ingrese estado"
                                             value={formik.values.state}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                                        />
+                                            className="block w-full rounded-md border border-gray-300 bg-white focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        >
+                                            <option value="">Selecciona estado</option>
+                                            <option value="al día">al día</option>
+                                            <option value="en deuda">en deuda</option>
+                                        </select>
                                         {formik.touched.state && formik.errors.state ? (
                                             <div className="text-red-500 text-sm">{formik.errors.state}</div>
                                         ) : null}
