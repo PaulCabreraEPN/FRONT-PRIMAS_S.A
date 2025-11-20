@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -8,14 +8,89 @@ import axios from "axios";
 const RegisterProducts = () => {
     const navigate = useNavigate();
     const [image, setImage] = useState(null);
+    const [allProducts, setAllProducts] = useState([]);
 
-    const validationSchema = Yup.object({
-        id: Yup.number().typeError("El ID debe ser numérico").required("El ID del producto es obligatorio"),
+    useEffect(() => {
+        const getAllProducts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/products`;
+                const options = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const resp = await axios.get(url, options);
+                const payload = resp.data;
+                let products = [];
+
+                if (Array.isArray(payload)) {
+                    products = payload;
+                } else if (Array.isArray(payload?.products)) {
+                    products = payload.products;
+                } else if (Array.isArray(payload?.data)) {
+                    products = payload.data;
+                } else {
+                    const maybeArray = Object.values(payload || {}).find(v => Array.isArray(v));
+                    if (Array.isArray(maybeArray)) {
+                        products = maybeArray;
+                    } else if (payload && typeof payload === 'object') {
+                        products = Object.values(payload).filter(v => v && typeof v === 'object');
+                    }
+                }
+
+                setAllProducts(products);
+            } catch (err) {
+                console.error('Error cargando productos:', err?.response?.data?.msg || err.message);
+            }
+        };
+        getAllProducts();
+    }, []);
+
+    const validationSchema = useMemo(() => Yup.object({
+        // ID: requerido, exactamente 5 dígitos y único frente a los productos ya registrados
+        id: Yup.string()
+            .required("El ID del producto es obligatorio")
+            .matches(/^\d{5}$/, "El ID debe tener exactamente 5 dígitos")
+            .test('unique-product-id', 'Ya existe un producto con ese ID', function (value) {
+                if (!value) return true;
+                if (!allProducts || allProducts.length === 0) return true;
+                const valStr = String(value).trim();
+                const exists = allProducts.some(p => {
+                    const pid = p?.id ?? p?._id ?? p?.product_id ?? p?.productId ?? p?.idProducto ?? p?.ID ?? "";
+                    return String(pid).trim() === valStr;
+                });
+                return !exists;
+            }),
         product_name: Yup.string()
             .required("El nombre del producto es obligatorio")
+            .test('unique-product-name', 'Ya existe un producto con ese nombre', function (value) {
+                if (!value) return true;
+                if (!allProducts || allProducts.length === 0) return true;
+                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                const valNorm = normalize(value);
+                const exists = allProducts.some(p => {
+                    const name = p?.product_name ?? p?.name ?? p?.productName ?? "";
+                    return normalize(name) === valNorm;
+                });
+                return !exists;
+            })
             .min(6, "El nombre del producto debe tener al menos 6 caracteres")
             .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
-        reference: Yup.string().required("La referencia es obligatoria"),
+        reference: Yup.string()
+            .required("La referencia es obligatoria")
+            .test('unique-product-reference', 'Ya existe un producto con esa referencia', function (value) {
+                if (!value) return true;
+                if (!allProducts || allProducts.length === 0) return true;
+                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                const valNorm = normalize(value);
+                const exists = allProducts.some(p => {
+                    const ref = p?.reference ?? p?.ref ?? p?.product_reference ?? "";
+                    return normalize(ref) === valNorm;
+                });
+                return !exists;
+            }),
         description: Yup.string()
             .required("La descripción es obligatoria")
             .min(30, "La descripción debe tener al menos 30 caracteres")
@@ -37,17 +112,18 @@ const RegisterProducts = () => {
         stock: Yup.number()
             .typeError("El stock debe ser numérico")
             .required("El stock es obligatorio")
+            .min(1, "El stock debe ser al menos 1")
             .test(
                 "stock-format",
-                "El stock debe ser un entero sin decimales y hasta 3 dígitos",
+                "El stock debe ser un entero positivo sin decimales y hasta 3 dígitos",
                 function (value) {
                     if (value === undefined || value === null || value === "") return false;
                     const str = String(value);
-                    // acepta solo enteros de 1 a 3 dígitos (0 a 999)
-                    return /^\d{1,3}$/.test(str);
+                    // acepta solo enteros de 1 a 3 dígitos (1 a 999)
+                    return /^[1-9]\d{0,2}$/.test(str);
                 }
-            ),
-    });
+            )
+    }), [allProducts]);
 
     const formik = useFormik({
         initialValues: {
