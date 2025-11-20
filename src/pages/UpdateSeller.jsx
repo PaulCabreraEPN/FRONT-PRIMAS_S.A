@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
 import Loader from "../components/Carga";
@@ -22,6 +22,7 @@ const UpdateSeller = () => {
         confirmEmail: false
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [allSellers, setAllSellers] = useState([]);
     const { id } = useParams()
     const navigate = useNavigate()
 
@@ -65,7 +66,40 @@ const UpdateSeller = () => {
 
     // formik will handle changes; keep seller state as source for initialValues
 
-    const validationSchema = Yup.object({
+    useEffect(() => {
+        const getAllSellers = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/sellers`;
+                const options = {
+                    headers: { Authorization: `Bearer ${token}` }
+                };
+                const resp = await axios.get(url, options);
+                const payload = resp.data;
+                let sellers = [];
+                if (Array.isArray(payload)) {
+                    sellers = payload;
+                } else if (Array.isArray(payload?.sellers)) {
+                    sellers = payload.sellers;
+                } else if (Array.isArray(payload?.data)) {
+                    sellers = payload.data;
+                } else {
+                    const maybeArray = Object.values(payload || {}).find(v => Array.isArray(v));
+                    if (Array.isArray(maybeArray)) sellers = maybeArray;
+                    else if (payload && typeof payload === 'object') sellers = Object.values(payload).filter(v => v && typeof v === 'object');
+                }
+                setAllSellers(sellers);
+            } catch (err) {
+                console.error('Error cargando vendedores:', err?.response?.data?.msg || err.message);
+            }
+        };
+        getAllSellers();
+    }, []);
+
+    const validationSchema = useMemo(() => {
+        const digits = (s = "") => s.toString().replace(/\D/g, "");
+        return Yup.object({
         names: Yup.string()
             .required("Los nombres son obligatorios")
             .min(3, "Los nombres deben tener al menos 3 caracteres")
@@ -114,7 +148,21 @@ const UpdateSeller = () => {
                     );
                 }
             ),
-        email: Yup.string().email("El correo debe ser válido").required("El correo es obligatorio"),
+        email: Yup.string()
+            .email("El correo debe ser válido")
+            .required("El correo es obligatorio")
+            .test('unique-email', 'El correo ya está registrado', function (value) {
+                if (!value) return true;
+                if (!allSellers || allSellers.length === 0) return true;
+                const val = value.toString().toLowerCase().trim();
+                const exists = allSellers.some(s => {
+                    const mail = s?.email ?? s?.Email ?? s?.correo ?? "";
+                    const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                    if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                    return (mail || "").toString().toLowerCase().trim() === val;
+                });
+                return !exists;
+            }),
         SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
         PhoneNumber: Yup.string()
             .required("El número de teléfono es obligatorio")
@@ -127,8 +175,20 @@ const UpdateSeller = () => {
                 }
             )
             .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+            .test('unique-phone', 'El número de teléfono ya está registrado', function (value) {
+                if (!value) return true;
+                if (!allSellers || allSellers.length === 0) return true;
+                const valDigits = digits(value);
+                const exists = allSellers.some(s => {
+                    const phone = s?.PhoneNumber ?? s?.phone ?? s?.Phone ?? s?.telefono ?? "";
+                    const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                    if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                    return digits(phone) === valDigits;
+                });
+                return !exists;
+            })
     });
-
+    }, [allSellers, id]);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -324,7 +384,7 @@ const UpdateSeller = () => {
                                     <div>
                                         <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Teléfono:</label>
                                         <input
-                                            type="number"
+                                            type="Text"
                                             id="PhoneNumber"
                                             name="PhoneNumber"
                                             placeholder="0987654324"
