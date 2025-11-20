@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -7,7 +8,61 @@ import axios from "axios";
 const Register = () => {
     const navigate = useNavigate();
 
-    const validationSchema = Yup.object({
+    const [allSellers, setAllSellers] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const getAllSellers = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/sellers`;
+                const options = { headers: { Authorization: `Bearer ${token}` } };
+                const resp = await axios.get(url, options);
+                const payload = resp.data;
+                let sellers = [];
+                if (Array.isArray(payload)) sellers = payload;
+                else if (Array.isArray(payload?.sellers)) sellers = payload.sellers;
+                else if (Array.isArray(payload?.data)) sellers = payload.data;
+                else {
+                    const maybeArray = Object.values(payload || {}).find(v => Array.isArray(v));
+                    if (Array.isArray(maybeArray)) sellers = maybeArray;
+                    else if (payload && typeof payload === 'object') sellers = Object.values(payload).filter(v => v && typeof v === 'object');
+                }
+                setAllSellers(sellers);
+            } catch (err) {
+                console.error('Error cargando vendedores:', err?.response?.data?.msg || err.message);
+            }
+        };
+        getAllSellers();
+    }, []);
+
+    const validationSchema = useMemo(() => {
+        const digits = (s = "") => s.toString().replace(/\D/g, "");
+        const validateEcuadorianCedula = (ci) => {
+            if (!ci && ci !== 0) return false;
+            const str = ci.toString().trim();
+            if (!/^\d{10}$/.test(str)) return false;
+            const province = parseInt(str.substring(0, 2), 10);
+            if (isNaN(province) || province < 1 || province > 24) return false;
+            const third = parseInt(str.charAt(2), 10);
+            if (isNaN(third) || third >= 6) return false;
+            const digitsArr = str.split('').map(d => parseInt(d, 10));
+            let sum = 0;
+            for (let i = 0; i < 9; i++) {
+                let val = digitsArr[i];
+                if (i % 2 === 0) {
+                    val = val * 2;
+                    if (val > 9) val -= 9;
+                }
+                sum += val;
+            }
+            const remainder = sum % 10;
+            const check = remainder === 0 ? 0 : 10 - remainder;
+            return check === digitsArr[9];
+        };
+
+        return Yup.object({
         names: Yup.string()
             .required("Los nombres son obligatorios")
             .min(3, "Los nombres deben tener al menos 3 caracteres")
@@ -59,10 +114,35 @@ const Register = () => {
         cedula: Yup.string()
             .required("El número de identificación es obligatorio")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de identificación debe contener unicamente números"),
+            .matches(/^\d{10}$/, "El número de identificación debe contener unicamente números")
+            .test('ecuador-cedula', 'La cédula ecuatoriana no válida', function (value) {
+                if (!value) return false;
+                return validateEcuadorianCedula(value);
+            })
+            .test('unique-cedula', 'La cédula ya está registrada', function (value) {
+                // si el campo está vacío o no tenemos la lista, dejar que otras validaciones lo manejen
+                if (!value) return true;
+                if (!allSellers || allSellers.length === 0) return true;
+                const valDigits = digits(value);
+                const exists = allSellers.some(s => {
+                    const ced = s?.cedula ?? s?.numberID ?? s?.ci ?? s?.identification ?? s?.ruc ?? "";
+                    return digits(ced) === valDigits;
+                });
+                return !exists;
+            }),
         email: Yup.string()
             .email("El correo debe ser válido")
-            .required("El correo es obligatorio"),
+            .required("El correo es obligatorio")
+            .test('unique-email', 'El correo ya está registrado', function (value) {
+                if (!value) return true;
+                if (!allSellers || allSellers.length === 0) return true;
+                const val = value.toString().toLowerCase().trim();
+                const exists = allSellers.some(s => {
+                    const mail = s?.email ?? s?.Email ?? s?.correo ?? "";
+                    return (mail || "").toString().toLowerCase().trim() === val;
+                });
+                return !exists;
+            }),
         SalesCity: Yup.string()
             .required("La ciudad de venta es obligatoria"),
         PhoneNumber: Yup.string()
@@ -76,8 +156,19 @@ const Register = () => {
                     return !value.includes("-");
                 }
             )
-            .length(10, "El número de teléfono debe tener exactamente 10 dígitos"),
+            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+            .test('unique-phone', 'El número de teléfono ya está registrado', function (value) {
+                if (!value) return true;
+                if (!allSellers || allSellers.length === 0) return true;
+                const valDigits = digits(value);
+                const exists = allSellers.some(s => {
+                    const phone = s?.PhoneNumber ?? s?.phone ?? s?.Phone ?? s?.telefono ?? "";
+                    return digits(phone) === valDigits;
+                });
+                return !exists;
+            }),
     });
+    }, [allSellers]);
 
     const cities = [
         "Quito",
@@ -110,7 +201,9 @@ const Register = () => {
         },
         validationSchema,
         onSubmit: async (values) => {
+            let success = false;
             try {
+                setIsLoading(true);
                 const token = localStorage.getItem("token");
                 const backUrl = import.meta.env.VITE_URL_BACKEND_API;
                 const url = `${backUrl}/register`;
@@ -120,15 +213,16 @@ const Register = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 };
-                const formData = { role: "Seller", status: false, ...values };
+                const formData = { role: "Seller", ...values };
                 const response = await axios.post(url, formData, options);
-                toast.success(response.data.msg);
-                setTimeout(() => {
-                    navigate("/dashboard/sellers");
-                }, 2000);
+                toast.success(response.data?.data || response.data?.msg || 'Vendedor registrado');
+                success = true;
             } catch (error) {
                 // Registrar en consola en lugar de mostrar un toast: usar únicamente Yup para validaciones
                 console.error('Register error:', error.response?.data?.msg || error.message || error);
+            } finally {
+                setIsLoading(false);
+                if (success) setTimeout(() => navigate("/dashboard/sellers"), 2000);
             }
         },
     });
@@ -200,7 +294,7 @@ const Register = () => {
                                 <div>
                                     <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Telefono <span className="text-red-500">*</span>:</label>
                                     <input
-                                        type="number"
+                                        type="Text"
                                         id="PhoneNumber"
                                         name="PhoneNumber"
                                         placeholder="0987654324"
@@ -254,26 +348,27 @@ const Register = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="state" className="mb-2 block text-sm font-semibold">Estado:</label>
-                                    <input
-                                        type="text"
-                                        id="state"
-                                        name="state"
-                                        placeholder="Ingrese estado"
-                                        value={formik.values.state}
-                                        onChange={formik.handleChange}
+                                    <label htmlFor="status" className="mb-2 block text-sm font-semibold">Estado:</label>
+                                    <select
+                                        id="status"
+                                        name="status"
+                                        value={formik.values.status?.toString()}
+                                        onChange={(e) => formik.setFieldValue('status', e.target.value === 'true')}
                                         onBlur={formik.handleBlur}
                                         className="block w-full rounded-md border border-gray-300 focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-1.5 text-gray-500"
-                                    />
-                                    {formik.touched.state && formik.errors.state && (
-                                        <div className="text-red-500 text-sm">{formik.errors.state}</div>
+                                    >
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                    {formik.touched.status && formik.errors.status && (
+                                        <div className="text-red-500 text-sm">{formik.errors.status}</div>
                                     )}
                                 </div>
                             </div>
 
                             <div className="mt-4">
-                                <button className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
-                                    Registrar
+                                <button type="submit" className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
+                                    {isLoading ? 'Registrando...' : 'Registrar'}
                                 </button>
                             </div>
                         </form>
