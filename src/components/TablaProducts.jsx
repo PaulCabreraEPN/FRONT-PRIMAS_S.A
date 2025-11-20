@@ -434,29 +434,29 @@ const TablaProducts = () => {
                                     </div>
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div>
-                                            <p className="text-sm text-gray-600">ID</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.id}</p>
+                                            <p className="text-sm font-medium text-gray-800">ID</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.id}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600">Nombre</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.product_name}</p>
+                                            <p className="text-sm font-medium text-gray-800">Nombre</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.product_name}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600">Referencia</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.reference}</p>
+                                            <p className="text-sm font-medium text-gray-800">Referencia</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.reference}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600">Precio</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.price}</p>
+                                            <p className="text-sm font-medium text-gray-800">Precio</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.price}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-600">Stock</p>
-                                            <p className="font-semibold text-gray-800">{modalProduct?.stock}</p>
+                                            <p className="text-sm font-medium text-gray-800">Stock</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.stock}</p>
                                         </div>
                                         
                                         <div className="md:col-span-2">
-                                            <p className="text-sm text-gray-600">Descripción</p>
-                                            <p className="text-gray-700 text-sm">{modalProduct?.description}</p>
+                                            <p className="text-sm font-medium text-gray-800">Descripción</p>
+                                            <p className="text-xs text-gray-500">{modalProduct?.description}</p>
                                         </div>
                                     </div>
                                 </div>
