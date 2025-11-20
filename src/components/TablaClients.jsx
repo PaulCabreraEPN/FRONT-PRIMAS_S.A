@@ -209,6 +209,10 @@ const ClientList = () => {
             {/* Loader mientras carga */}
             {isLoading ? (
                 <Loader />
+            ) : clients.length === 0 ? (
+                <div className="text-center p-4">
+                    <p className="text-gray-500">No hay clientes disponibles</p>
+                </div>
             ) : (
                 <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 px-4">
@@ -259,28 +263,28 @@ const ClientList = () => {
                                         <div className="flex-1">
                                             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Nombre</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Name || modalClient.name || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Nombre</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.Name || modalClient.name || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">RUC</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Ruc || modalClient.ruc || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">RUC</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.Ruc || modalClient.ruc || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Dirección</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.Address || modalClient.address || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Dirección</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.Address || modalClient.address || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Teléfono</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.telephone || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Teléfono</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.telephone || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Email</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.email || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Email</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.email || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Estado</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalClient.state || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Estado</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.state || 'N/A'}</dd>
                                                 </div>
                                             </dl>
                                         </div>
