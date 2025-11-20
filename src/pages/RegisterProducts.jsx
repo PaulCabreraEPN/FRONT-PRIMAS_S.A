@@ -80,13 +80,15 @@ const RegisterProducts = () => {
             .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
         reference: Yup.string()
             .required("La referencia es obligatoria")
-            .test('unique-product-reference', 'Ya existe un producto con esa referencia', function (value) {
+            .test('unique-reference', 'Ya existe un producto con esa referencia', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true;
                 const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
                 const valNorm = normalize(value);
                 const exists = allProducts.some(p => {
-                    const ref = p?.reference ?? p?.ref ?? p?.product_reference ?? "";
+                    const ref = p?.reference ?? p?.ref ?? p?.product_reference ?? p?.Reference ?? "";
+                    const pid = p?._id ?? p?.id ?? p?.product_id ?? "";
+                    if (pid && String(pid) === String(id)) return false; // excluir producto actual
                     return normalize(ref) === valNorm;
                 });
                 return !exists;
@@ -315,7 +317,7 @@ const RegisterProducts = () => {
                             </div>
 
                             <div className="mt-4">
-                                <button className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
+                                <button type="submit" className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
                                     Registrar
                                 </button>
                             </div>

@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Loader from "../components/Carga";
@@ -17,6 +16,7 @@ const UpdateProduct = () => {
     });
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [allProducts, setAllProducts] = useState([]);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -59,9 +59,26 @@ const UpdateProduct = () => {
         setImage(file);
     };
 
-    const validationSchema = Yup.object({
+    const validationSchema = useMemo(() => {
+        const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+
+        return Yup.object({
         product_name: Yup.string()
             .required('El nombre del producto es obligatorio')
+            .test('unique-product-name', 'Ya existe un producto con ese nombre', function (value) {
+                if (!value) return true;
+                if (!allProducts || allProducts.length === 0) return true; // no bloquear si no hay lista
+                const valNorm = normalize(value);
+                // permitir el valor si es igual al nombre actual del producto (no es un duplicado)
+                if (product?.product_name && normalize(product.product_name) === valNorm) return true;
+                const exists = allProducts.some(p => {
+                    const name = p?.product_name ?? p?.name ?? p?.productName ?? "";
+                    const pid = p?._id ?? p?.id ?? p?.product_id ?? "";
+                    if (pid && String(pid) === String(id)) return false; // excluir el producto actual
+                    return normalize(name) === valNorm;
+                });
+                return !exists;
+            })
             .min(6, 'El nombre debe tener al menos 6 caracteres')
             .max(60, 'El nombre debe tener como máximo 60 caracteres'),
         price: Yup.string()
@@ -72,6 +89,12 @@ const UpdateProduct = () => {
             }),
         stock: Yup.string()
             .required('El stock es obligatorio')
+            .test('min-1', 'El stock no puede ser menor a 1', value => {
+                if (value === undefined || value === null || value === '') return false;
+                const n = Number(value);
+                if (Number.isNaN(n)) return false;
+                return n >= 1;
+            })
             .test('stock-format', 'El stock debe ser un número entero de hasta 3 dígitos', value => {
                 if (value === undefined || value === null || value === '') return false;
                 return /^\d{1,3}$/.test(value.toString());
@@ -80,9 +103,26 @@ const UpdateProduct = () => {
             .required('La descripción es obligatoria')
             .min(30, 'La descripción debe tener al menos 30 caracteres')
             .max(300, 'La descripción debe tener como máximo 300 caracteres'),
-        reference: Yup.string().nullable(),
+        reference: Yup.string()
+            .required('La referencia es obligatoria')
+            .test('unique-reference', 'Ya existe un producto con esa referencia', function (value) {
+                if (!value) return true;
+                if (!allProducts || allProducts.length === 0) return true;
+                const valNorm = normalize(value);
+                // no hacer return temprano; la exclusión del producto actual
+                // se realiza comparando el id dentro del `some(...)`.
+                const exists = allProducts.some(p => {
+                    const ref = p?.reference ?? p?.ref ?? p?.product_reference ?? p?.Reference ?? "";
+                    const pid = p?._id ?? p?.id ?? p?.product_id ?? "";
+                    if (pid && String(pid) === String(id)) return false; // excluir producto actual
+                    return normalize(ref) === valNorm;
+                });
+                return !exists;
+            }),
         measure: Yup.string().nullable()
-    });
+
+        });
+    }, [allProducts, id, product]);
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -91,7 +131,8 @@ const UpdateProduct = () => {
             reference: product.reference || '',
             description: product.description || '',
             price: product.price !== undefined && product.price !== null ? String(product.price) : '',
-            stock: product.stock !== undefined && product.stock !== null ? String(product.stock) : '',
+                stock: product.stock !== undefined && product.stock !== null ? String(product.stock) : '',
+                image: null,
             measure: product.measure || ''
         },
         validationSchema,
@@ -148,6 +189,44 @@ const UpdateProduct = () => {
         }
     }, [id]);
 
+    useEffect(() => {
+        const getAllProducts = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const backUrl = import.meta.env.VITE_URL_BACKEND_API;
+                const url = `${backUrl}/products`;
+                const options = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+                const resp = await axios.get(url, options);
+                const payload = resp.data;
+                let products = [];
+
+                if (Array.isArray(payload)) {
+                    products = payload;
+                } else if (Array.isArray(payload?.products)) {
+                    products = payload.products;
+                } else if (Array.isArray(payload?.data)) {
+                    products = payload.data;
+                } else {
+                    const maybeArray = Object.values(payload || {}).find(v => Array.isArray(v));
+                    if (Array.isArray(maybeArray)) {
+                        products = maybeArray;
+                    } else if (payload && typeof payload === 'object') {
+                        products = Object.values(payload).filter(v => v && typeof v === 'object');
+                    }
+                }
+
+                setAllProducts(products);
+            } catch (err) {
+                console.error('Error cargando productos:', err?.response?.data?.msg || err.message);
+            }
+        };
+        getAllProducts();
+    }, []);
+
     if (isLoading) {
         return <Loader />;
     }
@@ -197,6 +276,9 @@ const UpdateProduct = () => {
                                             onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.reference && formik.errors.reference ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.reference}</div>
+                                        ) : null}
                                     </div>
 
                                     <div>
@@ -255,9 +337,16 @@ const UpdateProduct = () => {
                                             id="image"
                                             name="image"
                                             accept="image/*"
-                                            onChange={handleImageChange}
+                                            onChange={(e) => {
+                                                handleImageChange(e);
+                                                const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                                                formik.setFieldValue('image', file);
+                                            }}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         />
+                                        {formik.touched.image && formik.errors.image && (
+                                            <div className="text-red-500 text-sm">{formik.errors.image}</div>
+                                        )}
                                         {product.imgUrl && !image && (
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-600">Imagen actual:</p>
