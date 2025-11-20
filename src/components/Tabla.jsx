@@ -328,36 +328,36 @@ const Tabla = () => {
                                         <div className="flex-1">
                                             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Nombres</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.names || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Nombres</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.names || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Apellidos</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.lastNames || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Apellidos</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.lastNames || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Cédula</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.cedula || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Cédula</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.cedula || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Usuario</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.username || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Usuario</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.username || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Email</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.email || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Email</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.email || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Ciudad de Ventas</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.SalesCity || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Ciudad de Ventas</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.SalesCity || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Teléfono</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.PhoneNumber || 'N/A'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Teléfono</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.PhoneNumber || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-xs text-gray-500">Estado</dt>
-                                                    <dd className="text-sm font-medium text-gray-800">{modalSeller.status ? 'Activo' : 'Inactivo'}</dd>
+                                                    <dt className="text-sm font-medium text-gray-800">Estado</dt>
+                                                    <dd className="text-xs text-gray-500">{modalSeller.status ? 'Activo' : 'Inactivo'}</dd>
                                                 </div>
                                             </dl>
                                         </div>
@@ -384,7 +384,9 @@ const Tabla = () => {
 
             {/* Mensaje cuando no hay registros */}
             {filterSellers().length === 0 ? (
-                <Mensaje tipo="error">No existen registros</Mensaje>
+                <div className="text-center p-4">
+                    <p className="text-gray-500">No hay vendedores disponibles</p>
+                </div>
             ) : (
                 <>
                 <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-10">
