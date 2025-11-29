@@ -9,6 +9,7 @@ const Forgot = () => {
     const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
 
     const [mensaje, setMensaje] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     // Crear un useState para el formulario
     const [form, setForm] = useState({
@@ -42,15 +43,28 @@ const Forgot = () => {
         }
 
         try {
+            setIsLoading(true);
             const url = `${backendUrl}/recovery-password-admin`;
             const respuesta = await axios.post(url, normalizedForm);
-            setMensaje({ respuesta: respuesta.data.msg, tipo: true });
-            setForm({ username: "" }); // Resetear el formulario
+
+            // El backend puede devolver status: 'success' o 'warning' (entre otros)
+            const respStatus = respuesta.data?.status ?? 'success';
+            const respMsg = respuesta.data?.msg || "Operación completada.";
+
+            // Mostrar mensaje: tipo true sólo si es 'success'
+            setMensaje({ respuesta: respMsg, tipo: respStatus === 'success' });
+
+            // Si fue éxito completo, limpiar formulario
+            if (respStatus === 'success') {
+                setForm({ username: "" });
+            }
         } catch (error) {
             const errorMsg =
                 error.response?.data?.msg ||
                 "Ocurrió un error al procesar la solicitud.";
             setMensaje({ respuesta: errorMsg, tipo: false });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -88,8 +102,12 @@ const Forgot = () => {
                             />
                         </div>
                         
-                        <button className="py-2 w-full bg-gray-500 text-slate-300 border hover:scale-105 duration-300 hover:bg-[#7626acc2] hover:text-white rounded-full">
-                            Enviar email
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`py-2 w-full ${isLoading ? 'bg-gray-400 cursor-wait' : 'bg-gray-500 hover:scale-105 hover:bg-[#7626acc2] hover:text-white'} text-slate-300 border rounded-full duration-300`}
+                        >
+                            {isLoading ? 'Enviando...' : 'Enviar email'}
                         </button>
                     </form>
                     
