@@ -68,7 +68,7 @@ describe('Tabla - listar todos los vendedores', () => {
     expect(screen.getByText(/Juan/)).toBeInTheDocument();
     expect(screen.getByText(/Maria/)).toBeInTheDocument();
 
-    // También podemos comprobar que el estado (Activo/Inactivo) se muestra
+    // Comprobar que el estado (Activo/Inactivo) se muestra
     expect(screen.getByText(/Activo/)).toBeInTheDocument();
     expect(screen.getByText(/Inactivo/)).toBeInTheDocument();
   });
