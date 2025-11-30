@@ -67,12 +67,12 @@ const RegisterClients = () => {
             .test("two-words", "Debe ingresar al menos dos nombres", value =>
                 value && value.trim().split(/\s+/).length >= 2
             ),
-            
+
         ComercialName: Yup.string()
-        .required("El nombre comercial es obligatorio"),
+            .required("El nombre comercial es obligatorio"),
         Ruc: Yup.string()
             .required("El RUC es obligatorio")
-            .length(13,"El RUC debe tener exactamente 13 digitos")
+            .length(13, "El RUC debe tener exactamente 13 digitos")
             .matches(/^\d+$/, "El RUC debe contener solo números"),
         Address: Yup.string()
             .required("La dirección es obligatoria")
@@ -80,7 +80,7 @@ const RegisterClients = () => {
             .max(60, "La dirección debe tener como máximo 60 caracteres"),
         telephone: Yup.string()
             .required("El número de teléfono es obligatorio")
-            
+
             .test(
                 "no-negative",
                 "El número de teléfono no puede ser negativo",
@@ -163,7 +163,8 @@ const RegisterClients = () => {
     return (
         <div>
             <h1 className='font-black text-4xl text-gray-500'>Registrar Cliente</h1>
-
+            <hr className='my-4' />
+            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador registrar un nuevo cliente</h5>
             <hr className='my-4' />
 
             <div className="bg-white flex justify-center items-start w-full pt-2 pb-4">
