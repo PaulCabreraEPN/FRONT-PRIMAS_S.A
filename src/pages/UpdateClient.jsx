@@ -186,7 +186,8 @@ const UpdateClient = () => {
     return (
         <div>
             <h1 className='font-black text-4xl text-gray-500'>Actualizar Cliente</h1>
-
+            <hr className='my-4' />
+            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador actualizar los datos del cliente</h5>
             <hr className='my-4' />
 
 
