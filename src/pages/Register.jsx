@@ -229,8 +229,9 @@ const Register = () => {
 
     return (
         <div>
-            <h1 className='font-black text-4xl text-gray-500'>Registrar Vendedor</h1>
-
+             <h1 className='font-black text-4xl text-gray-500'>Registrar Vendedor</h1>
+            <hr className='my-4' />
+            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador registrar un nuevo vendedor</h5>
             <hr className='my-4' />
 
             <div className="bg-white flex justify-center items-start w-full pt-2 pb-4">
