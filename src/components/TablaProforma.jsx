@@ -57,11 +57,10 @@ const TablaProforma = () => {
 
   return (
     <>
-      <div className="p-4 mb-4 w-full">
-        <h1 className='font-black text-4xl text-gray-500'>Informacion de la Orden</h1>
-
-        <hr className='my-4' />
-      </div>
+      <h1 className='font-black text-4xl text-gray-500'>Información de la Orden</h1>
+      <hr className='my-4' />
+      <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar la información de la orden</h5>
+      <hr className='my-4' />
 
       {/*
       <button
