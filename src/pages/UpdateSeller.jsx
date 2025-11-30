@@ -100,94 +100,94 @@ const UpdateSeller = () => {
     const validationSchema = useMemo(() => {
         const digits = (s = "") => s.toString().replace(/\D/g, "");
         return Yup.object({
-        names: Yup.string()
-            .required("Los nombres son obligatorios")
-            .min(3, "Los nombres deben tener al menos 3 caracteres")
-            .max(41, "Los nombres deben tener como máximo 20 caracteres")
-            .test("two-words", "Debe ingresar exactamente dos nombres", value =>
-                value && value.trim().split(/\s+/).length === 2
-            )
-            .test(
-                "each-name-length",
-                "Cada nombre debe tener entre 3 y 20 caracteres",
-                function (value) {
-                    if (!value) return false;
-                    const parts = value.trim().split(/\s+/);
-                    if (parts.length !== 2) return false;
-                    const first = parts[0];
-                    const second = parts[1];
-                    return (
-                        first.length >= 3 &&
-                        first.length <= 20 &&
-                        second.length >= 3 &&
-                        second.length <= 20
-                    );
-                }
-            ),
-        lastNames: Yup.string()
-            .required("Los apellidos son obligatorios")
-            .min(3, "Los apellidos deben tener al menos 3 caracteres")
-            .max(41, "Los apellidos deben tener como máximo 20 caracteres")
-            .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
-                value && value.trim().split(/\s+/).length === 2
-            )
-            .test(
-                "each-lastname-length",
-                "Cada apellido debe tener entre 3 y 20 caracteres",
-                function (value) {
-                    if (!value) return false;
-                    const parts = value.trim().split(/\s+/);
-                    if (parts.length !== 2) return false;
-                    const first = parts[0];
-                    const second = parts[1];
-                    return (
-                        first.length >= 3 &&
-                        first.length <= 20 &&
-                        second.length >= 3 &&
-                        second.length <= 20
-                    );
-                }
-            ),
-        email: Yup.string()
-            .email("El correo debe ser válido")
-            .required("El correo es obligatorio")
-            .test('unique-email', 'El correo ya está registrado', function (value) {
-                if (!value) return true;
-                if (!allSellers || allSellers.length === 0) return true;
-                const val = value.toString().toLowerCase().trim();
-                const exists = allSellers.some(s => {
-                    const mail = s?.email ?? s?.Email ?? s?.correo ?? "";
-                    const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
-                    if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
-                    return (mail || "").toString().toLowerCase().trim() === val;
-                });
-                return !exists;
-            }),
-        SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
-        PhoneNumber: Yup.string()
-            .required("El número de teléfono es obligatorio")
-            .test(
-                "no-negative",
-                "El número de teléfono no puede ser negativo",
-                function (value) {
-                    if (!value) return false;
-                    return !value.includes("-");
-                }
-            )
-            .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
-            .test('unique-phone', 'El número de teléfono ya está registrado', function (value) {
-                if (!value) return true;
-                if (!allSellers || allSellers.length === 0) return true;
-                const valDigits = digits(value);
-                const exists = allSellers.some(s => {
-                    const phone = s?.PhoneNumber ?? s?.phone ?? s?.Phone ?? s?.telefono ?? "";
-                    const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
-                    if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
-                    return digits(phone) === valDigits;
-                });
-                return !exists;
-            })
-    });
+            names: Yup.string()
+                .required("Los nombres son obligatorios")
+                .min(3, "Los nombres deben tener al menos 3 caracteres")
+                .max(41, "Los nombres deben tener como máximo 20 caracteres")
+                .test("two-words", "Debe ingresar exactamente dos nombres", value =>
+                    value && value.trim().split(/\s+/).length === 2
+                )
+                .test(
+                    "each-name-length",
+                    "Cada nombre debe tener entre 3 y 20 caracteres",
+                    function (value) {
+                        if (!value) return false;
+                        const parts = value.trim().split(/\s+/);
+                        if (parts.length !== 2) return false;
+                        const first = parts[0];
+                        const second = parts[1];
+                        return (
+                            first.length >= 3 &&
+                            first.length <= 20 &&
+                            second.length >= 3 &&
+                            second.length <= 20
+                        );
+                    }
+                ),
+            lastNames: Yup.string()
+                .required("Los apellidos son obligatorios")
+                .min(3, "Los apellidos deben tener al menos 3 caracteres")
+                .max(41, "Los apellidos deben tener como máximo 20 caracteres")
+                .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
+                    value && value.trim().split(/\s+/).length === 2
+                )
+                .test(
+                    "each-lastname-length",
+                    "Cada apellido debe tener entre 3 y 20 caracteres",
+                    function (value) {
+                        if (!value) return false;
+                        const parts = value.trim().split(/\s+/);
+                        if (parts.length !== 2) return false;
+                        const first = parts[0];
+                        const second = parts[1];
+                        return (
+                            first.length >= 3 &&
+                            first.length <= 20 &&
+                            second.length >= 3 &&
+                            second.length <= 20
+                        );
+                    }
+                ),
+            email: Yup.string()
+                .email("El correo debe ser válido")
+                .required("El correo es obligatorio")
+                .test('unique-email', 'El correo ya está registrado', function (value) {
+                    if (!value) return true;
+                    if (!allSellers || allSellers.length === 0) return true;
+                    const val = value.toString().toLowerCase().trim();
+                    const exists = allSellers.some(s => {
+                        const mail = s?.email ?? s?.Email ?? s?.correo ?? "";
+                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                        return (mail || "").toString().toLowerCase().trim() === val;
+                    });
+                    return !exists;
+                }),
+            SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
+            PhoneNumber: Yup.string()
+                .required("El número de teléfono es obligatorio")
+                .test(
+                    "no-negative",
+                    "El número de teléfono no puede ser negativo",
+                    function (value) {
+                        if (!value) return false;
+                        return !value.includes("-");
+                    }
+                )
+                .length(10, "El número de teléfono debe tener exactamente 10 dígitos")
+                .test('unique-phone', 'El número de teléfono ya está registrado', function (value) {
+                    if (!value) return true;
+                    if (!allSellers || allSellers.length === 0) return true;
+                    const valDigits = digits(value);
+                    const exists = allSellers.some(s => {
+                        const phone = s?.PhoneNumber ?? s?.phone ?? s?.Phone ?? s?.telefono ?? "";
+                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                        return digits(phone) === valDigits;
+                    });
+                    return !exists;
+                })
+        });
     }, [allSellers, id]);
     const formik = useFormik({
         enableReinitialize: true,
@@ -259,8 +259,9 @@ const UpdateSeller = () => {
 
     return (
         <div>
-             <h1 className='font-black text-4xl text-gray-500'>Actualizar Vendedor</h1>
-
+            <h1 className='font-black text-4xl text-gray-500'>Actualizar Vendedor</h1>
+            <hr className='my-4' />
+            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador actualizar los datos del vendedor</h5>
             <hr className='my-4' />
 
             <div className="container mx-auto p-4">
