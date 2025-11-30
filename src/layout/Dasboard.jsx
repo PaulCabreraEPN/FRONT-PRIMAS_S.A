@@ -66,14 +66,14 @@ const Dashboard = () => {
             className="block px-6 py-3 hover:bg-[#2762b2]"
             onClick={() => setIsSidebarOpen(false)}
           >
-            <i className="fas fa-home"></i> Inicio
+            <i className="fas fa-home"></i> Estadísticas
           </Link>
           <Link 
             to="/dashboard/orders" 
             className="block px-6 py-3 hover:bg-[#2762b2]"
             onClick={() => setIsSidebarOpen(false)}
           >
-            <i className="fas fa-shopping-cart"></i> Pedidos
+            <i className="fas fa-shopping-cart"></i> Órdenes
           </Link>
           <Link 
             to="/dashboard/clients" 
