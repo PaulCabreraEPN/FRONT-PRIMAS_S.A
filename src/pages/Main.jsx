@@ -10,12 +10,12 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 const Main = () => {
-    
+
     const [counts, setCounts] = useState({})
     const [isLoading, setIsLoading] = useState(false);
-    
 
-    const getAllCount = async() => {
+
+    const getAllCount = async () => {
         try {
             setIsLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
@@ -31,17 +31,17 @@ const Main = () => {
             // El backend devuelve { status, code, msg, data: { products, orders, sellers, clients } }
             const data = response.data?.data || {};
             setCounts(data);
-            
+
         } catch (error) {
             console.log(error);
-        }finally {
+        } finally {
             setIsLoading(false);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getAllCount()
-    },[])
+    }, [])
 
     if (isLoading) {
         return <Loader />;
@@ -70,82 +70,85 @@ const Main = () => {
 
     return (
         <>
-                <div id="main-header">
-                    <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
-                    <hr className='my-4' />
-                </div>
-                <div id="top-cards" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {/* Card: Orders */}
-            <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                <div className="flex-shrink-0 mr-4 text-blue-600">
-                    <i className="fas fa-shopping-cart fa-2x"></i>
-                </div>
-                <div className="flex-1">
-                    <h6 className="text-sm text-gray-500">Total Pedidos</h6>
-                    <div className="flex items-center justify-between">
-                        <div className="text-2xl font-semibold text-gray-800">{counts.orders ?? 0}</div>
-                        <div className="w-16 h-16">
-                            <Doughnut data={doughnutData(counts.orders ?? 0, '#2563EB')} options={doughnutOptions} />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="main-header">
+                <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
+                <hr className='my-4' />
+                <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar estadísticas</h5>
 
-            {/* Card: Clients */}
-            <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                <div className="flex-shrink-0 mr-4 text-green-600">
-                    <i className="fas fa-users fa-2x"></i>
-                </div>
-                <div className="flex-1">
-                    <h6 className="text-sm text-gray-500">Clientes Registrados</h6>
-                    <div className="flex items-center justify-between">
-                        <div className="text-2xl font-semibold text-gray-800">{counts.clients ?? 0}</div>
-                        <div className="w-16 h-16">
-                            <Doughnut data={doughnutData(counts.clients ?? 0, '#16A34A')} options={doughnutOptions} />
+            </div>
+            <br></br>
+            <div id="top-cards" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {/* Card: Orders */}
+                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-4 text-blue-600">
+                        <i className="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                    <div className="flex-1">
+                        <h6 className="text-sm text-gray-500">Total Pedidos</h6>
+                        <div className="flex items-center justify-between">
+                            <div className="text-2xl font-semibold text-gray-800">{counts.orders ?? 0}</div>
+                            <div className="w-16 h-16">
+                                <Doughnut data={doughnutData(counts.orders ?? 0, '#2563EB')} options={doughnutOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Card: Products */}
-            <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                <div className="flex-shrink-0 mr-4 text-purple-600">
-                    <i className="fas fa-box fa-2x"></i>
-                </div>
-                <div className="flex-1">
-                    <h6 className="text-sm text-gray-500">Productos Activos</h6>
-                    <div className="flex items-center justify-between">
-                        <div className="text-2xl font-semibold text-gray-800">{counts.products ?? 0}</div>
-                        <div className="w-16 h-16">
-                            <Doughnut data={doughnutData(counts.products ?? 0, '#8B5CF6')} options={doughnutOptions} />
+                {/* Card: Clients */}
+                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-4 text-green-600">
+                        <i className="fas fa-users fa-2x"></i>
+                    </div>
+                    <div className="flex-1">
+                        <h6 className="text-sm text-gray-500">Clientes Registrados</h6>
+                        <div className="flex items-center justify-between">
+                            <div className="text-2xl font-semibold text-gray-800">{counts.clients ?? 0}</div>
+                            <div className="w-16 h-16">
+                                <Doughnut data={doughnutData(counts.clients ?? 0, '#16A34A')} options={doughnutOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Card: Sellers */}
-            <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                <div className="flex-shrink-0 mr-4 text-yellow-600">
-                    <i className="fas fa-user-cog fa-2x"></i>
+                {/* Card: Products */}
+                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-4 text-purple-600">
+                        <i className="fas fa-box fa-2x"></i>
+                    </div>
+                    <div className="flex-1">
+                        <h6 className="text-sm text-gray-500">Productos Activos</h6>
+                        <div className="flex items-center justify-between">
+                            <div className="text-2xl font-semibold text-gray-800">{counts.products ?? 0}</div>
+                            <div className="w-16 h-16">
+                                <Doughnut data={doughnutData(counts.products ?? 0, '#8B5CF6')} options={doughnutOptions} />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex-1">
-                    <h6 className="text-sm text-gray-500">Vendedores Activos</h6>
-                    <div className="flex items-center justify-between">
-                        <div className="text-2xl font-semibold text-gray-800">{counts.sellers ?? 0}</div>
-                        <div className="w-16 h-16">
-                            <Doughnut data={doughnutData(counts.sellers ?? 0, '#F59E0B')} options={doughnutOptions} />
+
+                {/* Card: Sellers */}
+                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-4 text-yellow-600">
+                        <i className="fas fa-user-cog fa-2x"></i>
+                    </div>
+                    <div className="flex-1">
+                        <h6 className="text-sm text-gray-500">Vendedores Activos</h6>
+                        <div className="flex items-center justify-between">
+                            <div className="text-2xl font-semibold text-gray-800">{counts.sellers ?? 0}</div>
+                            <div className="w-16 h-16">
+                                <Doughnut data={doughnutData(counts.sellers ?? 0, '#F59E0B')} options={doughnutOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div>
-            <StatictsBarS/>
-        </div>
+            <div>
+                <StatictsBarS />
+            </div>
 
         </>
     );
-    
+
 }
 
 export default Main
