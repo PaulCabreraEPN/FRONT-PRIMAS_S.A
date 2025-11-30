@@ -12,7 +12,9 @@ const Sellers = () => {
 
             <hr className='my-4' />
             
-            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador gestionar vendedores</h5>
+            <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar los vendedores</h5>
+            <hr className='my-4' />
+
             <Tabla/>
         </div>
     )
