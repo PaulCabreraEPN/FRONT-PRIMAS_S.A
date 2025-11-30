@@ -74,6 +74,8 @@ const Main = () => {
                 <h1 className='font-black text-4xl text-gray-500'>Estadísticas Generales</h1>
                 <hr className='my-4' />
                 <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar estadísticas</h5>
+                <hr className='my-4' />
+
 
             </div>
             <br></br>
