@@ -200,7 +200,7 @@ const ClientList = () => {
                             className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
                         >
                             <i className="fas fa-user-plus mr-2"></i>
-                            Registrar cliente
+                            Registrar Cliente
                         </button>
                     </div>
                 </div>
