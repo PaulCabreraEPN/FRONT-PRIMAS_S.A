@@ -238,7 +238,7 @@ const TablaOrders = () => {
     const currentItems = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="p-4">
+        <>
             <ToastContainer />
             {/* Cabecera: menú desplegable (izq), búsqueda (centro) */}
             <div className="p-4 mb-4 w-full">
@@ -377,7 +377,7 @@ const TablaOrders = () => {
                 )}
                 </>
             )}
-        </div>
+        </>
     );
 };
 
