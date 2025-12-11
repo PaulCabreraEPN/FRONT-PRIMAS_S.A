@@ -1,7 +1,7 @@
 
 import React from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import Loader from "./Carga";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,10 @@ const ClientList = () => {
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [confirmDeleteClientId, setConfirmDeleteClientId] = useState(null);
     const [confirmDeleting, setConfirmDeleting] = useState(false);
+    // Filtro por estado (menu similar a TablaOrders / TablaProducts)
+    const [currentStateFilter, setCurrentStateFilter] = useState('all');
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const fetchClients = async () => {
         setIsLoading(true);
@@ -94,6 +98,38 @@ const ClientList = () => {
         initializeProducts();
     }, []);
 
+    // Cerrar menú al hacer click fuera o presionar Escape
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
+        };
+        const handleKey = (e) => {
+            if (e.key === 'Escape') setMenuOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKey);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKey);
+        };
+    }, [menuRef]);
+
+    // Clases para badge según estado (normaliza a minúsculas)
+    const getStateBadgeClasses = (state) => {
+        const s = String(state || '').toLowerCase();
+        switch (s) {
+            case 'al día':
+            case 'al dia':
+                return 'text-sm font-semibold px-2 py-1 rounded bg-green-50 text-green-700 border border-green-100';
+            case 'en deuda':
+                return 'text-sm font-semibold px-2 py-1 rounded bg-red-50 text-red-700 border border-red-100';
+            default:
+                return 'text-sm font-semibold px-2 py-1 rounded bg-gray-100 text-gray-800 border border-gray-200';
+        }
+    };
+
     // Abrir modal y cargar información del cliente por RUC
     const openClientModal = async (ruc) => {
         setModalOpen(true);
@@ -166,14 +202,25 @@ const ClientList = () => {
     // Filtrado en vivo: mientras se escribe en el input searchRuc (filtra por RUC o nombre)
     useEffect(() => {
         const term = String(searchRuc || "").trim();
+        // Si no hay término, aplicamos el filtro de estado (si existe) o mostramos todo
         if (!term) {
-            setClients(allClients);
+            if (currentStateFilter === 'all') {
+                setClients(allClients);
+            } else {
+                const desired = String(currentStateFilter || '').toLowerCase();
+                setClients(Array.isArray(allClients) ? allClients.filter(c => String(c.state || '').toLowerCase() === desired) : []);
+            }
             setCurrentPage(1);
             return;
         }
 
         const lower = term.toLowerCase();
-        const filtered = (Array.isArray(allClients) ? allClients : []).filter((c) => {
+        let base = Array.isArray(allClients) ? allClients : [];
+        if (currentStateFilter !== 'all') {
+            base = base.filter(c => c.state === currentStateFilter);
+        }
+
+        const filtered = base.filter((c) => {
             const ruc = String(c.Ruc || c.ruc || '');
             const name = String(c.Name || c.name || '').toLowerCase();
             return ruc.includes(term) || name.includes(lower);
@@ -181,10 +228,10 @@ const ClientList = () => {
 
         setClients(filtered);
         setCurrentPage(1);
-    }, [searchRuc, allClients]);
+    }, [searchRuc, allClients, currentStateFilter]);
 
     return (
-        <div className="p-6 min-h-screen">
+        <>
             <ToastContainer />
     
             {/* Cabecera: búsqueda y acciones a la izquierda, registrar a la derecha */}
@@ -192,6 +239,25 @@ const ClientList = () => {
                 <div className="flex items-center gap-4">
 
                     <div className="flex items-center gap-3">
+                        <div className="relative" ref={menuRef}>
+                            <button
+                                onClick={() => setMenuOpen((v) => !v)}
+                                className="p-2 rounded-md bg-white border shadow-sm hover:bg-gray-50"
+                                aria-haspopup="true"
+                                aria-expanded={menuOpen}
+                                id="menu-button-clients"
+                            >
+                                <span className="text-xl">☰</span>
+                            </button>
+                            {menuOpen && (
+                                <div className="absolute left-0 mt-2 w-40 bg-white border rounded shadow-lg z-10" role="menu" aria-orientation="vertical" aria-labelledby="menu-button-clients">
+                                    <button onClick={async () => { setCurrentStateFilter('all'); await fetchClients(); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">Todos</button>
+                                    <button onClick={() => { const desired = 'al día'; setCurrentStateFilter(desired); setClients(Array.isArray(allClients) ? allClients.filter(c => String(c.state || '').toLowerCase() === desired.toLowerCase()) : []); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">al día</button>
+                                    <button onClick={() => { const desired = 'en deuda'; setCurrentStateFilter(desired); setClients(Array.isArray(allClients) ? allClients.filter(c => String(c.state || '').toLowerCase() === desired.toLowerCase()) : []); setCurrentPage(1); setMenuOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100" role="menuitem">en deuda</button>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex items-center gap-2">
                             <input
                                 type="text"
@@ -201,12 +267,13 @@ const ClientList = () => {
                                 className="border p-2 rounded w-44 max-w-xs"
                                 aria-label="Buscar cliente por RUC o nombre"
                             />
-                            <button
-                                onClick={fetchClients}
-                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition"
-                            >
-                                Mostrar Todos
-                            </button>
+                        </div>
+
+                        <div className="ml-3">
+                            <span className={getStateBadgeClasses(currentStateFilter === 'all' ? '' : currentStateFilter)} aria-live="polite" title={`Estado: ${currentStateFilter === 'all' ? 'Todos' : currentStateFilter}`}>
+                                <span className="mr-2 text-xs text-gray-500">Filtro</span>
+                                <span className="font-semibold">{currentStateFilter === 'all' ? 'Todos' : currentStateFilter}</span>
+                            </span>
                         </div>
                     </div>
 
@@ -231,25 +298,48 @@ const ClientList = () => {
                 </div>
             ) : (
                 <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 px-4">
+                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-4">
                     {(() => {
                         const totalPages = Math.max(1, Math.ceil(clients.length / itemsPerPage));
                         const startIndex = (currentPage - 1) * itemsPerPage;
                         const currentItems = clients.slice(startIndex, startIndex + itemsPerPage);
                         return currentItems.map((client) => (
-                        <div 
-                            key={client.Ruc || client.ruc} 
+                        <div
+                            key={client.Ruc || client.ruc}
                             className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
                             onClick={() => openClientModal(client.Ruc || client.ruc)}
                         >
-                            <h2 className="text-xl font-bold text-gray-800 whitespace-normal break-words">
-                                {client.Name || client.name}
-                            </h2>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>RUC:</strong> <span className="font-semibold">{client.Ruc || client.ruc}</span></p>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Dirección:</strong> <span className="font-semibold">{client.Address || client.address}</span></p>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Teléfono:</strong> <span className="font-semibold">{client.telephone}</span></p>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Email:</strong> <span className="font-semibold">{client.email}</span></p>
-                            <p className="text-sm text-gray-800 whitespace-normal break-words"><strong>Estado:</strong> <span className="font-semibold">{client.state}</span></p>
+                            <div className="flex flex-col md:flex-row items-center gap-4">
+                                <div className="flex-1 text-left">
+                                    <div className="flex flex-col gap-2">
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>RUC:</strong> <span className="font-semibold">{client.Ruc || client.ruc || '-'}</span></p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Nombre:</strong> <span className="font-semibold">{client.Name || client.name || '-'}</span></p>
+                                        </div>
+
+                                        
+
+                                        <div>
+                                            <p className="text-sm text-gray-800"><strong>Ciudad:</strong> <span className="font-semibold">{client.City || client.CityName || (client.Address ? (String(client.Address).split(',')[0]) : '-')}</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
+                                    <img src={client.image || '/images/seller.png'} alt={`Imagen ${client.Name || client.name}`} className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm" />
+                                </div>
+                            </div>
+
+                            {/* Pie: estado en la parte inferior derecha con diseño igual a Tabla.jsx */}
+                            <div className="mt-4 border-t pt-3 flex items-center justify-between bg-white">
+                                <div />
+                                <span className={`text-sm font-medium px-3 py-1 rounded ${String(client.state || '').toLowerCase().includes('al di') ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                                    {client.state || '-'}
+                                </span>
+                            </div>
                         </div>
                         ));
                     })()}
@@ -342,7 +432,7 @@ const ClientList = () => {
 
                 {/* Controles de paginación */}
                 {clients.length > itemsPerPage && (
-                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-4">
+                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-2">
                         <button
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
@@ -377,7 +467,7 @@ const ClientList = () => {
                 )}
                 </>
             )}
-        </div>
+        </>
     );
     
     
