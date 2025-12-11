@@ -32,6 +32,9 @@ const TablaProducts = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalProduct, setModalProduct] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [confirmDeleteProductId, setConfirmDeleteProductId] = useState(null);
+    const [confirmDeleting, setConfirmDeleting] = useState(false);
 
     const categories = {
         rollers: { name: "Rodillos", keywords: ["ROD", "ROLA", "ROLITO"] },
@@ -169,13 +172,25 @@ const TablaProducts = () => {
         }
     };
 
-    const eliminarProductFromModal = async (id) => {
-        if (!confirm('¿Confirma que desea eliminar este producto?')) return;
+    // Abrir modal de confirmación para eliminar producto
+    const requestDeleteProduct = (id) => {
+        setConfirmDeleteProductId(id);
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleCancelDelete = () => {
+        setConfirmDeleteOpen(false);
+        setConfirmDeleteProductId(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDeleteProductId) return;
+        setConfirmDeleting(true);
+        setModalLoading(true);
         try {
-            setModalLoading(true);
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem('token');
-            const url = `${backendUrl}/products/delete/${id}`;
+            const url = `${backendUrl}/products/delete/${confirmDeleteProductId}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",
@@ -195,7 +210,10 @@ const TablaProducts = () => {
             console.error(error);
             toast.error(error.response?.data?.msg || 'Error al eliminar el producto');
         } finally {
+            setConfirmDeleting(false);
+            setConfirmDeleteOpen(false);
             setModalLoading(false);
+            setConfirmDeleteProductId(null);
         }
     };
 
@@ -463,7 +481,28 @@ const TablaProducts = () => {
                                 <div className="flex justify-end gap-3 p-4 border-t">
                                     <button onClick={() => setModalOpen(false)} className="px-4 py-2 bg-white border rounded text-gray-700 hover:bg-gray-50">Cancelar</button>
                                     <button onClick={() => { setModalOpen(false); navigate(`/dashboard/products/update/${modalProduct?.id}`); }} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Actualizar</button>
-                                    <button onClick={() => eliminarProductFromModal(modalProduct?.id)} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Eliminar</button>
+                                    <button onClick={() => requestDeleteProduct(modalProduct?.id)} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Confirmación de eliminación (modal visual) */}
+                    {confirmDeleteOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                            <div className="absolute inset-0 bg-black/50" onClick={handleCancelDelete} />
+
+                            <div role="dialog" aria-modal="true" className="relative z-10 w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                                        <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z"></path></svg>
+                                    </div>
+                                    <h3 className="text-xl font-semibold mb-1">¿Estás seguro?</h3>
+                                    <p className="text-sm text-gray-500 mb-4">No podrás revertir esto!</p>
+                                    <div className="flex gap-3">
+                                        <button onClick={handleConfirmDelete} disabled={confirmDeleting} className={`px-4 py-2 rounded ${confirmDeleting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>Sí, eliminarlo!</button>
+                                        <button onClick={handleCancelDelete} disabled={confirmDeleting} className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white">Cancelar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
