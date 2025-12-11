@@ -50,9 +50,19 @@ const Forgot = () => {
             // El backend puede devolver status: 'success' o 'warning' (entre otros)
             const respStatus = respuesta.data?.status ?? 'success';
             const respMsg = respuesta.data?.msg || "Operación completada.";
+            const emailDetails = respuesta.data?.info?.emailDetails;
+
+            // Añadir detalle del envío de correo si el backend lo proporciona
+            let fullMsg = respMsg;
+            if (emailDetails) {
+                const sent = typeof emailDetails.sent === 'boolean' ? (emailDetails.sent ? 'enviado' : 'no enviado') : '';
+                const detailMsg = emailDetails.message ? `detalle: ${emailDetails.message}` : '';
+                const extra = [sent, detailMsg].filter(Boolean).join(' - ');
+                if (extra) fullMsg = `${fullMsg} (${extra})`;
+            }
 
             // Mostrar mensaje: tipo true sólo si es 'success'
-            setMensaje({ respuesta: respMsg, tipo: respStatus === 'success' });
+            setMensaje({ respuesta: fullMsg, tipo: respStatus === 'success' });
 
             // Si fue éxito completo, limpiar formulario
             if (respStatus === 'success') {

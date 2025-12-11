@@ -8,6 +8,7 @@ import axios from "axios";
 const RegisterProducts = () => {
     const navigate = useNavigate();
     const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [allProducts, setAllProducts] = useState([]);
 
     useEffect(() => {
@@ -138,37 +139,68 @@ const RegisterProducts = () => {
         },
         validationSchema,
         onSubmit: async (values) => {
+            setIsLoading(true);
             try {
                 const token = localStorage.getItem("token");
                 const backUrl = import.meta.env.VITE_URL_BACKEND_API;
                 const url = `${backUrl}/products/register`;
 
                 const formData = new FormData();
-                Object.keys(values).forEach((key) => {
-                    formData.append(key, values[key]);
-                });
+
+                // Asegurar que los campos numéricos se envían en formato correcto
+                formData.append('id', String(values.id).trim());
+                formData.append('product_name', values.product_name);
+                formData.append('reference', values.reference);
+                formData.append('description', values.description);
+                formData.append('price', String(values.price).trim());
+                formData.append('stock', String(values.stock).trim());
+
                 if (image) {
                     formData.append("image", image);
                 }
 
                 const options = {
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        // Dejar que el browser determine el boundary de multipart
                         Authorization: `Bearer ${token}`,
                     },
                 };
 
                 const response = await axios.post(url, formData, options);
-                if (response.data.status === "success") {
+
+                // Éxito: backend devuelve status 'success' y code 201
+                if (response.status === 201 || response.data?.status === "success") {
                     toast.success(response.data.msg || "Producto creado correctamente.");
+                    if (response.data?.info?.imageAction) {
+                        toast.info(`Imagen: ${response.data.info.imageAction}`);
+                    }
                     setTimeout(() => {
                         navigate("/dashboard/products");
-                    }, 2000);
+                    }, 1500);
                 } else {
-                    toast.error(response.data.msg || "Error al registrar el producto");
+                    toast.error(response.data?.msg || "Error al registrar el producto");
                 }
             } catch (error) {
-                toast.error(error.response?.data?.msg || "Error al registrar el producto");
+                const resp = error.response;
+                if (resp) {
+                    // Conflict: recurso ya existe (409)
+                    if (resp.status === 409) {
+                        toast.error(resp.data?.msg || 'El producto ya existe.');
+                        if (resp.data?.info?.imageAction) {
+                            toast.info(`Imagen: ${resp.data.info.imageAction}`);
+                        }
+                    } else {
+                        // Otros errores del servidor o validación
+                        toast.error(resp.data?.msg || 'Error al registrar el producto');
+                        if (resp.data?.info?.imageAction) {
+                            toast.info(`Imagen: ${resp.data.info.imageAction}`);
+                        }
+                    }
+                } else {
+                    toast.error(error.message || 'Error al registrar el producto');
+                }
+            } finally {
+                setIsLoading(false);
             }
         },
     });
@@ -318,8 +350,12 @@ const RegisterProducts = () => {
                             </div>
 
                             <div className="mt-4">
-                                <button type="submit" className="py-2 w-full block text-center bg-blue-900 text-slate-100 border rounded-xl hover:scale-100 duration-300 hover:bg-green-300 hover:text-black">
-                                    Registrar
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className={`py-2 w-full block text-center ${isLoading ? 'bg-gray-400 cursor-wait' : 'bg-blue-900 hover:bg-green-300 hover:text-black'} text-slate-100 border rounded-xl duration-300`}
+                                >
+                                    {isLoading ? 'Registrando...' : 'Registrar'}
                                 </button>
                             </div>
                         </form>
