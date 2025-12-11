@@ -16,7 +16,7 @@ const TablaOrders = () => {
     const [orderStates, setOrderStates] = useState({});
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6; // Mantener consistencia con TablaProducts
+    const itemsPerPage = 4; // Mostrar 4 items por página
     const [currentStateFilter, setCurrentStateFilter] = useState("all"); // Filtro de estado
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
