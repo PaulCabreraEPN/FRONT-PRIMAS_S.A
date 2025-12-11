@@ -100,7 +100,6 @@ const BarChart = () => {
 
     return (
         <div className="w-full h-full min-h-0">
-            <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Top 5 Vendedores</div>
             <div className="w-full h-full min-h-0">
                 <Bar data={data} options={options} />
             </div>
