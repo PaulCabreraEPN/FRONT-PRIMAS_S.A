@@ -12,7 +12,7 @@ const StatictsBarS = () => {
     const update = () => {
       if (!containerRef.current) return;
       const top = containerRef.current.getBoundingClientRect().top;
-      const padding = 24; // espacio extra inferior
+      const padding = 8; // reducir padding usado para cálculo y dar más espacio al gráfico
       const avail = Math.max(320, window.innerHeight - top - padding);
       setAvailableHeight(avail);
     };
@@ -46,25 +46,28 @@ const StatictsBarS = () => {
   const style = availableHeight ? { height: `${availableHeight}px`, overflow: 'hidden' } : { overflow: 'hidden' };
 
   return (
-    <div ref={containerRef} style={style} className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-6 h-full">
+    <div ref={containerRef} style={style} className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 h-full">
         {/* BarChart (fila 1, col 1) */}
-        <div className="md:row-start-1 md:row-end-2 bg-white shadow-md rounded-lg p-4 min-h-0 flex items-center justify-center">
-          <div className="w-full h-full min-h-0 p-4">
+        <div className="md:row-start-1 md:row-end-2 bg-white shadow-md rounded-lg p-3 min-h-0 flex items-center justify-center flex-col">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Top 5 Vendedores</h3>
+          <div className="w-full h-full min-h-0 p-2">
             <BarChart />
           </div>
         </div>
 
         {/* LineChart (columna derecha, ocupa 2 filas) */}
-        <div className="md:row-start-1 md:row-end-3 bg-white shadow-md rounded-lg p-4 min-h-0 flex items-center justify-center">
-          <div className="w-full h-full min-h-0 p-4">
+        <div className="md:row-start-1 md:row-end-3 bg-white shadow-md rounded-lg p-3 min-h-0 flex items-center justify-center flex-col">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Ventas por Semana</h3>
+          <div className="w-full h-full min-h-0 p-2">
             <LineChart />
           </div>
         </div>
 
         {/* Doughnut (fila 2, col 1) */}
-        <div className="md:row-start-2 md:row-end-3 bg-white shadow-md rounded-lg p-4 min-h-0 flex items-center justify-center">
-          <div className="w-full h-full min-h-0 p-4">
+        <div className="md:row-start-2 md:row-end-3 bg-white shadow-md rounded-lg p-3 min-h-0 flex items-center justify-center flex-col">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Ventas por Vendedor</h3>
+          <div className="w-full h-full min-h-0 p-2">
             <DoughnutChart />
           </div>
         </div>

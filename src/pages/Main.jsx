@@ -79,17 +79,17 @@ const Main = () => {
 
             </div>
             <br></br>
-            <div id="top-cards" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div id="top-cards" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 {/* Card: Orders */}
-                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                    <div className="flex-shrink-0 mr-4 text-blue-600">
-                        <i className="fas fa-shopping-cart fa-2x"></i>
+                <div className="flex items-center p-3 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-3 text-blue-600">
+                        <i className="fas fa-shopping-cart fa-lg"></i>
                     </div>
                     <div className="flex-1">
                         <h6 className="text-sm text-gray-500">Total Pedidos</h6>
                         <div className="flex items-center justify-between">
-                            <div className="text-2xl font-semibold text-gray-800">{counts.orders ?? 0}</div>
-                            <div className="w-16 h-16">
+                            <div className="text-xl font-semibold text-gray-800">{counts.orders ?? 0}</div>
+                            <div className="w-12 h-12">
                                 <Doughnut data={doughnutData(counts.orders ?? 0, '#2563EB')} options={doughnutOptions} />
                             </div>
                         </div>
@@ -97,15 +97,15 @@ const Main = () => {
                 </div>
 
                 {/* Card: Clients */}
-                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                    <div className="flex-shrink-0 mr-4 text-green-600">
-                        <i className="fas fa-users fa-2x"></i>
+                <div className="flex items-center p-3 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-3 text-green-600">
+                        <i className="fas fa-users fa-lg"></i>
                     </div>
                     <div className="flex-1">
                         <h6 className="text-sm text-gray-500">Clientes Registrados</h6>
                         <div className="flex items-center justify-between">
-                            <div className="text-2xl font-semibold text-gray-800">{counts.clients ?? 0}</div>
-                            <div className="w-16 h-16">
+                            <div className="text-xl font-semibold text-gray-800">{counts.clients ?? 0}</div>
+                            <div className="w-12 h-12">
                                 <Doughnut data={doughnutData(counts.clients ?? 0, '#16A34A')} options={doughnutOptions} />
                             </div>
                         </div>
@@ -113,15 +113,15 @@ const Main = () => {
                 </div>
 
                 {/* Card: Products */}
-                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                    <div className="flex-shrink-0 mr-4 text-purple-600">
-                        <i className="fas fa-box fa-2x"></i>
+                <div className="flex items-center p-3 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-3 text-purple-600">
+                        <i className="fas fa-box fa-lg"></i>
                     </div>
                     <div className="flex-1">
                         <h6 className="text-sm text-gray-500">Productos Activos</h6>
                         <div className="flex items-center justify-between">
-                            <div className="text-2xl font-semibold text-gray-800">{counts.products ?? 0}</div>
-                            <div className="w-16 h-16">
+                            <div className="text-xl font-semibold text-gray-800">{counts.products ?? 0}</div>
+                            <div className="w-12 h-12">
                                 <Doughnut data={doughnutData(counts.products ?? 0, '#8B5CF6')} options={doughnutOptions} />
                             </div>
                         </div>
@@ -129,15 +129,15 @@ const Main = () => {
                 </div>
 
                 {/* Card: Sellers */}
-                <div className="flex items-center p-4 bg-white shadow-md rounded-lg">
-                    <div className="flex-shrink-0 mr-4 text-yellow-600">
-                        <i className="fas fa-user-cog fa-2x"></i>
+                <div className="flex items-center p-3 bg-white shadow-md rounded-lg">
+                    <div className="flex-shrink-0 mr-3 text-yellow-600">
+                        <i className="fas fa-user-cog fa-lg"></i>
                     </div>
                     <div className="flex-1">
                         <h6 className="text-sm text-gray-500">Vendedores Activos</h6>
                         <div className="flex items-center justify-between">
-                            <div className="text-2xl font-semibold text-gray-800">{counts.sellers ?? 0}</div>
-                            <div className="w-16 h-16">
+                            <div className="text-xl font-semibold text-gray-800">{counts.sellers ?? 0}</div>
+                            <div className="w-12 h-12">
                                 <Doughnut data={doughnutData(counts.sellers ?? 0, '#F59E0B')} options={doughnutOptions} />
                             </div>
                         </div>
