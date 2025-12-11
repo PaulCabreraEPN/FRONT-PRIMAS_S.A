@@ -85,7 +85,6 @@ const DoughnutChart = () => {
 
     return (
         <div className="w-full h-full min-h-0">
-            <div style={{ textAlign: 'center' }} className="mb-2 font-semibold">Ventas por Vendedor</div>
             <div className="w-full h-full min-h-0">
                 <Pie data={pieData} options={pieOptions} />
             </div>
