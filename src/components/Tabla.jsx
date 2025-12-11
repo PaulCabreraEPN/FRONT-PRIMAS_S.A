@@ -426,7 +426,7 @@ const Tabla = () => {
                 </div>
             ) : (
                 <>
-                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-10">
+                <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-4">
                     {(() => {
                         const filtered = filterSellers();
                         const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
@@ -484,7 +484,7 @@ const Tabla = () => {
 
                 {/* Controles de paginación */}
                 {filterSellers().length > itemsPerPage && (
-                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-4">
+                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-2">
                         <button
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
