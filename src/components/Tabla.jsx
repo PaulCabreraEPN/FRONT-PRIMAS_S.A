@@ -20,6 +20,9 @@ const Tabla = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalSeller, setModalSeller] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [confirmDeleteSellerId, setConfirmDeleteSellerId] = useState(null);
+    const [confirmDeleting, setConfirmDeleting] = useState(false);
 
     // Clases para el badge que muestra el filtro activo (armoniza con los badges existentes)
     const getBadgeClasses = (filter) => {
@@ -175,15 +178,24 @@ const Tabla = () => {
         }
     };
 
-    // Eliminar vendedor desde el modal (reusa la lógica de SellerDetatill)
-    const eliminarSellerFromModal = async (id) => {
-        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este vendedor?");
-        if (!confirmacion) return;
+    // Solicita confirmación visual antes de eliminar: abrimos modal de confirmación
+    const requestDeleteSeller = (id) => {
+        setConfirmDeleteSellerId(id);
+        setConfirmDeleteOpen(true);
+    };
 
+    const handleCancelDelete = () => {
+        setConfirmDeleteOpen(false);
+        setConfirmDeleteSellerId(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDeleteSellerId) return;
+        setConfirmDeleting(true);
         try {
             const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
             const token = localStorage.getItem("token");
-            const url = `${backendUrl}/deleteSellerinfo/${id}`;
+            const url = `${backendUrl}/deleteSellerinfo/${confirmDeleteSellerId}`;
             const options = {
                 headers: {
                     "Content-Type": "application/json",
@@ -192,8 +204,11 @@ const Tabla = () => {
             };
             const respuesta = await axios.delete(url, options);
             toast.success(respuesta.data.msg || 'Vendedor eliminado');
+            // cerrar modales y limpiar estado
+            setConfirmDeleteOpen(false);
             setModalOpen(false);
             setModalSeller(null);
+            setConfirmDeleteSellerId(null);
             // refrescar lista
             setTimeout(() => {
                 listarSellers();
@@ -201,6 +216,8 @@ const Tabla = () => {
         } catch (error) {
             console.error(error);
             toast.error('Error al eliminar el vendedor');
+        } finally {
+            setConfirmDeleting(false);
         }
     };
 
@@ -371,7 +388,27 @@ const Tabla = () => {
                             <div className="px-5 py-4 bg-gray-50 border-t flex items-center justify-end gap-3">
                                 <button onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-md bg-white border text-sm text-gray-700 hover:bg-gray-100">Cancelar</button>
                                 <button onClick={() => { if(modalSeller) navigate(`/dashboard/sellers/update/${modalSeller._id}`); }} className="px-4 py-2 rounded-md bg-green-600 text-white text-sm hover:bg-green-700">Actualizar</button>
-                                <button onClick={() => { if(modalSeller) eliminarSellerFromModal(modalSeller._id); }} className="px-4 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">Eliminar</button>
+                                <button onClick={() => { if(modalSeller) requestDeleteSeller(modalSeller._id); }} className="px-4 py-2 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Confirmación de eliminación (modal visual) */}
+                {confirmDeleteOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                        <div className="absolute inset-0 bg-black/50" onClick={handleCancelDelete} />
+
+                        <div role="dialog" aria-modal="true" className="relative z-10 w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+                            <div className="flex flex-col items-center">
+                                <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                                    <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-1">¿Estás seguro?</h3>
+                                <p className="text-sm text-gray-500 mb-4">No podrás revertir esto!</p>
+                                <div className="flex gap-3">
+                                    <button onClick={handleConfirmDelete} disabled={confirmDeleting} className={`px-4 py-2 rounded ${confirmDeleting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>Sí, eliminarlo!</button>
+                                    <button onClick={handleCancelDelete} disabled={confirmDeleting} className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white">Cancelar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
