@@ -229,6 +229,30 @@ const TablaOrders = () => {
         setCurrentPage(1);
     }, [searchId, allOrders, currentStateFilter, orderStates, orders]);
 
+    // Detectar si el área de contenido es desplazable y marcarla con la clase `has-scroll`
+    useEffect(() => {
+        const nodes = Array.from(document.querySelectorAll('.orders-scroll-area'));
+        const onResize = () => {
+            nodes.forEach((n) => {
+                if (!n) return;
+                if (n.scrollHeight > n.clientHeight) n.classList.add('has-scroll');
+                else n.classList.remove('has-scroll');
+            });
+        };
+
+        // Comprobar inicialmente
+        onResize();
+
+        // Añadir listeners para mantener actualizado el estado
+        window.addEventListener('resize', onResize);
+        nodes.forEach((n) => n.addEventListener('scroll', onResize));
+
+        return () => {
+            window.removeEventListener('resize', onResize);
+            nodes.forEach((n) => n.removeEventListener('scroll', onResize));
+        };
+    }, [filteredOrders, currentPage]);
+
     if (isLoading) {
         return <Loader />;
     }
@@ -239,9 +263,32 @@ const TablaOrders = () => {
 
     return (
         <>
+            {/* estilos locales para ocultar scrollbar por defecto y mostrarlo en hover
+                y para mostrar un indicador fino (gradiente) cuando el contenido sea desplazable */}
+            <style>{`
+                .orders-scroll-area { scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+                .orders-scroll-area::-webkit-scrollbar { width: 6px; }
+                .orders-scroll-area::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.22); border-radius: 6px; }
+                .orders-scroll-area:not(:hover)::-webkit-scrollbar { width: 0; }
+                .orders-scroll-area:not(:hover) { scrollbar-width: none; }
+
+                /* Indicador fino en el lateral para hint de scroll */
+                .orders-scroll-area.has-scroll::before {
+                    content: '';
+                    position: absolute;
+                    right: 6px;
+                    top: 12px;
+                    height: calc(100% - 24px);
+                    width: 6px;
+                    border-radius: 9999px;
+                    background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.06));
+                    pointer-events: none;
+                    opacity: 0.9;
+                }
+            `}</style>
             <ToastContainer />
             {/* Cabecera: menú desplegable (izq), búsqueda (centro) */}
-            <div className="p-4 mb-4 w-full">
+            <div className="p-4 mb-1 w-full">
                 <div className="flex items-center gap-4">
 
                     <div className="flex items-center gap-3">
@@ -295,9 +342,9 @@ const TablaOrders = () => {
                 <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
             ) : (
                 <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
                     {currentItems.map((order) => (
-                        <div key={order._id} className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 relative">
+                        <div key={order._id} className="bg-white shadow-lg rounded-lg p-2 border-l-4 border-blue-500 flex flex-col" style={{ height: '13.7rem' }}>
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
                                 <MdNoteAdd
@@ -309,23 +356,25 @@ const TablaOrders = () => {
                                 />
                             </div>
                             
-                            <p className="text-gray-700">Cliente: {order.customer.Name}</p>
-                            <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
+                            <div className="mt-2 flex-1 overflow-auto pr-2 orders-scroll-area">
+                                <p className="text-gray-700">Cliente: {order.customer.Name}</p>
+                                <p className="font-bold text-green-600">Total: ${order.totalWithTax.toFixed(2)}</p>
 
-                            <div className="mt-3">
-                                <p><strong>Vendedor:</strong> {order.seller?.names} {order.seller?.lastNames}</p>
-                                <p className="mt-2 font-semibold">Productos:</p>
-                                <ul className="list-disc pl-5 text-sm text-gray-700">
-                                    {order.products.map((prod) => (
-                                        <li key={prod.productId}>
-                                            {prod.quantity}x {prod.productDetails.product_name} (${prod.productDetails.price})
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="mt-3">
+                                    <p><strong>Vendedor:</strong> {order.seller?.names} {order.seller?.lastNames}</p>
+                                    <p className="mt-2 font-semibold">Productos:</p>
+                                    <ul className="list-disc pl-5 text-sm text-gray-700">
+                                        {order.products.map((prod) => (
+                                            <li key={prod.productId}>
+                                                {prod.quantity}x {prod.productDetails.product_name} (${prod.productDetails.price})
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
 
-                            {/* Select alineado en la esquina inferior derecha */}
-                            <div className="absolute bottom-4 right-4">
+                            {/* Pie: select al final de la tarjeta (mantiene visibilidad, sin posicionamiento absoluto) */}
+                            <div className="mt-2 mt-auto flex items-center justify-end">
                                 <select
                                     className={`text-sm font-semibold border rounded-md px-3 py-1 transition ${getStatusColor(orderStates[order._id])}`}
                                     value={orderStates[order._id] || "Pendiente"}
