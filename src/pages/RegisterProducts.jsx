@@ -101,7 +101,16 @@ const RegisterProducts = () => {
         price: Yup.number()
             .typeError("El precio debe ser numérico")
             .required("El precio es obligatorio")
-            .min(0, "El precio no puede ser negativo")
+            .test('no-negative', 'El precio no puede ser negativo', function (value) {
+                if (value === undefined || value === null || value === '') return true;
+                const n = Number(value.toString().replace(',', '.'));
+                if (Number.isNaN(n)) return false;
+                return n >= 0;
+            })
+            .test('not-zero', 'El precio no puede ser 0', function (value) {
+                if (value === undefined || value === null || value === "") return true;
+                return Number(value) !== 0;
+            })
             .test(
                 "price-format",
                 "El precio puede tener hasta 4 dígitos enteros y hasta 2 decimales",
