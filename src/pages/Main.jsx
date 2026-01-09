@@ -86,7 +86,7 @@ const Main = () => {
                         <i className="fas fa-shopping-cart fa-lg"></i>
                     </div>
                     <div className="flex-1">
-                        <h6 className="text-sm text-gray-500">Total Pedidos</h6>
+                        <h6 className="text-sm text-gray-500">Total Órdenes</h6>
                         <div className="flex items-center justify-between">
                             <div className="text-xl font-semibold text-gray-800">{counts.orders ?? 0}</div>
                             <div className="w-12 h-12">
@@ -118,7 +118,7 @@ const Main = () => {
                         <i className="fas fa-box fa-lg"></i>
                     </div>
                     <div className="flex-1">
-                        <h6 className="text-sm text-gray-500">Productos Activos</h6>
+                        <h6 className="text-sm text-gray-500">Total Productos</h6>
                         <div className="flex items-center justify-between">
                             <div className="text-xl font-semibold text-gray-800">{counts.products ?? 0}</div>
                             <div className="w-12 h-12">
