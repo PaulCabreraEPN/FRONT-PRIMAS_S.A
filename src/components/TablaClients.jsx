@@ -373,6 +373,10 @@ const ClientList = () => {
                                                     <dd className="text-xs text-gray-500">{modalClient.Name || modalClient.name || 'N/A'}</dd>
                                                 </div>
                                                 <div>
+                                                    <dt className="text-sm font-medium text-gray-800">Nombre Comercial</dt>
+                                                    <dd className="text-xs text-gray-500">{modalClient.ComercialName || modalClient.comercialName || 'N/A'}</dd>
+                                                </div>
+                                                <div>
                                                     <dt className="text-sm font-medium text-gray-800">RUC</dt>
                                                     <dd className="text-xs text-gray-500">{modalClient.Ruc || modalClient.ruc || 'N/A'}</dd>
                                                 </div>
@@ -382,11 +386,11 @@ const ClientList = () => {
                                                 </div>
                                                 <div>
                                                     <dt className="text-sm font-medium text-gray-800">Teléfono</dt>
-                                                    <dd className="text-xs text-gray-500">{modalClient.telephone || 'N/A'}</dd>
+                                                    <dd className="text-xs text-gray-500">{modalClient.telephone || modalClient.Telefono || 'N/A'}</dd>
                                                 </div>
                                                 <div>
                                                     <dt className="text-sm font-medium text-gray-800">Email</dt>
-                                                    <dd className="text-xs text-gray-500">{modalClient.email || 'N/A'}</dd>
+                                                    <dd className="text-xs text-gray-500">{modalClient.email || modalClient.Email || 'N/A'}</dd>
                                                 </div>
                                                 <div>
                                                     <dt className="text-sm font-medium text-gray-800">Estado</dt>
