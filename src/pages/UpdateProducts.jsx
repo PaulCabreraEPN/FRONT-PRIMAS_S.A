@@ -83,6 +83,18 @@ const UpdateProduct = () => {
             .max(60, 'El nombre debe tener como máximo 60 caracteres'),
         price: Yup.string()
             .required('El precio es obligatorio')
+            .test('no-negative', 'El precio no puede ser negativo', function (value) {
+                if (value === undefined || value === null || value === '') return true;
+                const n = Number(value.toString().replace(',', '.'));
+                if (Number.isNaN(n)) return false;
+                return n >= 0;
+            })
+            .test('not-zero', 'El precio no puede ser 0', function (value) {
+                if (value === undefined || value === null || value === '') return true;
+                const n = Number(value.toString().replace(',', '.'));
+                if (Number.isNaN(n)) return false;
+                return n !== 0;
+            })
             .test('price-format', 'El precio puede tener hasta 4 dígitos enteros y hasta 2 decimales', value => {
                 if (!value) return false;
                 return /^\d{1,4}(\.\d{1,2})?$/.test(value.toString());
