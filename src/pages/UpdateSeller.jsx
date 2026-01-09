@@ -123,7 +123,20 @@ const UpdateSeller = () => {
                             second.length <= 20
                         );
                     }
-                ),
+                )
+                .test('unique-name', 'Los nombres ya están registrados en otro vendedor', function (value) {
+                    if (!value) return true;
+                    if (!allSellers || allSellers.length === 0) return true;
+                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                    const val = normalize(value);
+                    const exists = allSellers.some(s => {
+                        const name = s?.names ?? s?.Names ?? s?.name ?? "";
+                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                        return normalize(name) === val;
+                    });
+                    return !exists;
+                }),
             lastNames: Yup.string()
                 .required("Los apellidos son obligatorios")
                 .min(3, "Los apellidos deben tener al menos 3 caracteres")
@@ -147,7 +160,20 @@ const UpdateSeller = () => {
                             second.length <= 20
                         );
                     }
-                ),
+                )
+                .test('unique-lastnames', 'Los apellidos ya están registrados en otro vendedor', function (value) {
+                    if (!value) return true;
+                    if (!allSellers || allSellers.length === 0) return true;
+                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                    const val = normalize(value);
+                    const exists = allSellers.some(s => {
+                        const lname = s?.lastNames ?? s?.LastNames ?? s?.lastname ?? s?.lastName ?? "";
+                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
+                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
+                        return normalize(lname) === val;
+                    });
+                    return !exists;
+                }),
             email: Yup.string()
                 .email("El correo debe ser válido")
                 .required("El correo es obligatorio")
