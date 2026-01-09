@@ -89,11 +89,36 @@ const UpdateClient = () => {
             ComercialName: Yup.string()
                 .nullable()
                 .min(2, "El nombre comercial debe tener al menos 2 caracteres")
-                .max(60, "El nombre comercial debe tener como máximo 60 caracteres"),
+                .max(60, "El nombre comercial debe tener como máximo 60 caracteres")
+                .test('unique-comercial-name', 'El nombre comercial ya está registrado en otro cliente', function (value) {
+                    if (!value) return true;
+                    if (!clients.length) return true;
+                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                    const valNorm = normalize(value);
+                    const exists = clients.some(c => {
+                        const comercial = c?.ComercialName ?? c?.comercialName ?? c?.Comercial ?? "";
+                        // excluir al cliente actual por RUC
+                        if (c?.Ruc && String(c.Ruc) === String(ruc)) return false;
+                        return normalize(comercial) === valNorm;
+                    });
+                    return !exists;
+                }),
             Address: Yup.string()
                 .required("La dirección es obligatoria")
                 .min(20, "La dirección debe tener al menos 20 caracteres")
-                .max(60, "La dirección debe tener como máximo 60 caracteres"),
+                .max(60, "La dirección debe tener como máximo 60 caracteres")
+                .test('unique-address', 'La dirección ya está registrada en otro cliente', function (value) {
+                    if (!value) return true;
+                    if (!clients.length) return true;
+                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[^\w\s-]/g, "");
+                    const valNorm = normalize(value);
+                    const exists = clients.some(c => {
+                        const addr = c?.Address ?? c?.address ?? c?.direccion ?? c?.Direccion ?? "";
+                        if (c?.Ruc && String(c.Ruc) === String(ruc)) return false; // excluir cliente actual
+                        return normalize(addr) === valNorm;
+                    });
+                    return !exists;
+                }),
             telephone: Yup.string()
                 .required("El teléfono es obligatorio")
                 .test("no-negative", "El teléfono no puede contener '-'", value => !value || !value.includes('-'))
