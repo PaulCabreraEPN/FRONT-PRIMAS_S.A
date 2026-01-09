@@ -69,15 +69,51 @@ const RegisterClients = () => {
             ),
 
         ComercialName: Yup.string()
-            .required("El nombre comercial es obligatorio"),
+            .required("El nombre comercial es obligatorio")
+            .test("unique-comercial-name", "Ya existe un cliente con ese nombre comercial", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+                const valNorm = normalize(value);
+                const exists = allClients.some(c => {
+                    const comercial = c?.ComercialName ?? c?.comercialName ?? c?.commercialName ?? c?.CommercialName ?? "";
+                    return normalize(comercial) === valNorm;
+                });
+                return !exists;
+            }),
         Ruc: Yup.string()
             .required("El RUC es obligatorio")
             .length(13, "El RUC debe tener exactamente 13 digitos")
-            .matches(/^\d+$/, "El RUC debe contener solo números"),
+            .matches(/^\d+$/, "El RUC debe contener solo números")
+            .test("unique-ruc", "Ya existe un cliente con ese RUC", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const normalizeRuc = (s = "") => s.toString().replace(/\D/g, "").trim();
+                const valNorm = normalizeRuc(value);
+                const exists = allClients.some(c => {
+                    const r = c?.Ruc ?? c?.ruc ?? c?.RUC ?? c?.document ?? "";
+                    return normalizeRuc(r) === valNorm;
+                });
+                return !exists;
+            }),
+        
+        
+        
         Address: Yup.string()
             .required("La dirección es obligatoria")
-            .min(20, "La dirección debe tener al menos 20 caracteres")
-            .max(60, "La dirección debe tener como máximo 60 caracteres"),
+            .min(15, "La dirección debe tener al menos 15 caracteres")
+            .max(40, "La dirección debe tener como máximo 40 caracteres")
+            .test("unique-address", "Ya existe un cliente con esa dirección", function (value) {
+                if (!value) return true;
+                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
+                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[^\w\s-]/g, "");
+                const valNorm = normalize(value);
+                const exists = allClients.some(c => {
+                    const addr = c?.Address ?? c?.address ?? c?.direccion ?? c?.Direccion ?? "";
+                    return normalize(addr) === valNorm;
+                });
+                return !exists;
+            }),
         telephone: Yup.string()
             .required("El número de teléfono es obligatorio")
 
@@ -154,9 +190,12 @@ const RegisterClients = () => {
     });
 
     useEffect(() => {
-        // cuando cambian los clientes recargados, revalidar el campo Name
-        if (formik && formik.values && formik.values.Name) {
-            formik.validateField("Name");
+        // cuando cambian los clientes recargados, revalidar los campos Name y ComercialName
+        if (formik && formik.values) {
+            if (formik.values.Name) formik.validateField("Name");
+            if (formik.values.ComercialName) formik.validateField("ComercialName");
+            if (formik.values.Ruc) formik.validateField("Ruc");
+            if (formik.values.Address) formik.validateField("Address");
         }
     }, [allClients]);
 
