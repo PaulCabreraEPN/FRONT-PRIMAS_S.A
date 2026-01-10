@@ -336,7 +336,7 @@ const ClientList = () => {
                             {/* Pie: estado en la parte inferior derecha con diseño igual a Tabla.jsx */}
                             <div className="mt-4 border-t pt-3 flex items-center justify-between bg-white">
                                 <div />
-                                <span className={`text-sm font-medium px-3 py-1 rounded ${String(client.state || '').toLowerCase().includes('al di') ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                                <span className={getStateBadgeClasses(client.state)}>
                                     {client.state || '-'}
                                 </span>
                             </div>
