@@ -339,7 +339,9 @@ const TablaOrders = () => {
             {/* Nota: los filtros de estado están disponibles desde el menú desplegable en la cabecera */}
 
             {filteredOrders.length === 0 ? (
-                <Mensaje tipo={'error'}>{'No existen registros'}</Mensaje>
+                <div className="text-center p-4">
+                    <p className="text-gray-500">No hay pedidos disponibles</p>
+                </div>
             ) : (
                 <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
