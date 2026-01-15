@@ -215,6 +215,23 @@ const UpdateSeller = () => {
                 })
         });
     }, [allSellers, id]);
+    const cities = [
+        "Quito",
+        "Guayaquil",
+        "Cuenca",
+        "Ambato",
+        "Manta",
+        "Loja",
+        "Machala",
+        "Riobamba",
+        "Ibarra",
+        "Durán",
+        "Esmeraldas",
+        "Portoviejo",
+        "Babahoyo",
+        "Tena",
+        "Santo Domingo"
+    ];
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -393,16 +410,21 @@ const UpdateSeller = () => {
 
                                     <div>
                                         <label htmlFor="SalesCity" className="mb-2 block text-sm font-semibold">Ciudad de Ventas:</label>
-                                        <input
-                                            type="text"
+                                        <select
                                             id="SalesCity"
                                             name="SalesCity"
-                                            placeholder="Quito"
                                             value={formik.values.SalesCity}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                                        />
+                                        >
+                                            <option value="">Selecciona una ciudad</option>
+                                            {cities.map((city, index) => (
+                                                <option key={index} value={city}>
+                                                    {city}
+                                                </option>
+                                            ))}
+                                        </select>
                                         {formik.touched.SalesCity && formik.errors.SalesCity ? (
                                             <div className="text-red-500 text-sm">{formik.errors.SalesCity}</div>
                                         ) : null}
