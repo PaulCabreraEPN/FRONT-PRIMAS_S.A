@@ -349,7 +349,7 @@ const Register = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="status" className="mb-2 block text-sm font-semibold">Estado:</label>
+                                    <label htmlFor="status" className="mb-2 block text-sm font-semibold">Estado :</label>
                                     <select
                                         id="status"
                                         name="status"
