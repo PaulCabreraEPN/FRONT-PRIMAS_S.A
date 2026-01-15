@@ -242,7 +242,7 @@ const RegisterClients = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial:</label>
+                                    <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="text"
                                         id="ComercialName"
@@ -276,7 +276,7 @@ const RegisterClients = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono:</label>
+                                    <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="text"
                                         id="telephone"
@@ -293,7 +293,7 @@ const RegisterClients = () => {
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label htmlFor="Address" className="mb-2 block text-sm font-semibold">Dirección:</label>
+                                    <label htmlFor="Address" className="mb-2 block text-sm font-semibold">Dirección <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="text"
                                         id="Address"
@@ -336,7 +336,6 @@ const RegisterClients = () => {
                                         onBlur={formik.handleBlur}
                                         className="block w-full rounded-md border border-gray-300 bg-white focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700 py-1 px-2 text-gray-500"
                                     >
-                                        <option value="" disabled>Seleccione estado</option>
                                         <option value="al día">al día</option>
                                         <option value="en deuda">en deuda</option>
                                     </select>
