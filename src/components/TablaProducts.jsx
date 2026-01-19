@@ -340,9 +340,9 @@ const TablaProducts = () => {
             <ToastContainer />
             {/* Cabecera: menú desplegable (izq), búsqueda (centro), registrar (derecha) */}
             <div className="p-4 mb-4 w-full">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
                         <div className="relative" ref={menuRef}>
                             <button
                                 onClick={() => setMenuOpen((v) => !v)}
@@ -365,13 +365,13 @@ const TablaProducts = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
                                 placeholder="ID del producto"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
-                                className="border p-2 rounded w-44 max-w-xs"
+                                className="border p-2 rounded w-full sm:w-44 max-w-xs"
                                 aria-label="Buscar producto por ID, nombre o referencia"
                             />
                         </div>
@@ -385,7 +385,7 @@ const TablaProducts = () => {
                         </div>
                     </div>
 
-                    <div className="ml-auto">
+                    <div className="mt-3 sm:mt-0 sm:ml-auto">
                         <button onClick={() => navigate("register")} className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
                             <i className="fas fa-user-plus mr-2"></i>
                             Registrar Producto
@@ -402,8 +402,8 @@ const TablaProducts = () => {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-4">
                         {currentItems.map((product) => (
-                            <div key={product.id} onClick={() => openProductModal(product.id)} className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg" role="button" tabIndex={0}>
-                                <div className="flex flex-col md:flex-row items-center gap-4">
+                            <div key={product.id} onClick={() => openProductModal(product.id)} className="w-full p-4 sm:p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[150px] sm:min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg" role="button" tabIndex={0}>
+                                <div className="flex flex-col sm:flex-row items-center gap-4">
                                         <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
                                             <div>
@@ -423,8 +423,8 @@ const TablaProducts = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
-                                        <img src={product.imgUrl} alt={`Imagen de ${product.product_name}`} className="w-20 h-20 md:w-24 md:h-24 object-contain rounded-lg shadow-sm" />
+                                    <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 flex items-center justify-center">
+                                        <img loading="lazy" src={product.imgUrl} alt={`Imagen de ${product.product_name}`} className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain rounded-lg shadow-sm" />
                                     </div>
                                 </div>
                             </div>
@@ -435,22 +435,22 @@ const TablaProducts = () => {
                     {modalOpen && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
                             <div className="absolute inset-0 bg-black opacity-40" onClick={() => setModalOpen(false)}></div>
-                            <div className="relative bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-2/3">
+                            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-3xl mx-4 sm:mx-0">
                                 <div className="flex justify-between items-center p-4 border-b">
                                     <h3 className="text-lg font-semibold">Detalle del Producto</h3>
                                     <button className="text-gray-500 hover:text-gray-700" onClick={() => setModalOpen(false)}>✕</button>
                                 </div>
-                                <div className="p-6 flex flex-col md:flex-row gap-6">
-                                    <div className="flex-shrink-0 w-full md:w-48 flex items-center justify-center">
-                                        {modalLoading ? (
+                                <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
+                                    <div className="flex-shrink-0 w-full sm:w-48 flex items-center justify-center">
+                                            {modalLoading ? (
                                             <div>Cargando...</div>
                                         ) : modalProduct ? (
-                                            <img src={modalProduct.imgUrl} alt={modalProduct.product_name} className="w-40 h-40 object-contain rounded-md shadow-sm" />
+                                            <img loading="lazy" src={modalProduct.imgUrl} alt={modalProduct.product_name} className="w-24 h-24 sm:w-40 sm:h-40 object-contain rounded-md shadow-sm" />
                                         ) : (
                                             <div className="text-gray-500">No hay datos</div>
                                         )}
                                     </div>
-                                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <p className="text-sm font-medium text-gray-800">ID</p>
                                             <p className="text-xs text-gray-500">{modalProduct?.id}</p>
