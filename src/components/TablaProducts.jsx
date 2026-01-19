@@ -400,14 +400,20 @@ const TablaProducts = () => {
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-4">
+                    <div className="px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 pb-4">
                         {currentItems.map((product) => (
-                            <div key={product.id} onClick={() => openProductModal(product.id)} className="w-full p-4 sm:p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[150px] sm:min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg" role="button" tabIndex={0}>
-                                <div className="flex flex-col sm:flex-row items-center gap-4">
-                                        <div className="flex-1 text-left">
+                            <div
+                                key={product.id}
+                                className="w-full p-6 bg-white cursor-pointer transform transition duration-300 rounded-lg overflow-hidden min-h-[190px] hover:shadow-xl hover:-translate-y-1 border-l-4 border-blue-500 shadow-lg"
+                                onClick={() => openProductModal(product.id)}
+                                role="button"
+                                tabIndex={0}
+                            >
+                                <div className="flex flex-col md:flex-row items-center gap-4">
+                                    <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
                                             <div>
-                                                <p className="text-sm text-gray-800"><strong>ID:</strong> <span className="font-semibold">{product.id}</span></p>
+                                                <p className="text-sm text-gray-800"><strong>Identificación:</strong> <span className="font-semibold">{product.id}</span></p>
                                             </div>
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
@@ -423,9 +429,22 @@ const TablaProducts = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 flex items-center justify-center">
-                                        <img loading="lazy" src={product.imgUrl} alt={`Imagen de ${product.product_name}`} className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain rounded-lg shadow-sm" />
+
+                                    <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
+                                        <img
+                                            loading="lazy"
+                                            src={product.imgUrl}
+                                            alt={`Imagen de ${product.product_name}`}
+                                            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain rounded-md shadow-sm"
+                                        />
                                     </div>
+                                </div>
+
+                                <div className="mt-4 border-t pt-3 flex items-center justify-between bg-white">
+                                    <div />
+                                    <span className={`text-sm font-medium px-3 py-1 rounded ${product.stock > 0 ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                                        {product.stock > 0 ? 'Disponible' : 'Agotado'}
+                                    </span>
                                 </div>
                             </div>
                         ))}
@@ -445,7 +464,9 @@ const TablaProducts = () => {
                                             {modalLoading ? (
                                             <div>Cargando...</div>
                                         ) : modalProduct ? (
-                                            <img loading="lazy" src={modalProduct.imgUrl} alt={modalProduct.product_name} className="w-24 h-24 sm:w-40 sm:h-40 object-contain rounded-md shadow-sm" />
+                                            <div className="bg-gray-50 p-3 rounded-lg">
+                                                <img loading="lazy" src={modalProduct.imgUrl} alt={modalProduct.product_name} className="w-24 h-24 sm:w-36 sm:h-36 md:w-44 md:h-44 object-contain rounded-md shadow-sm" />
+                                            </div>
                                         ) : (
                                             <div className="text-gray-500">No hay datos</div>
                                         )}
