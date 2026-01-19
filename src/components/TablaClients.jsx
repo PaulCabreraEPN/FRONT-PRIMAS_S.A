@@ -236,9 +236,9 @@ const ClientList = () => {
     
             {/* Cabecera: búsqueda y acciones a la izquierda, registrar a la derecha */}
             <div className="p-4 mb-4 w-full">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
                         <div className="relative" ref={menuRef}>
                             <button
                                 onClick={() => setMenuOpen((v) => !v)}
@@ -258,13 +258,13 @@ const ClientList = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
                                 placeholder="Ingrese RUC o nombre"
                                 value={searchRuc}
                                 onChange={(e) => setSearchRuc(e.target.value)}
-                                className="border p-2 rounded w-44 max-w-xs"
+                                className="border p-2 rounded w-full sm:w-44 max-w-xs"
                                 aria-label="Buscar cliente por RUC o nombre"
                             />
                         </div>
@@ -277,7 +277,7 @@ const ClientList = () => {
                         </div>
                     </div>
 
-                    <div className="ml-auto">
+                    <div className="mt-3 sm:mt-0 sm:ml-auto">
                         <button
                             onClick={() => navigate("register")}
                             className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
@@ -323,14 +323,14 @@ const ClientList = () => {
                                         
 
                                         <div>
-                                            <p className="text-sm text-gray-800"><strong>Ciudad:</strong> <span className="font-semibold">{client.City || client.CityName || (client.Address ? (String(client.Address).split(',')[0]) : '-')}</span></p>
+                                            <p className="text-sm text-gray-800"><strong>Teléfono:</strong> <span className="font-semibold">{client.telephone || client.Telefono || '-'}</span></p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
-                                    <img src={client.image || '/images/seller.png'} alt={`Imagen ${client.Name || client.name}`} className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm" />
-                                </div>
+                                        <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
+                                            <img loading="lazy" src={client.image || '/images/seller.png'} alt={`Imagen ${client.Name || client.name}`} className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm" />
+                                        </div>
                             </div>
 
                             {/* Pie: estado en la parte inferior derecha con diseño igual a Tabla.jsx */}
