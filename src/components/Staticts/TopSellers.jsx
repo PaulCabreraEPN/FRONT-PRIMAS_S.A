@@ -11,6 +11,12 @@ const StatictsBarS = () => {
   useEffect(() => {
     const update = () => {
       if (!containerRef.current) return;
+      const isMobile = window.innerWidth < 640; // sm breakpoint
+      if (isMobile) {
+        // En móvil dejamos altura automática para que los componentes se apilen naturalmente
+        setAvailableHeight(null);
+        return;
+      }
       const top = containerRef.current.getBoundingClientRect().top;
       const padding = 8; // reducir padding usado para cálculo y dar más espacio al gráfico
       const avail = Math.max(320, window.innerHeight - top - padding);
@@ -45,9 +51,12 @@ const StatictsBarS = () => {
 
   const style = availableHeight ? { height: `${availableHeight}px`, overflow: 'hidden' } : { overflow: 'hidden' };
 
+  // Si estamos en móvil (availableHeight === null) usamos una cuadrícula apilada para evitar recortes
+  const gridClass = availableHeight === null ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 h-full';
+
   return (
     <div ref={containerRef} style={style} className="p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-4 h-full">
+      <div className={gridClass}>
         {/* BarChart (fila 1, col 1) */}
         <div className="md:row-start-1 md:row-end-2 bg-white shadow-md rounded-lg p-3 min-h-0 flex items-center justify-center flex-col">
           <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Top 5 Vendedores</h3>
