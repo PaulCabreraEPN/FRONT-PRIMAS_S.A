@@ -256,10 +256,10 @@ const Tabla = () => {
             <ToastContainer />
             {/* Cabecera: menú desplegable ☰ (izq), búsqueda + botones (centro), registrar (derecha) */}
             <div className="p-4 mb-4 w-full">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
 
                     {/* Menú desplegable ☰ y búsqueda inmediatamente a su derecha */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
                         <div className="relative" ref={menuRef}>
                             <button
                                 onClick={() => setMenuOpen((v) => !v)}
@@ -280,13 +280,13 @@ const Tabla = () => {
                             )}
                         </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
                                 placeholder="Cédula vendedor"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
-                                className="border p-2 rounded w-44 max-w-xs"
+                                className="border p-2 rounded w-full sm:w-44 max-w-xs"
                                 aria-label="Buscar vendedor por cédula, nombre o usuario"
                             />
                             </div>
@@ -301,7 +301,7 @@ const Tabla = () => {
                     </div>
 
                     {/* Botón Registrar a la derecha */}
-                    <div className="ml-auto">
+                    <div className="mt-3 sm:mt-0 sm:ml-auto">
                         <button
                             onClick={() => navigate("register")}
                             className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
@@ -335,9 +335,9 @@ const Tabla = () => {
                                 ) : modalSeller ? (
                                     <div className="flex flex-col md:flex-row gap-6">
                                         {/* Imagen */}
-                                        <div className="md:w-40 flex items-center justify-center md:justify-start">
+                                                <div className="md:w-40 flex items-center justify-center md:justify-start">
                                             <div className="bg-gray-50 p-3 rounded-lg">
-                                                <img src={modalSeller.image || '/images/seller.png'} alt={`Imagen ${modalSeller.names}`} className="w-36 h-36 md:w-44 md:h-44 object-cover rounded-full border-4 border-blue-600" />
+                                                <img loading="lazy" src={modalSeller.image || '/images/seller.png'} alt={`Imagen ${modalSeller.names}`} className="w-24 h-24 sm:w-36 sm:h-36 md:w-44 md:h-44 object-cover rounded-full border-4 border-blue-600" />
                                             </div>
                                         </div>
 
@@ -463,9 +463,10 @@ const Tabla = () => {
                                 {/* Imagen del vendedor */}
                                 <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
                                     <img
+                                        loading="lazy"
                                         src={seller.image || "/images/seller.png"}
                                         alt={`Imagen de ${seller.names}`}
-                                        className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm"
+                                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-full shadow-sm"
                                     />
                                 </div>
                             </div>
