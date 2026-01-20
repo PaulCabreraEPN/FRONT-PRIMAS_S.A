@@ -230,6 +230,21 @@ const ClientList = () => {
         setCurrentPage(1);
     }, [searchRuc, allClients, currentStateFilter]);
 
+    // Paginación truncada helper (máx botones visibles: 5)
+    const getPagination = (totalPages, current, maxButtons = 5) => {
+        if (totalPages <= maxButtons) return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = [];
+        const side = Math.floor((maxButtons - 3) / 2);
+        const start = Math.max(2, current - side);
+        const end = Math.min(totalPages - 1, current + side);
+        pages.push(1);
+        if (start > 2) pages.push('...');
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+        return pages;
+    };
+
     return (
         <>
             <ToastContainer />
@@ -434,41 +449,47 @@ const ClientList = () => {
                     </div>
                 )}
 
-                {/* Controles de paginación */}
-                {clients.length > itemsPerPage && (
-                    <div className="flex justify-center items-center gap-2 sm:gap-3 mt-2">
-                        <button
-                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                            disabled={currentPage === 1}
-                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                        >
-                            Anterior
-                        </button>
+                {/* Controles de paginación (truncada) */}
+                {Math.ceil(clients.length / itemsPerPage) > 1 && (() => {
+                    const totalPages = Math.max(1, Math.ceil(clients.length / itemsPerPage));
+                    return (
+                        <div className="flex justify-center items-center gap-2 sm:gap-3 mt-2">
+                            <button
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                            >
+                                Anterior
+                            </button>
 
-                        <div className="flex gap-1 sm:gap-2 items-center">
-                            {Array.from({ length: Math.max(1, Math.ceil(clients.length / itemsPerPage)) }).map((_, idx) => {
-                                const pageNum = idx + 1;
-                                return (
-                                    <button
-                                        key={pageNum}
-                                        onClick={() => setCurrentPage(pageNum)}
-                                        className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                                    >
-                                        {pageNum}
-                                    </button>
-                                );
-                            })}
+                            <div className="flex gap-1 sm:gap-2 items-center">
+                                {getPagination(totalPages, currentPage, 5).map((item, idx) => {
+                                    if (item === '...') return <span key={'dots-' + idx} className="px-2 text-sm text-gray-500">...</span>;
+                                    const pageNum = item;
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            aria-label={`Ir a la página ${pageNum}`}
+                                            aria-current={currentPage === pageNum ? 'page' : undefined}
+                                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                            >
+                                Siguiente
+                            </button>
                         </div>
-
-                        <button
-                            onClick={() => setCurrentPage((p) => Math.min(Math.ceil(clients.length / itemsPerPage), p + 1))}
-                            disabled={currentPage === Math.ceil(clients.length / itemsPerPage)}
-                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === Math.ceil(clients.length / itemsPerPage) ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                        >
-                            Siguiente
-                        </button>
-                    </div>
-                )}
+                    );
+                })()}
                 </>
             )}
         </>
