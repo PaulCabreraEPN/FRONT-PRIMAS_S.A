@@ -251,6 +251,22 @@ const Tabla = () => {
         return <Loader />;
     }
 
+    // Paginación truncada helper (máx botones visibles: 5)
+    const totalPages = Math.max(1, Math.ceil(filterSellers().length / itemsPerPage));
+    const getPagination = (totalPages, current, maxButtons = 5) => {
+        if (totalPages <= maxButtons) return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = [];
+        const side = Math.floor((maxButtons - 3) / 2); // para maxButtons=5 => side=1
+        const start = Math.max(2, current - side);
+        const end = Math.min(totalPages - 1, current + side);
+        pages.push(1);
+        if (start > 2) pages.push('...');
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+        return pages;
+    };
+
     return (
         <>
             <ToastContainer />
@@ -484,7 +500,7 @@ const Tabla = () => {
                 </div>
 
                 {/* Controles de paginación */}
-                {filterSellers().length > itemsPerPage && (
+                {totalPages > 1 && (
                     <div className="flex justify-center items-center gap-2 sm:gap-3 mt-2">
                         <button
                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -495,12 +511,15 @@ const Tabla = () => {
                         </button>
 
                         <div className="flex gap-1 sm:gap-2 items-center">
-                            {Array.from({ length: Math.max(1, Math.ceil(filterSellers().length / itemsPerPage)) }).map((_, idx) => {
-                                const pageNum = idx + 1;
+                            {getPagination(totalPages, currentPage, 5).map((item, idx) => {
+                                if (item === '...') return <span key={'dots-' + idx} className="px-2 text-sm text-gray-500">...</span>;
+                                const pageNum = item;
                                 return (
                                     <button
                                         key={pageNum}
                                         onClick={() => setCurrentPage(pageNum)}
+                                        aria-label={`Ir a la página ${pageNum}`}
+                                        aria-current={currentPage === pageNum ? 'page' : undefined}
                                         className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                     >
                                         {pageNum}
@@ -510,9 +529,9 @@ const Tabla = () => {
                         </div>
 
                         <button
-                            onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filterSellers().length / itemsPerPage), p + 1))}
-                            disabled={currentPage === Math.ceil(filterSellers().length / itemsPerPage)}
-                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === Math.ceil(filterSellers().length / itemsPerPage) ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
                         >
                             Siguiente
                         </button>
