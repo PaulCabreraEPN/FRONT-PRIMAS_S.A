@@ -335,6 +335,21 @@ const TablaProducts = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
+    // Paginación truncada: devuelve array con números y '...' (max botones incluye first/last)
+    const getPagination = (totalPages, current, maxButtons = 5) => {
+        if (totalPages <= maxButtons) return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = [];
+        const side = Math.floor((maxButtons - 3) / 2); // para maxButtons=5 => side=1
+        const start = Math.max(2, current - side);
+        const end = Math.min(totalPages - 1, current + side);
+        pages.push(1);
+        if (start > 2) pages.push('...');
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+        return pages;
+    };
+
     return (
         <>
             <ToastContainer />
@@ -415,6 +430,7 @@ const TablaProducts = () => {
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Identificación:</strong> <span className="font-semibold">{product.id}</span></p>
                                             </div>
+                                            
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
                                             </div>
@@ -540,12 +556,15 @@ const TablaProducts = () => {
                             </button>
 
                             <div className="flex gap-1 sm:gap-2 items-center">
-                                {Array.from({ length: totalPages }).map((_, idx) => {
-                                    const pageNum = idx + 1;
+                                {getPagination(totalPages, currentPage, 5).map((item, idx) => {
+                                    if (item === '...') return <span key={'dots-' + idx} className="px-2 text-sm text-gray-500">...</span>;
+                                    const pageNum = item;
                                     return (
                                         <button
                                             key={pageNum}
                                             onClick={() => setCurrentPage(pageNum)}
+                                            aria-label={`Ir a la página ${pageNum}`}
+                                            aria-current={currentPage === pageNum ? 'page' : undefined}
                                             className={`text-sm sm:text-base px-2 sm:px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                         >
                                             {pageNum}
