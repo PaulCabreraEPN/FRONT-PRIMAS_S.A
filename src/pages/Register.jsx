@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -215,14 +216,24 @@ const Register = () => {
                 };
                 const formData = { role: "Seller", ...values };
                 const response = await axios.post(url, formData, options);
-                toast.success(response.data?.data || response.data?.msg || 'Vendedor registrado');
+                const successMsg = response.data?.notification || response.data?.msg || (typeof response.data === 'string' ? response.data : JSON.stringify(response.data?.data || response.data));
+                toast.success(successMsg, { autoClose: 6000 });
+                toast.success(response.data.msg);
                 success = true;
             } catch (error) {
                 // Registrar en consola en lugar de mostrar un toast: usar únicamente Yup para validaciones
                 console.error('Register error:', error.response?.data?.msg || error.message || error);
+                            const resp = error.response?.data || {};
+                            const errMsg = resp?.notification || resp?.msg || resp?.message || error.message || 'Error al registrar vendedor';
+                            if (resp?.status === 'warning') {
+                                toast.warn(errMsg, { autoClose: 6000 });
+                            } else {
+                                toast.error(errMsg, { autoClose: 6000 });
+                            }
+                            console.error('Register error:', errMsg);
             } finally {
                 setIsLoading(false);
-                if (success) setTimeout(() => navigate("/dashboard/sellers"), 2000);
+                if (success) setTimeout(() => navigate("/dashboard/sellers"), 7000);
             }
         },
     });
