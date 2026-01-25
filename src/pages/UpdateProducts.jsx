@@ -239,9 +239,7 @@ const UpdateProduct = () => {
         getAllProducts();
     }, []);
 
-    if (isLoading) {
-        return <Loader />;
-    }
+    
 
     return (
         <div>
