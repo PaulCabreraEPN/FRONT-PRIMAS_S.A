@@ -259,7 +259,8 @@ const UpdateSeller = () => {
                     }
                 };
                 const response = await axios.patch(url, values, options);
-                toast.success(response.data.data || response.data.msg || 'Vendedor actualizado');
+                const successMsg = response.data?.msg || "Vendedor actualizado correctamente.";
+                toast.success(successMsg, { autoClose: 6000 });
                 success = true;
             } catch (error) {
                 const resp = error.response?.data || {};
@@ -281,7 +282,7 @@ const UpdateSeller = () => {
                 }
             } finally {
                 setIsLoading(false);
-                if (success) setTimeout(() => navigate('/dashboard/sellers'), 2000);
+                if (success) setTimeout(() => navigate('/dashboard/sellers'), 4000);
             }
         }
     });
