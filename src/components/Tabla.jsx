@@ -212,7 +212,7 @@ const Tabla = () => {
             // refrescar lista
             setTimeout(() => {
                 listarSellers();
-            }, 800);
+            }, 4000);
         } catch (error) {
             console.error(error);
             toast.error('Error al eliminar el vendedor');
