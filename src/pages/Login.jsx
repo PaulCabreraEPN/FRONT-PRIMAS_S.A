@@ -24,7 +24,7 @@ const Login = () => {
             .required('El nombre de usuario es obligatorio')
             .oneOf(['TopAdmin', 'PrimAdmin', 'AtlasPro', 'PinAtlas'], 'El nombre de usuario no es válido'),
         password: Yup.string()
-            .min(6, 'La contraseña debe tener al 8 caracteres')
+            .min(6, 'La contraseña debe cumplir con el formato requerido')
             .required('La contraseña es obligatoria'),
     });
 
@@ -46,7 +46,7 @@ const Login = () => {
                 // Usar el servicio api en lugar de axios directamente
                 const { data } = await api.post('/login-admin', normalizedForm);
 
-                // Nievo: Accede correctamente al token desde la respuesta
+                //  Accede correctamente al token desde la respuesta
                 const token =data.data?.token;
                 
                 // Establecer el token en localStorage
