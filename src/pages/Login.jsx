@@ -18,7 +18,10 @@ const Login = () => {
 
     // Esquema de validación con Yup
     const validationSchema = Yup.object({
-        username: Yup.string().required('El nombre de usuario es obligatorio'),
+        username: Yup.string()
+            .trim()
+            .required('El nombre de usuario es obligatorio')
+            .oneOf(['TopAdmin', 'PrimAdmin', 'AtlasPro', 'PinAtlas'], 'El nombre de usuario no es válido'),
         password: Yup.string()
             .min(6, 'La contraseña debe tener al 8 caracteres')
             .required('La contraseña es obligatoria'),
