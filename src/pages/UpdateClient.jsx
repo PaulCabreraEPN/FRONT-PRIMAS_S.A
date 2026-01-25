@@ -204,9 +204,7 @@ const UpdateClient = () => {
         getAllClients();
     }, [ruc]);
 
-    if (isLoading) {
-        return <Loader />;
-    }
+
 
     return (
         <div>
@@ -343,7 +341,6 @@ const UpdateClient = () => {
                                             onBlur={formik.handleBlur}
                                             className="block w-full rounded-md border border-gray-300 bg-white focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
                                         >
-                                            <option value="">Selecciona estado</option>
                                             <option value="al día">al día</option>
                                             <option value="en deuda">en deuda</option>
                                         </select>
