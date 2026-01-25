@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
-import Mensaje from '../context/alerts/Mensaje';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Forgot = () => {
     // Declaraciones
     const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
 
-    const [mensaje, setMensaje] = useState({});
+    
     const [isLoading, setIsLoading] = useState(false);
 
     // Crear un useState para el formulario
@@ -35,10 +35,7 @@ const Forgot = () => {
 
         // Validar que el campo no esté vacío
         if (!normalizedForm.username) {
-            setMensaje({
-                respuesta: "Por favor, ingresa tu nombre de usuario.",
-                tipo: false,
-            });
+            toast.error('Por favor, ingresa tu nombre de usuario.', { autoClose: 6000 });
             return;
         }
 
@@ -61,18 +58,18 @@ const Forgot = () => {
                 if (extra) fullMsg = `${fullMsg} (${extra})`;
             }
 
-            // Mostrar mensaje: tipo true sólo si es 'success'
-            setMensaje({ respuesta: fullMsg, tipo: respStatus === 'success' });
-
-            // Si fue éxito completo, limpiar formulario
+            // Mostrar mensaje con toast según el status
             if (respStatus === 'success') {
+                toast.success(fullMsg, { autoClose: 6000 });
                 setForm({ username: "" });
+            } else if (respStatus === 'warning') {
+                toast.warn(fullMsg, { autoClose: 6000 });
+            } else {
+                toast.error(fullMsg, { autoClose: 6000 });
             }
         } catch (error) {
-            const errorMsg =
-                error.response?.data?.msg ||
-                "Ocurrió un error al procesar la solicitud.";
-            setMensaje({ respuesta: errorMsg, tipo: false });
+            const errorMsg = error.response?.data?.msg || "Ocurrió un error al procesar la solicitud.";
+            toast.error(errorMsg, { autoClose: 6000 });
         } finally {
             setIsLoading(false);
         }
@@ -93,9 +90,7 @@ const Forgot = () => {
                         No te preocupes, por favor ingresa tu usuario
                     </small>
                     
-                    {Object.keys(mensaje).length > 0 && (
-                        <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>
-                    )}
+                    <ToastContainer />
                     
                     <form onSubmit={handleSubmit} className="mt-4">
                         <div className="mb-5">
