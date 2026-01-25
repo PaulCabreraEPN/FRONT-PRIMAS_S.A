@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import Mensaje from '../context/alerts/Mensaje';
+import { toast, ToastContainer } from 'react-toastify';
 import api from '../services/api';
 import { useAuth } from '../context/AuthProvider';
 
@@ -11,7 +11,7 @@ const Login = () => {
     const { setAuth } = useAuth();
     const frontendUrl = import.meta.env.VITE_URL_FRONTEND;
     const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
-    const [mensaje, setMensaje] = useState({});
+    
     const [isLocked, setIsLocked] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -60,23 +60,19 @@ const Login = () => {
                 console.log(error);
                 const resp = error.response?.data || {};
 
-                // Si backend indica bloqueo, bloquear el formulario
+                // Si backend indica bloqueo, bloquear el formulario y mostrar toast
                 if (resp.code === 'ACCOUNT_LOCKED') {
                     setIsLocked(true);
-                    // Mostrar exactamente el mensaje que manda el backend
-                    setMensaje({ respuesta: resp.msg || 'La cuenta ha sido bloqueada.', tipo: false });
+                    toast.error(resp.msg || 'La cuenta ha sido bloqueada.', { autoClose: 6000 });
                 } else if (resp.code === 'INVALID_CREDENTIALS') {
                     // Mostrar el mensaje enviado por el backend (con intentos restantes)
-                    setMensaje({ respuesta: resp.msg || 'Credenciales inválidas.', tipo: false });
+                    toast.error(resp.msg || 'Credenciales inválidas.', { autoClose: 6000 });
                     // Si el backend indica bloqueo en el mensaje, marcar isLocked
                     if ((resp.msg || '').toLowerCase().includes('bloquead')) setIsLocked(true);
                 } else {
                     // Mostrar mensaje genérico del backend si existe
-                    setMensaje({ respuesta: resp.msg || 'Error al iniciar sesión. Intenta nuevamente.', tipo: false });
+                    toast.error(resp.msg || 'Error al iniciar sesión. Intenta nuevamente.', { autoClose: 6000 });
                 }
-
-                // Limpiar mensaje después de 6 segundos
-                setTimeout(() => setMensaje({}), 6000);
             }
         },
     });
@@ -101,9 +97,8 @@ const Login = () => {
                         Bienvenido a tu plataforma
                     </small>
 
-                    {Object.keys(mensaje).length > 0 && (
-                        <Mensaje tipo={mensaje.tipo}>{mensaje.respuesta}</Mensaje>
-                    )}
+                    {/* Los mensajes del backend se muestran mediante toasts */}
+                    <ToastContainer />
 
                     <form onSubmit={formik.handleSubmit} className="mt-8">
                         <div className="mb-5">
