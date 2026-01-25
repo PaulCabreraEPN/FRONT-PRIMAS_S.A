@@ -295,11 +295,7 @@ const UpdateSeller = () => {
         }
     }, [id])
 
-    if (isLoading) {
-        return (
-            <Loader />
-        );
-    }
+    
 
     return (
         <div>
