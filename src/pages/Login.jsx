@@ -13,6 +13,7 @@ const Login = () => {
     const backendUrl = import.meta.env.VITE_URL_BACKEND_API;
     
     const [isLocked, setIsLocked] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
@@ -40,7 +41,8 @@ const Login = () => {
                 password: values.password.trim() || '',
             };
 
-            try {
+                try {
+                setIsLoading(true);
                 // Usar el servicio api en lugar de axios directamente
                 const { data } = await api.post('/login-admin', normalizedForm);
 
@@ -76,6 +78,8 @@ const Login = () => {
                     // Mostrar mensaje genérico del backend si existe
                     toast.error(resp.msg || 'Error al iniciar sesión. Intenta nuevamente.', { autoClose: 6000 });
                 }
+            } finally {
+                setIsLoading(false);
             }
         },
     });
@@ -164,9 +168,9 @@ const Login = () => {
 
                         <button
                             type="submit"
-                            disabled={isLocked}
-                            className={`py-2 w-full text-slate-300 border rounded-full ${isLocked ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-500 hover:scale-105 duration-300 hover:bg-customBlue hover:text-white'}`}>
-                            {isLocked ? 'Cuenta bloqueada' : 'Iniciar Sesión'}
+                            disabled={isLocked || isLoading}
+                            className={`py-2 w-full text-slate-300 border rounded-full ${isLocked ? 'bg-gray-300 cursor-not-allowed' : isLoading ? 'bg-gray-400 cursor-wait' : 'bg-gray-500 hover:scale-105 duration-300 hover:bg-customBlue hover:text-white'}`}>
+                            {isLocked ? 'Cuenta bloqueada' : isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                         </button>
                     </form>
 
