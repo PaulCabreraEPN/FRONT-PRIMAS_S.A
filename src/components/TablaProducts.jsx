@@ -266,6 +266,8 @@ const TablaProducts = () => {
 
     useEffect(() => {
         const applyCategory = async () => {
+            const term = String(searchId || "").trim();
+            if (term) return; // no sobrescribir resultados de búsqueda
             if (searchActive) {
                 setFilteredProducts(products);
                 return;
@@ -277,7 +279,7 @@ const TablaProducts = () => {
             }
         };
         applyCategory();
-    }, [products, currentCategory, searchActive]);
+    }, [products, currentCategory, searchActive, searchId]);
 
     // Filtrado en vivo: mientras se escribe en el input de búsqueda
     useEffect(() => {
@@ -434,7 +436,7 @@ const TablaProducts = () => {
                                     <div className="flex-1 text-left">
                                         <div className="flex flex-col gap-2">
                                             <div>
-                                                <p className="text-sm text-gray-800"><strong>Identificación:</strong> <span className="font-semibold">{product.id}</span></p>
+                                                <p className="text-sm text-gray-800"><strong>ID:</strong> <span className="font-semibold">{product.id}</span></p>
                                             </div>
 
                                             <div>
