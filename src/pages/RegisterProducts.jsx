@@ -250,7 +250,7 @@ const RegisterProducts = () => {
                                         type="number"
                                         id="id"
                                         name="id"
-                                        placeholder="Ingrese id"
+                                        placeholder="Ingrese ID"
                                         value={formik.values.id}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
