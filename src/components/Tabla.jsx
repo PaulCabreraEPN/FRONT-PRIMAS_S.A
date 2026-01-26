@@ -299,7 +299,7 @@ const Tabla = () => {
                             <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
-                                placeholder="Cédula vendedor"
+                                placeholder="Consultar vendedor"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-full sm:w-44 max-w-xs"
