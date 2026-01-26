@@ -66,6 +66,7 @@ const RegisterProducts = () => {
             }),
         product_name: Yup.string()
             .required("El nombre del producto es obligatorio")
+            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s]+$/, "El nombre solo puede contener letras, números y espacios")
             .test('unique-product-name', 'Ya existe un producto con ese nombre', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true;
