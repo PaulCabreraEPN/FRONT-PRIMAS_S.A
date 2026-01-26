@@ -57,10 +57,12 @@ const TablaProforma = () => {
 
   return (
     <>
-      <h1 className='font-black text-4xl text-gray-500'>Información de la Orden</h1>
-      <hr className='my-4' />
-      <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar la información de la orden</h5>
-      <hr className='my-4' />
+      <div data-html2canvas-ignore="true">
+        <h1 className='font-black text-4xl text-gray-500'>Información de la Órden</h1>
+        <hr className='my-4' />
+        <h5 className="font-semibold text-lg text-gray-400">Este módulo permite al administrador visualizar la información de la órden</h5>
+        <hr className='my-4' />
+      </div>
 
       {/*
       <button
@@ -99,7 +101,7 @@ const TablaProforma = () => {
             <span className="ml-auto">{customer?.telephone || "-"}</span>
           </p>
           <p className="flex justify-between">
-            <strong>Email:</strong>
+            <strong>Correo:</strong>
             <span className="ml-auto">{customer?.email || "-"}</span>
           </p>
         </div>
