@@ -64,8 +64,8 @@ const RegisterClients = () => {
                 });
                 return !exists;
             })
-            .test("two-words", "Debe ingresar al menos dos nombres", value =>
-                value && value.trim().split(/\s+/).length >= 2
+            .test("four-words", "Debe ingresar al menos 2 nombres y 2 apellidos", value =>
+                value && value.trim().split(/\s+/).length >= 4
             ),
 
         ComercialName: Yup.string()
@@ -225,7 +225,7 @@ const RegisterClients = () => {
                         <form onSubmit={formik.handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="Name" className="mb-2 block text-sm font-semibold">Nombre{<span className="text-red-500">*</span>}:</label>
+                                    <label htmlFor="Name" className="mb-2 block text-sm font-semibold">Nombre Completo{<span className="text-red-500">*</span>}:</label>
                                     <input
                                         type="text"
                                         id="Name"
