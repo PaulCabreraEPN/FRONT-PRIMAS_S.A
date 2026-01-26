@@ -404,7 +404,7 @@ const ClientList = () => {
                                                     <dd className="text-xs text-gray-500">{modalClient.telephone || modalClient.Telefono || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-sm font-medium text-gray-800">Email</dt>
+                                                    <dt className="text-sm font-medium text-gray-800">Correo</dt>
                                                     <dd className="text-xs text-gray-500">{modalClient.email || modalClient.Email || 'N/A'}</dd>
                                                 </div>
                                                 <div>
@@ -439,7 +439,7 @@ const ClientList = () => {
                                     <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z"></path></svg>
                                 </div>
                                 <h3 className="text-xl font-semibold mb-1">¿Estás seguro?</h3>
-                                <p className="text-sm text-gray-500 mb-4">No podrás revertir esto!</p>
+                                <p className="text-sm text-gray-500 mb-4">¡No podrás revertir esto!</p>
                                 <div className="flex gap-3">
                                     <button onClick={handleConfirmDelete} disabled={confirmDeleting} className={`px-4 py-2 rounded ${confirmDeleting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>Sí, eliminarlo!</button>
                                     <button onClick={handleCancelDelete} disabled={confirmDeleting} className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white">Cancelar</button>
