@@ -331,7 +331,7 @@ const TablaOrders = () => {
                         <div className="flex items-center gap-2">
                             <input
                                 type="text"
-                                placeholder="Consultar una órden"
+                                placeholder="Consultar órden"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-64 max-w-xs"
