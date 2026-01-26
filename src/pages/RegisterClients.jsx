@@ -50,30 +50,52 @@ const RegisterClients = () => {
         getAllClients();
     }, []);
 
-    const validationSchema = useMemo(() => Yup.object({
+    const validationSchema = useMemo(() => {
+        const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
+        const onlyLettersAndSpaces = (s = "") => /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/.test(s);
+        const isObviousPhoneSequence = (s = "") => {
+            const v = s.toString().replace(/\D/g, "");
+            if (!v) return false;
+            if (/^0{10}$/.test(v)) return true;
+            if (v === "1234567890") return true;
+            return false;
+        };
+        const hasLettersAndNumbers = (s = "") => /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(s) && /\d/.test(s);
+
+        return Yup.object({
         Name: Yup.string()
             .required("El nombre es obligatorio")
+            .test("only-letters", "El nombre solo puede contener letras y espacios", value =>
+                !value || onlyLettersAndSpaces(value)
+            )
+            .test("four-words", "Debe ingresar al menos 2 nombres y 2 apellidos", value =>
+                value && value.trim().split(/\s+/).length >= 4
+            )
+            .test("each-word-length", "Cada nombre y apellido debe tener entre 3 y 15 caracteres", value => {
+                if (!value) return false;
+                const parts = value.trim().split(/\s+/);
+                if (parts.length < 4) return false;
+                return parts.every(p => p.length >= 3 && p.length <= 15);
+            })
             .test("unique-name", "Ya existe un cliente con ese nombre", function (value) {
                 if (!value) return true;
                 if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
-                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
                 const valNorm = normalize(value);
                 const exists = allClients.some(c => {
                     const name = c?.Name ?? c?.name ?? "";
                     return normalize(name) === valNorm;
                 });
                 return !exists;
-            })
-            .test("four-words", "Debe ingresar al menos 2 nombres y 2 apellidos", value =>
-                value && value.trim().split(/\s+/).length >= 4
-            ),
+            }),
 
         ComercialName: Yup.string()
             .required("El nombre comercial es obligatorio")
+            .test("not-only-numbers", "El nombre comercial no puede ser solo números", value =>
+                !value || /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(value)
+            )
             .test("unique-comercial-name", "Ya existe un cliente con ese nombre comercial", function (value) {
                 if (!value) return true;
                 if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
-                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
                 const valNorm = normalize(value);
                 const exists = allClients.some(c => {
                     const comercial = c?.ComercialName ?? c?.comercialName ?? c?.commercialName ?? c?.CommercialName ?? "";
@@ -103,19 +125,28 @@ const RegisterClients = () => {
             .required("La dirección es obligatoria")
             .min(15, "La dirección debe tener al menos 15 caracteres")
             .max(40, "La dirección debe tener como máximo 40 caracteres")
+            .test("address-mix", "La dirección debe contener letras y números", value =>
+                !value || hasLettersAndNumbers(value)
+            )
             .test("unique-address", "Ya existe un cliente con esa dirección", function (value) {
                 if (!value) return true;
                 if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
-                const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ").replace(/[^\w\s-]/g, "");
-                const valNorm = normalize(value);
+                const valNorm = normalize(value).replace(/[^\w\s-]/g, "");
                 const exists = allClients.some(c => {
                     const addr = c?.Address ?? c?.address ?? c?.direccion ?? c?.Direccion ?? "";
-                    return normalize(addr) === valNorm;
+                    return normalize(addr).replace(/[^\w\s-]/g, "") === valNorm;
                 });
                 return !exists;
             }),
         telephone: Yup.string()
             .required("El número de teléfono es obligatorio")
+            .matches(/^\d+$/, "El número de teléfono debe contener solo dígitos")
+            .test("starts-with-0", "El número de teléfono debe empezar con 0", value =>
+                !value || value.toString().startsWith("0")
+            )
+            .test("not-obvious-seq", "El número de teléfono no puede ser una secuencia inválida", value =>
+                !value || !isObviousPhoneSequence(value)
+            )
 
             .test(
                 "no-negative",
@@ -150,7 +181,8 @@ const RegisterClients = () => {
                 return !exists;
             }),
         state: Yup.string(),
-    }), [allClients]);
+    });
+    }, [allClients]);
 
     const formik = useFormik({
         initialValues: {
