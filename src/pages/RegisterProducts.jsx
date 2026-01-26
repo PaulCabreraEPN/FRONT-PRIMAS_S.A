@@ -185,7 +185,7 @@ const RegisterProducts = () => {
                     }
                     setTimeout(() => {
                         navigate("/dashboard/products");
-                    }, 1500);
+                    }, 4000);
                 } else {
                     toast.error(response.data?.msg || "Error al registrar el producto");
                 }
