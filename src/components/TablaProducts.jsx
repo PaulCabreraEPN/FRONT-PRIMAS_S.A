@@ -199,7 +199,7 @@ const TablaProducts = () => {
             };
             const res = await axios.delete(url, options);
             if (res.data && (res.data.status === 'success' || res.data.status === 'warning')) {
-                toast.success(res.data.msg || 'Producto eliminado');
+                toast.success('Producto eliminado correctamente.');
                 // refrescar lista
                 await handleMostrarTodos();
                 setModalOpen(false);
@@ -329,8 +329,14 @@ const TablaProducts = () => {
         setCurrentPage(1);
     }, [products, currentCategory]);
 
-    if (isLoading) return <Loader />;
-
+    if (isLoading) {
+        return (
+            <>
+                <ToastContainer />
+                <Loader />
+            </>
+        );
+    }
     const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
@@ -383,7 +389,7 @@ const TablaProducts = () => {
                         <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
-                                placeholder="ID del producto"
+                                placeholder="Consultar producto"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-full sm:w-44 max-w-xs"
@@ -430,7 +436,7 @@ const TablaProducts = () => {
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Identificación:</strong> <span className="font-semibold">{product.id}</span></p>
                                             </div>
-                                            
+
                                             <div>
                                                 <p className="text-sm text-gray-800"><strong>Producto:</strong> <span className="font-semibold">{product.product_name}</span></p>
                                             </div>
@@ -477,7 +483,7 @@ const TablaProducts = () => {
                                 </div>
                                 <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-6">
                                     <div className="flex-shrink-0 w-full sm:w-48 flex items-center justify-center">
-                                            {modalLoading ? (
+                                        {modalLoading ? (
                                             <div>Cargando...</div>
                                         ) : modalProduct ? (
                                             <div className="bg-gray-50 p-3 rounded-lg">
@@ -508,7 +514,7 @@ const TablaProducts = () => {
                                             <p className="text-sm font-medium text-gray-800">Stock</p>
                                             <p className="text-xs text-gray-500">{modalProduct?.stock}</p>
                                         </div>
-                                        
+
                                         <div className="md:col-span-2">
                                             <p className="text-sm font-medium text-gray-800">Descripción</p>
                                             <p className="text-xs text-gray-500">{modalProduct?.description}</p>
