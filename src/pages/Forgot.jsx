@@ -86,8 +86,8 @@ const Forgot = () => {
                     <h1 className="text-3xl font-semibold mt-6 text-center uppercase text-[#652A8C]">
                         ¿Perdiste tu contraseña?
                     </h1>
-                    <small className="text-gray-400 block my-4 text-center text-sm">
-                        No te preocupes, por favor ingresa tu usuario
+                    <small className="text-gray-900 block my-4 text-center text-sm">
+                        No te preocupes, ingresa tu usuario
                     </small>
                     
                     <ToastContainer />
@@ -112,16 +112,21 @@ const Forgot = () => {
                             disabled={isLoading}
                             className={`py-2 w-full ${isLoading ? 'bg-gray-400 cursor-wait' : 'bg-gray-500 hover:scale-105 hover:bg-[#7626acc2] hover:text-white'} text-slate-300 border rounded-full duration-300`}
                         >
-                            {isLoading ? 'Enviando...' : 'Enviar email'}
+                            {isLoading ? 'Enviando...' : 'Enviar correo de recuperación'}
                         </button>
                     </form>
                     
-                    <div className="mt-5 text-xs border-b-2 py-4"></div>
-                    
-                    <div className="mt-3 text-sm flex justify-between items-center text-gray-500">
-                        <p>Si ya tienes una cuenta, puedes ir al inicio de sesión</p>
-                        <Link to="/login" className="py-2 px-5 bg-gray-500 text-slate-300 border rounded-full hover:scale-110 duration-300 hover:bg-customBlue hover:text-white">
-                            Login
+                    <div className="mt-6 border-t border-gray-200 pt-5"></div>
+
+                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+                        <p className="text-center sm:text-left">
+                            Si ya tienes una cuenta, puedes ir al inicio de sesión
+                        </p>
+                        <Link
+                            to="/login"
+                            className="inline-flex items-center justify-center rounded-full px-5 py-2 font-medium bg-gray-500 text-slate-100 shadow-sm transition hover:bg-customBlue hover:text-white focus:outline-none focus:ring-2 focus:ring-customBlue whitespace-nowrap"
+                        >
+                            Iniciar sesión
                         </Link>
                     </div>
                 </div>
