@@ -377,7 +377,7 @@ const Tabla = () => {
                                                     <dd className="text-xs text-gray-500">{modalSeller.username || 'N/A'}</dd>
                                                 </div>
                                                 <div>
-                                                    <dt className="text-sm font-medium text-gray-800">Email</dt>
+                                                    <dt className="text-sm font-medium text-gray-800">Correo</dt>
                                                     <dd className="text-xs text-gray-500">{modalSeller.email || 'N/A'}</dd>
                                                 </div>
                                                 <div>
