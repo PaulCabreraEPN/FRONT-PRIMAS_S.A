@@ -99,9 +99,20 @@ const UpdateSeller = () => {
 
     const validationSchema = useMemo(() => {
         const digits = (s = "") => s.toString().replace(/\D/g, "");
+        const onlyLettersAndSpaces = (s = "") => /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/.test(s);
+        const isObviousPhoneSequence = (s = "") => {
+            const v = s.toString().replace(/\D/g, "");
+            if (!v) return false;
+            if (/^0{10}$/.test(v)) return true;
+            if (v === "1234567890") return true;
+            return false;
+        };
         return Yup.object({
             names: Yup.string()
                 .required("Los nombres son obligatorios")
+                .test("only-letters", "Los nombres solo pueden contener letras y espacios", value =>
+                    !value || onlyLettersAndSpaces(value)
+                )
                 .min(3, "Los nombres deben tener al menos 3 caracteres")
                 .max(41, "Los nombres deben tener como máximo 20 caracteres")
                 .test("two-words", "Debe ingresar exactamente dos nombres", value =>
@@ -139,6 +150,9 @@ const UpdateSeller = () => {
                 }),
             lastNames: Yup.string()
                 .required("Los apellidos son obligatorios")
+                .test("only-letters", "Los apellidos solo pueden contener letras y espacios", value =>
+                    !value || onlyLettersAndSpaces(value)
+                )
                 .min(3, "Los apellidos deben tener al menos 3 caracteres")
                 .max(41, "Los apellidos deben tener como máximo 20 caracteres")
                 .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
@@ -192,6 +206,13 @@ const UpdateSeller = () => {
             SalesCity: Yup.string().required("La ciudad de venta es obligatoria"),
             PhoneNumber: Yup.string()
                 .required("El número de teléfono es obligatorio")
+                .matches(/^\d+$/, "El número de teléfono debe contener solo dígitos")
+                .test("starts-with-0", "El número de teléfono debe empezar con 0", value =>
+                    !value || value.toString().startsWith("0")
+                )
+                .test("not-obvious-seq", "El número de teléfono no puede ser una secuencia inválida", value =>
+                    !value || !isObviousPhoneSequence(value)
+                )
                 .test(
                     "no-negative",
                     "El número de teléfono no puede ser negativo",
