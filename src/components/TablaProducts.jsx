@@ -545,7 +545,7 @@ const TablaProducts = () => {
                                     <h3 className="text-xl font-semibold mb-1">¿Estás seguro?</h3>
                                     <p className="text-sm text-gray-500 mb-4">¡No podrás revertir esto!</p>
                                     <div className="flex gap-3">
-                                        <button onClick={handleConfirmDelete} disabled={confirmDeleting} className={`px-4 py-2 rounded ${confirmDeleting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>Sí, eliminarlo!</button>
+                                        <button onClick={handleConfirmDelete} disabled={confirmDeleting} className={`px-4 py-2 rounded ${confirmDeleting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} text-white`}>Sí, eliminarlo</button>
                                         <button onClick={handleCancelDelete} disabled={confirmDeleting} className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white">Cancelar</button>
                                     </div>
                                 </div>
