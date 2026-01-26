@@ -331,7 +331,7 @@ const TablaOrders = () => {
                         <div className="flex items-center gap-2">
                             <input
                                 type="text"
-                                placeholder="Código de Orden, vendedor o cliente"
+                                placeholder="Consultar una órden"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 className="border p-2 rounded w-64 max-w-xs"
@@ -363,7 +363,7 @@ const TablaOrders = () => {
                     {currentItems.map((order) => (
                         <div key={order._id} className="bg-white shadow-lg rounded-lg p-2 border-l-4 border-blue-500 flex flex-col" style={{ height: '13.7rem' }}>
                             <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-semibold">Orden #{order._id.slice(-6)}</h3>
+                                <h3 className="text-lg font-semibold">Órden #{order._id.slice(-6)}</h3>
                                 <MdNoteAdd
                                     className="h-7 w-7 text-slate-800 cursor-pointer"
                                     onClick={(e) => {
