@@ -83,7 +83,7 @@ const RegisterClients = () => {
             }),
         Ruc: Yup.string()
             .required("El RUC es obligatorio")
-            .length(13, "El RUC debe tener exactamente 13 digitos")
+            .length(13, "El RUC debe tener exactamente 13 dígitos")
             .matches(/^\d+$/, "El RUC debe contener solo números")
             .test("unique-ruc", "Ya existe un cliente con ese RUC", function (value) {
                 if (!value) return true;
