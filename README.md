@@ -2,21 +2,43 @@
 # 🏢 PRIMA S.A. - Sistema de Gestión de Ventas
 
 ## 📝 Descripción
-Sistema web para la gestión de vendedores, productos, clientes y pedidos de la empresa PRIMA S.A. Desarrollado con React, Tailwind CSS y Vite.
+DESARROLLO DE SISTEMA PARA LA GESTIÓN Y CONTROL DE PEDIDOS EN LA EMPRESA PRIMA S.A. 
 
 ## 👨‍💻 Autores
-* **Paúl Sebastián Cabrera Cruz**
-* **Mathías Agustín Terán Alcívar**
-* **Ariel David Catucuamba Díaz**
+* **Componente Frontend :Ariel David Catucuamba Diaz**
+* **Componente Móvil : Paúl Sebastián Cabrera Cruz**
+* **Componente Backend :Mathías Agustín Terán Alcívar**
 
 ## 🛠️ Tecnologías Utilizadas
-- React 19.0.0
-- Tailwind CSS 3.4.17
-- Vite 4.0.0
-- Chart.js 4.4.7
-- Formik 2.4.6
-- React Router DOM 7.1.1
-- Axios 1.7.9
+Ruteo
+  - React 18.2.0
+  - React Dom 18.2.0
+  - React Router DOM 7.1.1
+
+Solicitudes HTTP
+  - Axios 1.7.9
+
+Iconos
+  - React - Icons 5.4.0
+    
+Notificaciones
+  - React-Toastify 11.0.3
+    
+Estilos
+  - Tailwind CSS 3.4.17
+    
+Graficas
+  - Chart.js 4.4.7
+    
+Desarrollo 
+  - Vite 4.0.0
+    
+Pruebas 
+  - Vitest 1.6.1
+    
+Formularios/Validaciones
+  - Formik 2.4.6
+  - Yup 1.6.1
 
 ## 📁 Estructura del Proyecto
 ```
@@ -33,11 +55,12 @@ src/
 - Autenticación y autorización
 - Dashboard con estadísticas
 - Gestión de vendedores
-- Control de inventario
-- Manejo de pedidos
-- Administración de clientes
+- Gestión de productos
+- Gestión de clientes
+- Gestión de pedidos
+- Manejo del estado de pedidos
 - Generación de proformas en PDF
-- Visualización de datos con gráficos
+
 
 ## 📋 Requisitos
 - Node.js >= 16
