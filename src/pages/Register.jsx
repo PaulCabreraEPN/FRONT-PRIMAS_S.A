@@ -115,7 +115,7 @@ const Register = () => {
         cedula: Yup.string()
             .required("El número de identificación es obligatorio")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
-            .matches(/^\d{10}$/, "El número de identificación debe contener unicamente números")
+            .matches(/^\d{10}$/, "El número de identificación debe contener únicamente números")
             .test('ecuador-cedula', 'La cédula ecuatoriana no válida', function (value) {
                 if (!value) return false;
                 return validateEcuadorianCedula(value);
@@ -275,7 +275,7 @@ const Register = () => {
                                         type="text"
                                         id="lastNames"
                                         name="lastNames"
-                                        placeholder="Perez Rodriguez"
+                                        placeholder="Pérez Rodríguez"
                                         value={formik.values.lastNames}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
@@ -287,7 +287,7 @@ const Register = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">N° Identificacion <span className="text-red-500">*</span>:</label>
+                                    <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">N° Identificación <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="number"
                                         id="cedula"
@@ -304,7 +304,7 @@ const Register = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Telefono <span className="text-red-500">*</span>:</label>
+                                    <label htmlFor="PhoneNumber" className="mb-2 block text-sm font-semibold">Teléfono <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="Text"
                                         id="PhoneNumber"
@@ -343,7 +343,7 @@ const Register = () => {
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electronico <span className="text-red-500">*</span>:</label>
+                                    <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico <span className="text-red-500">*</span>:</label>
                                     <input
                                         type="email"
                                         id="email"
