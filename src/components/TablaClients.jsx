@@ -276,7 +276,7 @@ const ClientList = () => {
                         <div className="flex items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="text"
-                                placeholder="Ingrese RUC o nombre"
+                                placeholder="Consultar cliente"
                                 value={searchRuc}
                                 onChange={(e) => setSearchRuc(e.target.value)}
                                 className="border p-2 rounded w-full sm:w-44 max-w-xs"
