@@ -67,7 +67,7 @@ const StatictsBarS = () => {
 
         {/* LineChart (columna derecha, ocupa 2 filas) */}
         <div className="md:row-start-1 md:row-end-3 bg-white shadow-md rounded-lg p-3 min-h-0 flex items-center justify-center flex-col">
-          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Ventas por Semana</h3>
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-2 text-center">Ventas Semanales</h3>
           <div className="w-full h-full min-h-0 p-2">
             <LineChart />
           </div>
