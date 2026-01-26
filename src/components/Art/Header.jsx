@@ -12,12 +12,10 @@ const Header = () => {
         <p>PROMOCION INTERNACIONAL Y MATERIAL PRIMA S.A.</p>
         <p><strong>RUC: 1790510689001</strong></p>
         <p>AV. DE LOS SHYRIS N38 - 11 (215) Y EL TELEGRAFO</p>
-        <p>Tel.: 243-9841 / 243-3843 - FAX: 593-2 243-3900</p>
+        <p>Tel: 243-9841 / 243-3843 - FAX: 593-2 243-3900</p>
         <p>QUITO - ECUADOR</p>
       </div>
-      <div style={styles.rightSection}>
-        <h2>PROFORMA</h2>
-      </div>
+      <div style={styles.rightSection} aria-hidden="true" />
     </header>
   );
 };
