@@ -160,7 +160,7 @@ const RegisterClients = () => {
             Address: "",
             telephone: "",
             email: "",
-            state: "",
+            state: "al día",
         },
         validationSchema,
         onSubmit: async (values) => {
