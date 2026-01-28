@@ -76,16 +76,6 @@ const RegisterClients = () => {
                 const parts = value.trim().split(/\s+/);
                 if (parts.length < 4) return false;
                 return parts.every(p => p.length >= 3 && p.length <= 15);
-            })
-            .test("unique-name", "Ya existe un cliente con ese nombre", function (value) {
-                if (!value) return true;
-                if (!allClients || allClients.length === 0) return true; // no bloquear si no se cargaron clientes
-                const valNorm = normalize(value);
-                const exists = allClients.some(c => {
-                    const name = c?.Name ?? c?.name ?? "";
-                    return normalize(name) === valNorm;
-                });
-                return !exists;
             }),
 
         ComercialName: Yup.string()
@@ -124,7 +114,7 @@ const RegisterClients = () => {
         Address: Yup.string()
             .required("La dirección es obligatoria")
             .min(15, "La dirección debe tener al menos 15 caracteres")
-            .max(40, "La dirección debe tener como máximo 40 caracteres")
+            .max(100, "La dirección debe tener como máximo 100 caracteres")
             .test("address-mix", "La dirección debe contener letras y números", value =>
                 !value || hasLettersAndNumbers(value)
             )

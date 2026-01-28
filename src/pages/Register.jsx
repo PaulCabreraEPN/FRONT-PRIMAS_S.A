@@ -219,7 +219,7 @@ const Register = () => {
             SalesCity: "",
             PhoneNumber: "",
             role: "Seller",
-            status: false,
+            status: true,
         },
         validationSchema,
         onSubmit: async (values) => {

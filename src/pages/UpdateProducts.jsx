@@ -65,7 +65,7 @@ const UpdateProduct = () => {
         return Yup.object({
         product_name: Yup.string()
             .required('El nombre del producto es obligatorio')
-            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s]+$/, "El nombre solo puede contener letras, números y espacios")
+            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s.\-\/(),;:!?"'%&+@#$¿¡= {}]+$/, "El nombre solo puede contener letras, números, espacios y símbolos permitidos")
             .test('unique-product-name', 'Ya existe un producto con ese nombre', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true; // no bloquear si no hay lista
@@ -82,25 +82,31 @@ const UpdateProduct = () => {
             })
             .min(6, 'El nombre debe tener al menos 6 caracteres')
             .max(60, 'El nombre debe tener como máximo 60 caracteres'),
-        price: Yup.string()
+        price: Yup.number()
+            .typeError('El precio debe ser numérico')
             .required('El precio es obligatorio')
+            .test('no-comma', 'El precio no debe contener comas; use punto como separador decimal', function (value) {
+                if (value === undefined || value === null || value === '') return true;
+                return !String(value).includes(',');
+            })
             .test('no-negative', 'El precio no puede ser negativo', function (value) {
                 if (value === undefined || value === null || value === '') return true;
-                const n = Number(value.toString().replace(',', '.'));
+                const n = Number(value);
                 if (Number.isNaN(n)) return false;
                 return n >= 0;
             })
             .test('not-zero', 'El precio no puede ser 0', function (value) {
                 if (value === undefined || value === null || value === '') return true;
-                const n = Number(value.toString().replace(',', '.'));
+                const n = Number(value);
                 if (Number.isNaN(n)) return false;
                 return n !== 0;
             })
             .test('price-format', 'El precio puede tener hasta 4 dígitos enteros y hasta 2 decimales', value => {
-                if (!value) return false;
-                return /^\d{1,4}(\.\d{1,2})?$/.test(value.toString());
+                if (value === undefined || value === null || value === '') return false;
+                return /^\d{1,4}(\.\d{1,2})?$/.test(String(value));
             }),
-        stock: Yup.string()
+        stock: Yup.number()
+            .typeError('El stock debe ser numérico')
             .required('El stock es obligatorio')
             .test('min-1', 'El stock no puede ser menor a 1', value => {
                 if (value === undefined || value === null || value === '') return false;
@@ -110,7 +116,7 @@ const UpdateProduct = () => {
             })
             .test('stock-format', 'El stock debe ser un número entero de hasta 3 dígitos', value => {
                 if (value === undefined || value === null || value === '') return false;
-                return /^\d{1,3}$/.test(value.toString());
+                return /^\d{1,3}$/.test(String(value));
             }),
         description: Yup.string()
             .required('La descripción es obligatoria')
@@ -296,7 +302,7 @@ const UpdateProduct = () => {
                                     <div>
                                         <label htmlFor="price" className="mb-2 block text-sm font-semibold">Precio:</label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             id="price"
                                             name="price"
                                             placeholder="0.00"
@@ -313,7 +319,7 @@ const UpdateProduct = () => {
                                     <div>
                                         <label htmlFor="stock" className="mb-2 block text-sm font-semibold">Stock:</label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             id="stock"
                                             name="stock"
                                             placeholder="0"

@@ -100,13 +100,6 @@ const UpdateClient = () => {
                     const parts = value.trim().split(/\s+/);
                     if (parts.length < 4) return false;
                     return parts.every(p => p.length >= 3 && p.length <= 15);
-                })
-                .test('unique-name', 'El nombre ya está registrado', function (value) {
-                    if (!value) return true;
-                    if (!clients.length) return true; // allow if clients not loaded
-                    const nameNorm = normalize(value);
-                    const exists = clients.some(c => c.Name && (c.Ruc !== ruc) && normalize(c.Name) === nameNorm);
-                    return !exists;
                 }),
             ComercialName: Yup.string()
                 .nullable()
@@ -130,7 +123,7 @@ const UpdateClient = () => {
             Address: Yup.string()
                 .required("La dirección es obligatoria")
                 .min(20, "La dirección debe tener al menos 20 caracteres")
-                .max(60, "La dirección debe tener como máximo 60 caracteres")
+                .max(100, "La dirección debe tener como máximo 100 caracteres")
                 .test("address-mix", "La dirección debe contener letras y números", value =>
                     !value || hasLettersAndNumbers(value)
                 )
@@ -331,7 +324,7 @@ const UpdateClient = () => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="email" className="mb-2 block text-sm font-semibold">Email:</label>
+                                        <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico:</label>
                                         <input
                                             type="email"
                                             id="email"

@@ -66,7 +66,7 @@ const RegisterProducts = () => {
             }),
         product_name: Yup.string()
             .required("El nombre del producto es obligatorio")
-            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s]+$/, "El nombre solo puede contener letras, números y espacios")
+            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s.\-\/(),;:!?"'%&+@#$¿¡= {}]+$/, "El nombre solo puede contener letras, números, espacios y símbolos permitidos")
             .test('unique-product-name', 'Ya existe un producto con ese nombre', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true;
@@ -102,6 +102,10 @@ const RegisterProducts = () => {
         price: Yup.number()
             .typeError("El precio debe ser numérico")
             .required("El precio es obligatorio")
+            .test('no-comma', 'El precio no debe contener comas; use punto como separador decimal', function (value) {
+                if (value === undefined || value === null || value === '') return true;
+                return !String(value).includes(',');
+            })
             .test('no-negative', 'El precio no puede ser negativo', function (value) {
                 if (value === undefined || value === null || value === '') return true;
                 const n = Number(value.toString().replace(',', '.'));
