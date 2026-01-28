@@ -9,6 +9,17 @@ DESARROLLO DE SISTEMA PARA LA GESTIÓN Y CONTROL DE PEDIDOS EN LA EMPRESA PRIMA 
 * **Componente Móvil : Paúl Sebastián Cabrera Cruz**
 * **Componente Backend :Mathías Agustín Terán Alcívar**
 
+## 🔗 Video de funcionalidad
+[Funcionalidad Frontend PRIMA S.A.](https://www.youtube.com/watch?v=E7QhgEIhPzY)
+
+
+## 🔗 Documentos del proyecto
+[Link de la documentacion](https://drive.google.com/drive/folders/1w2R1snMVpdgqrfcwWJz-8gmdSnU5e4wl?usp=sharing)
+
+## 🔗 Documentacion  del proyecto generada IA
+[Link de la documentación con IA](https://deepwiki.com/PaulCabreraEPN/FRONT-PRIMAS_S.A)
+
+
 ## 🛠️ Tecnologías Utilizadas
 Ruteo
   - React 18.2.0
@@ -96,5 +107,16 @@ npm run dev
 - `npm run build`: Construye la aplicación para producción
 - `npm run preview`: Vista previa de la versión de producción
 
-## 🌐 Despliegue
-La aplicación está configurada para despliegue con redirecciones para SPA en el archivo `public/_redirects`.
+## 🧪 Pruebas
+
+```bash
+# Ejecutar todas las pruebas
+npm run test
+
+# Ejecutar todas las pruebas con interfaz gráfica 
+npm run test:ui
+
+# Ejecutar pruebas específicas
+npm run test -- -t "nombre del test"
+```
+
