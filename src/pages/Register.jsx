@@ -78,7 +78,7 @@ const Register = () => {
                 !value || onlyLettersAndSpaces(value)
             )
             .min(3, "Los nombres deben tener al menos 3 caracteres")
-            .max(41, "Los nombres deben tener como máximo 20 caracteres")
+            .max(35, "Los nombres deben tener como máximo 35 caracteres")
             .test("two-words", "Debe ingresar exactamente dos nombres", value =>
                 value && value.trim().split(/\s+/).length === 2
             )
@@ -105,13 +105,13 @@ const Register = () => {
                 !value || onlyLettersAndSpaces(value)
             )
             .min(3, "Los apellidos deben tener al menos 3 caracteres")
-            .max(41, "Los apellidos deben tener como máximo 20 caracteres")
+            .max(55, "Los apellidos deben tener como máximo 55 caracteres")
             .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
                 value && value.trim().split(/\s+/).length === 2
             )
             .test(
                 "each-lastname-length",
-                "Cada apellido debe tener entre 3 y 20 caracteres",
+                "Cada apellido debe tener entre 3 y 25 caracteres",
                 function (value) {
                     if (!value) return false;
                     const parts = value.trim().split(/\s+/);
@@ -120,9 +120,9 @@ const Register = () => {
                     const second = parts[1];
                     return (
                         first.length >= 3 &&
-                        first.length <= 20 &&
+                        first.length <= 25 &&
                         second.length >= 3 &&
-                        second.length <= 20
+                        second.length <= 25
                     );
                 }
             ),
@@ -130,7 +130,7 @@ const Register = () => {
             .required("El número de identificación es obligatorio")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
             .matches(/^\d{10}$/, "El número de identificación debe contener únicamente números")
-            .test('ecuador-cedula', 'La cédula ecuatoriana no válida', function (value) {
+            .test('ecuador-cedula', 'La cédula ecuatoriana no es válida', function (value) {
                 if (!value) return false;
                 return validateEcuadorianCedula(value);
             })

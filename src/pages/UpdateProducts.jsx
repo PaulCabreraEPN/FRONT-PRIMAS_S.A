@@ -114,7 +114,7 @@ const UpdateProduct = () => {
                 if (Number.isNaN(n)) return false;
                 return n >= 1;
             })
-            .test('stock-format', 'El stock debe ser un número entero de hasta 3 dígitos', value => {
+            .test('stock-format', 'El stock debe ser un número entero positivo de hasta 3 dígitos', value => {
                 if (value === undefined || value === null || value === '') return false;
                 return /^\d{1,3}$/.test(String(value));
             }),
@@ -124,6 +124,9 @@ const UpdateProduct = () => {
             .max(300, 'La descripción debe tener como máximo 300 caracteres'),
         reference: Yup.string()
             .required('La referencia es obligatoria')
+            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s.\-\/(),;:!?"'%&+@#$¿¡= {}]+$/, "La referencia solo puede contener letras, números, espacios y símbolos permitidos")
+            .min(3, "La referencia debe tener al menos 3 caracteres")
+            .max(12, "La referencia debe tener como máximo 12 caracteres")
             .test('unique-reference', 'Ya existe un producto con esa referencia', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true;

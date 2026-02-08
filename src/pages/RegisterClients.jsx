@@ -60,7 +60,6 @@ const RegisterClients = () => {
             if (v === "1234567890") return true;
             return false;
         };
-        const hasLettersAndNumbers = (s = "") => /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(s) && /\d/.test(s);
 
         return Yup.object({
         Name: Yup.string()
@@ -71,15 +70,17 @@ const RegisterClients = () => {
             .test("four-words", "Debe ingresar al menos 2 nombres y 2 apellidos", value =>
                 value && value.trim().split(/\s+/).length >= 4
             )
-            .test("each-word-length", "Cada nombre y apellido debe tener entre 3 y 15 caracteres", value => {
+            .test("each-word-length", "Cada nombre y apellido debe tener entre 3 y 25 caracteres", value => {
                 if (!value) return false;
                 const parts = value.trim().split(/\s+/);
                 if (parts.length < 4) return false;
-                return parts.every(p => p.length >= 3 && p.length <= 15);
+                return parts.every(p => p.length >= 3 && p.length <= 25);
             }),
 
         ComercialName: Yup.string()
             .required("El nombre comercial es obligatorio")
+            .min(3, "El nombre comercial debe tener al menos 3 caracteres")
+            .max(50, "El nombre comercial debe tener como máximo 50 caracteres")
             .test("not-only-numbers", "El nombre comercial no puede ser solo números", value =>
                 !value || /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(value)
             )
@@ -115,8 +116,8 @@ const RegisterClients = () => {
             .required("La dirección es obligatoria")
             .min(15, "La dirección debe tener al menos 15 caracteres")
             .max(100, "La dirección debe tener como máximo 100 caracteres")
-            .test("address-mix", "La dirección debe contener letras y números", value =>
-                !value || hasLettersAndNumbers(value)
+            .test("not-only-numbers", "La dirección no puede ser solo números", value =>
+                !value || /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(value)
             )
             .test("unique-address", "Ya existe un cliente con esa dirección", function (value) {
                 if (!value) return true;

@@ -84,7 +84,6 @@ const UpdateClient = () => {
             if (v === "1234567890") return true;
             return false;
         };
-        const hasLettersAndNumbers = (s = "") => /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(s) && /\d/.test(s);
 
         return Yup.object({
             Name: Yup.string()
@@ -103,8 +102,9 @@ const UpdateClient = () => {
                 }),
             ComercialName: Yup.string()
                 .nullable()
-                .min(2, "El nombre comercial debe tener al menos 2 caracteres")
-                .max(60, "El nombre comercial debe tener como máximo 60 caracteres")
+                .required("El nombre comercial es obligatorio")
+                .min(3, "El nombre comercial debe tener al menos 3 caracteres")
+                .max(50, "El nombre comercial debe tener como máximo 50 caracteres")
                 .test("not-only-numbers", "El nombre comercial no puede ser solo números", value =>
                     !value || /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(value)
                 )
@@ -122,10 +122,10 @@ const UpdateClient = () => {
                 }),
             Address: Yup.string()
                 .required("La dirección es obligatoria")
-                .min(20, "La dirección debe tener al menos 20 caracteres")
+                .min(15, "La dirección debe tener al menos 15 caracteres")
                 .max(100, "La dirección debe tener como máximo 100 caracteres")
-                .test("address-mix", "La dirección debe contener letras y números", value =>
-                    !value || hasLettersAndNumbers(value)
+                .test("not-only-numbers", "La dirección no puede ser solo números", value =>
+                    !value || /[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]/.test(value)
                 )
                 .test('unique-address', 'La dirección ya está registrada en otro cliente', function (value) {
                     if (!value) return true;
@@ -261,7 +261,7 @@ const UpdateClient = () => {
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label htmlFor="Name" className="mb-2 block text-sm font-semibold">Nombre:</label>
+                                        <label htmlFor="Name" className="mb-2 block text-sm font-semibold">Nombre Completo:</label>
                                         <input
                                             type="text"
                                             id="Name"
@@ -278,6 +278,23 @@ const UpdateClient = () => {
                                     </div>
 
                                     <div>
+                                        <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial:</label>
+                                        <input
+                                            type="text"
+                                            id="ComercialName"
+                                            name="ComercialName"
+                                            placeholder="Nombre comercial "
+                                            value={formik.values.ComercialName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                        {formik.touched.ComercialName && formik.errors.ComercialName ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.ComercialName}</div>
+                                        ) : null}
+                                    </div>
+
+                                    <div>
                                         <label htmlFor="Ruc" className="mb-2 block text-sm font-semibold">RUC:</label>
                                         <input
                                             type="text"
@@ -289,23 +306,7 @@ const UpdateClient = () => {
                                         />
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="Address" className="mb-2 block text-sm font-semibold">Dirección:</label>
-                                        <input
-                                            type="text"
-                                            id="Address"
-                                            name="Address"
-                                            placeholder="Ingrese dirección"
-                                            value={formik.values.Address}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                                        />
-                                        {formik.touched.Address && formik.errors.Address ? (
-                                            <div className="text-red-500 text-sm">{formik.errors.Address}</div>
-                                        ) : null}
-                                    </div>
-
+                                    
                                     <div>
                                         <label htmlFor="telephone" className="mb-2 block text-sm font-semibold">Teléfono:</label>
                                         <input
@@ -322,6 +323,25 @@ const UpdateClient = () => {
                                             <div className="text-red-500 text-sm">{formik.errors.telephone}</div>
                                         ) : null}
                                     </div>
+
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="Address" className="mb-2 block text-sm font-semibold">Dirección:</label>
+                                        <input
+                                            type="text"
+                                            id="Address"
+                                            name="Address"
+                                            placeholder="Ingrese dirección"
+                                            value={formik.values.Address}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
+                                        />
+                                        {formik.touched.Address && formik.errors.Address ? (
+                                            <div className="text-red-500 text-sm">{formik.errors.Address}</div>
+                                        ) : null}
+                                    </div>
+
+                                    
 
                                     <div>
                                         <label htmlFor="email" className="mb-2 block text-sm font-semibold">Correo Electrónico:</label>
@@ -340,22 +360,7 @@ const UpdateClient = () => {
                                         ) : null}
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="ComercialName" className="mb-2 block text-sm font-semibold">Nombre Comercial:</label>
-                                        <input
-                                            type="text"
-                                            id="ComercialName"
-                                            name="ComercialName"
-                                            placeholder="Nombre comercial (opcional)"
-                                            value={formik.values.ComercialName}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500"
-                                        />
-                                        {formik.touched.ComercialName && formik.errors.ComercialName ? (
-                                            <div className="text-red-500 text-sm">{formik.errors.ComercialName}</div>
-                                        ) : null}
-                                    </div>
+                                    
 
                                     <div>
                                         <label htmlFor="state" className="mb-2 block text-sm font-semibold">Estado:</label>

@@ -114,7 +114,7 @@ const UpdateSeller = () => {
                     !value || onlyLettersAndSpaces(value)
                 )
                 .min(3, "Los nombres deben tener al menos 3 caracteres")
-                .max(41, "Los nombres deben tener como máximo 20 caracteres")
+                .max(35, "Los nombres deben tener como máximo 35 caracteres")
                 .test("two-words", "Debe ingresar exactamente dos nombres", value =>
                     value && value.trim().split(/\s+/).length === 2
                 )
@@ -134,33 +134,20 @@ const UpdateSeller = () => {
                             second.length <= 20
                         );
                     }
-                )
-                .test('unique-name', 'Los nombres ya están registrados en otro vendedor', function (value) {
-                    if (!value) return true;
-                    if (!allSellers || allSellers.length === 0) return true;
-                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
-                    const val = normalize(value);
-                    const exists = allSellers.some(s => {
-                        const name = s?.names ?? s?.Names ?? s?.name ?? "";
-                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
-                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
-                        return normalize(name) === val;
-                    });
-                    return !exists;
-                }),
+                ),
             lastNames: Yup.string()
                 .required("Los apellidos son obligatorios")
                 .test("only-letters", "Los apellidos solo pueden contener letras y espacios", value =>
                     !value || onlyLettersAndSpaces(value)
                 )
                 .min(3, "Los apellidos deben tener al menos 3 caracteres")
-                .max(41, "Los apellidos deben tener como máximo 20 caracteres")
+                .max(55, "Los apellidos deben tener como máximo 55 caracteres")
                 .test("two-words", "Debe ingresar exactamente dos apellidos", value =>
                     value && value.trim().split(/\s+/).length === 2
                 )
                 .test(
                     "each-lastname-length",
-                    "Cada apellido debe tener entre 3 y 20 caracteres",
+                    "Cada apellido debe tener entre 3 y 25 caracteres",
                     function (value) {
                         if (!value) return false;
                         const parts = value.trim().split(/\s+/);
@@ -169,25 +156,12 @@ const UpdateSeller = () => {
                         const second = parts[1];
                         return (
                             first.length >= 3 &&
-                            first.length <= 20 &&
+                            first.length <= 25 &&
                             second.length >= 3 &&
-                            second.length <= 20
+                            second.length <= 25
                         );
                     }
-                )
-                .test('unique-lastnames', 'Los apellidos ya están registrados en otro vendedor', function (value) {
-                    if (!value) return true;
-                    if (!allSellers || allSellers.length === 0) return true;
-                    const normalize = (s = "") => s.toString().normalize?.("NFD")?.replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
-                    const val = normalize(value);
-                    const exists = allSellers.some(s => {
-                        const lname = s?.lastNames ?? s?.LastNames ?? s?.lastname ?? s?.lastName ?? "";
-                        const pid = s?._id ?? s?.id ?? s?.seller_id ?? "";
-                        if (pid && String(pid) === String(id)) return false; // excluir vendedor actual
-                        return normalize(lname) === val;
-                    });
-                    return !exists;
-                }),
+                ),
             email: Yup.string()
                 .email("El correo debe ser válido")
                 .required("El correo es obligatorio")

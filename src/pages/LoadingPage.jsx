@@ -46,7 +46,7 @@ const LoadingPage = () => {
 
           {/* Footer */}
           <footer className="absolute bottom-5 text-white text-sm">
-              &copy; 2024 PRIMA S.A. Todos los derechos reservados.
+              &copy; 2026 PRIMA S.A. Todos los derechos reservados.
           </footer>
       </div>
   );

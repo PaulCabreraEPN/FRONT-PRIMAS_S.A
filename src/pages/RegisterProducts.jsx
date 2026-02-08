@@ -82,6 +82,9 @@ const RegisterProducts = () => {
             .max(60, "El nombre del producto debe tener como máximo 60 caracteres"),
         reference: Yup.string()
             .required("La referencia es obligatoria")
+            .matches(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ0-9\s.\-\/(),;:!?"'%&+@#$¿¡= {}]+$/, "La referencia solo puede contener letras, números, espacios y símbolos permitidos")
+            .min(3, "La referencia debe tener al menos 3 caracteres")
+            .max(12, "La referencia debe tener como máximo 12 caracteres")
             .test('unique-reference', 'Ya existe un producto con esa referencia', function (value) {
                 if (!value) return true;
                 if (!allProducts || allProducts.length === 0) return true;
