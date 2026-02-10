@@ -310,7 +310,9 @@ const Register = () => {
                                 <div>
                                     <label htmlFor="cedula" className="mb-2 block text-sm font-semibold">N° Identificación <span className="text-red-500">*</span>:</label>
                                     <input
-                                        type="number"
+                                        type="text"
+                                        inputMode="numeric"
+                                        pattern="\d*"
                                         id="cedula"
                                         name="cedula"
                                         placeholder="1734567897"
