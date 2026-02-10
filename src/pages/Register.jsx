@@ -128,6 +128,7 @@ const Register = () => {
             ),
         cedula: Yup.string()
             .required("El número de identificación es obligatorio")
+            .matches(/^\d+$/, "El número de identificación no debe contener letras ni símbolos")
             .length(10, "El número de identificación debe tener exactamente 10 dígitos")
             .matches(/^\d{10}$/, "El número de identificación debe contener únicamente números")
             .test('ecuador-cedula', 'La cédula ecuatoriana no es válida', function (value) {
