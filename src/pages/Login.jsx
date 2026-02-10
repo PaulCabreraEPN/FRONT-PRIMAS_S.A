@@ -24,7 +24,11 @@ const Login = () => {
             .required('El nombre de usuario es obligatorio')
             .oneOf(['TopAdmin', 'PrimAdmin', 'AtlasPro', 'PinAtlas'], 'El nombre de usuario no es válido'),
         password: Yup.string()
-            .min(6, 'La contraseña debe cumplir con el formato requerido')
+            .min(8, 'La contraseña debe tener al menos 8 caracteres')
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%&*().]{8,}$/,
+                'La contraseña debe tener al menos una minúscula, una mayúscula, un número y solo símbolos permitidos: !@#$%&*().'
+            )
             .required('La contraseña es obligatoria'),
     });
 

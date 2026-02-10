@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const Forgot = () => {
     // Declaraciones
@@ -11,33 +13,18 @@ const Forgot = () => {
     
     const [isLoading, setIsLoading] = useState(false);
 
-    // Crear un useState para el formulario
-    const [form, setForm] = useState({
-        username: "",
+    const validationSchema = Yup.object({
+        username: Yup.string()
+            .trim()
+            .required('El nombre de usuario es obligatorio')
+            .oneOf(['TopAdmin', 'PrimAdmin', 'AtlasPro', 'PinAtlas'], 'El nombre de usuario no es válido'),
     });
 
-    // Manejar cambios en los inputs
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
-    };
-
     // Manejar el envío del formulario
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Normalizar valores vacíos
+    const handleSubmit = async (values, { resetForm }) => {
         const normalizedForm = {
-            username: form.username.trim(),
+            username: values.username.trim(),
         };
-
-        // Validar que el campo no esté vacío
-        if (!normalizedForm.username) {
-            toast.error('Por favor, ingresa tu nombre de usuario.', { autoClose: 6000 });
-            return;
-        }
 
         try {
             setIsLoading(true);
@@ -61,7 +48,7 @@ const Forgot = () => {
             // Mostrar mensaje con toast según el status
             if (respStatus === 'success') {
                 toast.success(fullMsg, { autoClose: 6000 });
-                setForm({ username: "" });
+                resetForm();
             } else if (respStatus === 'warning') {
                 toast.warn(fullMsg, { autoClose: 6000 });
             } else {
@@ -74,6 +61,14 @@ const Forgot = () => {
             setIsLoading(false);
         }
     };
+
+    const formik = useFormik({
+        initialValues: {
+            username: '',
+        },
+        validationSchema,
+        onSubmit: handleSubmit,
+    });
 
     return (
         <div className="flex flex-col sm:flex-row h-screen">
@@ -92,7 +87,7 @@ const Forgot = () => {
                     
                     <ToastContainer />
                     
-                    <form onSubmit={handleSubmit} className="mt-4">
+                    <form onSubmit={formik.handleSubmit} className="mt-4">
                         <div className="mb-5">
                             <label className="block text-base font-sans text-[#6b6999] mb-2">
                                 Nombre de Usuario
@@ -102,9 +97,13 @@ const Forgot = () => {
                                 placeholder="Ingresa tu nombre de usuario"
                                 className="block w-full rounded-full border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-2 px-3 text-gray-500"
                                 name="username"
-                                onChange={handleChange}
-                                value={form.username}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.username}
                             />
+                            {formik.touched.username && formik.errors.username ? (
+                                <div className="text-red-500 text-sm">{formik.errors.username}</div>
+                            ) : null}
                         </div>
                         
                         <button
